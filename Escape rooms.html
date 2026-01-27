@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escape Rooms Map</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!-- Marker clustering -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+
+  <!-- Your CSS -->
+  <style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+#layout {
+  display: flex;
+  height: 100vh;
+}
+
+#sidebar {
+  width: 300px;
+  padding: 12px;
+  overflow-y: auto;
+  background: #701f1f;
+  border: 6px solid #080808;
+}
+
+#map {
+  flex: 1;
+}
+
+#submitPanel {
+  margin-top: 20px;
+  padding: 12px;
+  background: #9d2b2b;
+  border: 5px solid #080808;
+}
+
+/* User location marker styling */
+.user-location-marker {
+  background: none !important;
+  border: none !important;
+  font-size: 24px;
+  color: #27b622;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+/* GPS button styling */
+#locateMe {
+  background: #4CAF50;
+  color: white;
+  border: 2px solid #45a049;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+#locateMe:hover:not(:disabled) {
+  background: #45a049;
+}
+
+#locateMe:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Filter input styling */
+#sidebar input[type="text"], #sidebar input[type="number"], #sidebar select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#sidebar input[type="text"]:focus, #sidebar input[type="number"]:focus, #sidebar select:focus {
+  border-color: #3388ff;
+  outline: none;
+}
+
+#sidebar label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #fff;
+}
+
+#map.selecting-location {
+  cursor: pointer;
+}
+  </style>
+</head>
+
+<body>
+
+<div id="layout">
+  <aside id="sidebar">
+    <h2>Filters</h2>
+
+    <label>Category</label>
+    <select id="category" multiple>
+      <option value="Action">Action</option>
+      <option value="Comedy">Comedy</option>
+      <option value="Horror">Horror</option>
+      <option value="Horror/Action">Horror/Action</option>
+      <option value="Horror/psychological horror">Horror/psychological horror</option>
+      <option value="Horror/psychological horror/Role playing">Horror/psychological horror/Role playing</option>
+      <option value="Horror/psychological horror/splatter">Horror/psychological horror/splatter</option>
+      <option value="Kids">Kids</option>
+      <option value="Kids/Action">Kids/Action</option>
+      <option value="Kids/Sci-fi">Kids/Sci-fi</option>
+      <option value="Outer Space">Outer Space</option>
+      <option value="Portable">Portable</option>
+      <option value="Psychological horror">Psychological horror</option>
+      <option value="Psychological horror/Role playing">Psychological horror/Role playing</option>
+      <option value="Role playing">Role playing</option>
+      <option value="Riddles">Riddles</option>
+      <option value="Riddles/Role playing">Riddles/Role playing</option>
+      <option value="Riddles/Spooky">Riddles/Spooky</option>
+      <option value="Spooky">Spooky</option>
+      <option value="Sci-fi">Sci-fi</option>
+      <option value="VR">VR</option>
+
+    </select>
+
+    <label>Duration (minutes)</label>
+    <input type="number" id="minDuration" placeholder="Min">
+    <input type="number" id="maxDuration" placeholder="Max">
+
+    <label>Year</label>
+    <input type="number" id="minYear" placeholder="From">
+    <input type="number" id="maxYear" placeholder="To">
+
+    <label>Company</label>
+    <input type="text" id="company">
+
+    <label>Escape Room Name</label>
+    <input type="text" id="escapeRoomName" placeholder="Search by name">
+
+    <label>Radius from my location (km)</label>
+    <input type="number" id="radius" placeholder="e.g., 5" min="0.1" step="0.1">
+    <small id="locationStatus" style="color: #ffcccc; font-size: 12px;">Location not set - use "📍 Locate Me" first</small>
+
+    <button id="applyFilters">Apply filters</button>
+
+    <hr>
+
+    <button id="locateMe">📍 Locate Me</button>
+
+    <hr>
+
+    <button id="openSubmit">➕ Submit an escape room</button>
+  </aside>
+
+  <div id="map"></div>
+</div>
+
+<!-- Submission panel -->
+<div id="submitPanel" hidden>
+  <h3>Submit an escape room</h3>
+
+  <label for="nameInput">Name *</label>
+  <input id="nameInput" placeholder="Name" required>
+  <label for="companyInput">Company *</label>
+  <input id="companyInput" placeholder="Company" required>
+  <label for="durationInput">Duration</label>
+  <input id="durationInput" type="number" placeholder="Duration">
+  <label for="yearInput">Year created</label>
+  <input id="yearInput" type="number" placeholder="Year created">
+  <label for="websiteInput">Website</label>
+  <input id="websiteInput" placeholder="website">
+  <label for="addressInput">Address *</label>
+  <input id="addressInput" placeholder="Address" required>
+
+  <label for="categoryInput">Category *</label>
+  <select id="categoryInput" required>
+    <option value="Action">Action</option>
+      <option value="Comedy">Comedy</option>
+      <option value="Horror">Horror</option>
+      <option value="Horror/Action">Horror/Action</option>
+      <option value="Horror/psychological horror">Horror/psychological horror</option>
+      <option value="Horror/psychological horror/Role playing">Horror/psychological horror/Role playing</option>
+      <option value="Horror/psychological horror/splatter">Horror/psychological horror/splatter</option>
+      <option value="Kids">Kids</option>
+      <option value="Kids/Action">Kids/Action</option>
+      <option value="Kids/Sci-fi">Kids/Sci-fi</option>
+      <option value="Outer Space">Outer Space</option>
+      <option value="Portable">Portable</option>
+      <option value="Psychological horror">Psychological horror</option>
+      <option value="Psychological horror/Role playing">Psychological horror/Role playing</option>
+      <option value="Role playing">Role playing</option>
+      <option value="Riddles">Riddles</option>
+      <option value="Riddles/Role playing">Riddles/Role playing</option>
+      <option value="Riddles/Spooky">Riddles/Spooky</option>
+      <option value="Spooky">Spooky</option>
+      <option value="Sci-fi">Sci-fi</option>
+      <option value="VR">VR</option>
+  </select>
+
+  <p>Click on the map to select location</p>
+  <button id="submitBtn">Submit</button>
+</div>
+
+<!-- Scripts -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+const db = supabase.createClient(
+  "https://ypmtgvoadqtcspcrtemy.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwbXRndm9hZHF0Y3NwY3J0ZW15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg0NjE4MjIsImV4cCI6MjA4NDAzNzgyMn0.9m6Wi-y0xZ3BafqHJzGLPgLhsBOuSlTZ3mu4Bq28SGI"
+);
+
+const map = L.map("map").setView([37.9838, 23.7275], 12);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "© OpenStreetMap contributors"
+}).addTo(map);
+
+const markers = L.markerClusterGroup();
+map.addLayer(markers);
+
+// Haversine formula to calculate distance between two WGS84 coordinates in kilometers
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Earth's radius in kilometers
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+async function loadEscapeRooms() {
+  markers.clearLayers();
+
+  let query = db
+    .from("Escape_Rooms")
+    .select("*")
+    .eq("Status", "approved")
+    .eq("Operational", "Yes")
+
+  const categories = [...document.getElementById("category").selectedOptions]
+    .map(o => o.value);
+
+  if (categories.length) query = query.in("Category", categories);
+
+  const minDuration = document.getElementById("minDuration").value;
+  const maxDuration = document.getElementById("maxDuration").value;
+  if (minDuration) query = query.gte("Duration", minDuration);
+  if (maxDuration) query = query.lte("Duration", maxDuration);
+
+  const minYear = document.getElementById("minYear").value;
+  const maxYear = document.getElementById("maxYear").value;
+  if (minYear) query = query.gte("Year of S", minYear);
+  if (maxYear) query = query.lte("Year of S", maxYear);
+
+  const company = document.getElementById("company").value;
+  if (company) query = query.ilike("Company", `%${company}%`);
+
+  const escapeRoomName = document.getElementById("escapeRoomName").value;
+  if (escapeRoomName) query = query.ilike("Escape room", `%${escapeRoomName}%`);
+
+  const { data, error } = await query;
+  console.log('Query result:', data, error);
+  if (error) return console.error(error);
+
+  // Client-side filtering for radius
+  const radius = parseFloat(document.getElementById("radius").value);
+  let filteredData = data;
+
+  if (radius > 0 && userLocation) {
+    filteredData = data.filter(r => {
+      const distance = calculateDistance(userLocation.lat, userLocation.lng, r.Lat, r.Lon);
+      return distance <= radius;
+    });
+    console.log(`Filtered ${data.length} rooms to ${filteredData.length} within ${radius}km radius`);
+  } else if (radius > 0 && !userLocation) {
+    alert("Please set your location first using the '📍 Locate Me' button to use radius filtering.");
+    return;
+  }
+
+  filteredData.forEach(r => {
+    let popupContent = `
+      <strong>${r.Company}</strong><br>
+      ${r["Escape room"]} <br>
+      ${r.Category}<br>
+      ${r.Duration} min<br>
+      Address: ${r.Address}<br>
+      Actors: ${r.Actors ? 'Yes' : 'No'}<br>
+      Year Created: ${r["Year of S"]}<br>  
+      Website: ${r.website ? `<a href="${r.website}" target="_blank">${r.website}</a>` : 'N/A'}<br>
+    `; 
+  
+    // Add distance if user location is available
+    if (userLocation) {
+      const distance = calculateDistance(userLocation.lat, userLocation.lng, r.Lat, r.Lon);
+      popupContent += `Distance: ${distance.toFixed(1)} km<br>`;
+    }
+
+    const marker = L.marker([r.Lat, r.Lon]).bindPopup(popupContent);
+
+    markers.addLayer(marker);
+  });
+}
+
+document.getElementById("applyFilters").onclick = loadEscapeRooms;
+loadEscapeRooms();
+
+let selectedLatLng = null;
+let selectedLocationMarker = null;
+
+map.on("click", e => {
+  selectedLatLng = e.latlng;
+  alert("Location selected");
+  document.getElementById("map").classList.remove("selecting-location");
+
+  // Add marker at selected location
+  if (selectedLocationMarker) {
+    map.removeLayer(selectedLocationMarker);
+  }
+  selectedLocationMarker = L.marker(selectedLatLng).addTo(map).bindPopup("Selected location");
+});
+
+document.getElementById("submitBtn").onclick = async () => {
+  console.log("Submit button clicked");
+  if (!selectedLatLng) {
+    alert("Select a location on the map");
+    return;
+  }
+
+  const name = document.getElementById("nameInput").value.trim();
+  if (!name) {
+    alert("Name is required");
+    return;
+  }
+
+  const company = document.getElementById("companyInput").value.trim();
+  if (!company) {
+    alert("Company is required");
+    return;
+  }
+
+  const category = document.getElementById("categoryInput").value;
+  if (!category) {
+    alert("Category is required");
+    return;
+  }
+
+  const address = document.getElementById("addressInput").value.trim();
+  if (!address) {
+    alert("Address is required");
+    return;
+  }
+
+  try {
+    const { data, error } = await db.from("Escape_Rooms").insert({
+      "Escape room": document.getElementById("nameInput").value,
+      Company: document.getElementById("companyInput").value,
+      Duration: document.getElementById("durationInput").value,
+      "Year of S": document.getElementById("yearInput").value,
+      website: document.getElementById("websiteInput").value,
+      Address: document.getElementById("addressInput").value,
+      Category: document.getElementById("categoryInput").value,
+      Lat: selectedLatLng.lat,
+      Lon: selectedLatLng.lng,
+      City: "Athens",
+      Country: "Greece",
+      Status: "pending",
+    });
+
+    if (error) {
+      console.error("Insert error:", error);
+      alert("Error submitting: " + error.message);
+    } else {
+      alert("Submitted for review!");
+      // Optionally reload the map or clear form
+    }
+  } catch (err) {
+    console.error("Submit error:", err);
+    alert("Error: " + err.message);
+  }
+};
+
+document.getElementById("openSubmit").onclick = () => {
+  console.log("Open submit clicked");
+  document.getElementById("submitPanel").hidden = false;
+  document.getElementById("map").classList.add("selecting-location");
+};
+
+// GPS functionality - Uses WGS84 coordinate system (EPSG:4326)
+// Compatible with all modern browsers that support Geolocation API
+let userLocationMarker = null;
+let userLocation = null; // Store user's current location for radius filtering
+let isLocating = false;
+
+document.getElementById("locateMe").onclick = () => {
+  if (isLocating) return; // Prevent multiple simultaneous requests
+  
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by this browser. Please update your browser or use a different device.");
+    return;
+  }
+  
+  isLocating = true;
+  const button = document.getElementById("locateMe");
+  const originalText = button.textContent;
+  button.textContent = "🔄 Locating...";
+  button.disabled = true;
+  
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      // Reset button state
+      isLocating = false;
+      button.textContent = originalText;
+      button.disabled = false;
+      
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const accuracy = position.coords.accuracy;
+      
+      // Validate WGS84 coordinate ranges
+      if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        alert("Invalid coordinates received. Please try again.");
+        return;
+      }
+      
+      console.log(`GPS Location (WGS84): Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}, Accuracy: ±${accuracy.toFixed(0)}m`);
+      
+      // Store user location for radius filtering
+      userLocation = { lat, lng };
+      
+      // Update location status indicator
+      document.getElementById("locationStatus").textContent = "✓ Location set - radius filter available";
+      document.getElementById("locationStatus").style.color = "#ccffcc";
+      
+      // Remove existing user location marker if it exists
+      if (userLocationMarker) {
+        map.removeLayer(userLocationMarker);
+      }
+      
+      // Create a marker for user location with accuracy circle
+      const accuracyRadius = Math.max(accuracy, 10); // Minimum 10m radius for visibility
+      
+      userLocationMarker = L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: 'user-location-marker',
+          html: '📍',
+          iconSize: [25, 25],
+          iconAnchor: [12, 25]
+        })
+      }).addTo(map);
+      
+      // Add accuracy circle
+      const accuracyCircle = L.circle([lat, lng], {
+        color: '#3388ff',
+        fillColor: '#3388ff',
+        fillOpacity: 0.1,
+        radius: accuracyRadius,
+        weight: 2
+      }).addTo(map);
+      
+      // Store circle reference for cleanup
+      userLocationMarker.accuracyCircle = accuracyCircle;
+      
+      // Enhanced popup with WGS84 coordinates and accuracy
+      userLocationMarker.bindPopup(`
+        <strong>You are here!</strong><br>
+        <small>WGS84 Coordinates:</small><br>
+        Latitude: ${lat.toFixed(6)}°<br>
+        Longitude: ${lng.toFixed(6)}°<br>
+      `);
+      
+      // Center the map on the user's location with appropriate zoom
+      const zoomLevel = accuracy > 100 ? 13 : accuracy > 50 ? 14 : 16;
+      map.setView([lat, lng], zoomLevel);
+      
+      // Auto-remove marker after 10 minutes
+      setTimeout(() => {
+        if (userLocationMarker) {
+          map.removeLayer(userLocationMarker);
+          if (userLocationMarker.accuracyCircle) {
+            map.removeLayer(userLocationMarker.accuracyCircle);
+          }
+          userLocationMarker = null;
+          userLocation = null; // Clear stored location
+          // Reset location status indicator
+          document.getElementById("locationStatus").textContent = "Location not set - use \"📍 Locate Me\" first";
+          document.getElementById("locationStatus").style.color = "#ffcccc";
+        }
+      }, 600000); // 10 minutes
+    },
+    (error) => {
+      // Reset button state
+      isLocating = false;
+      button.textContent = originalText;
+      button.disabled = false;
+      
+      let errorMessage = "Unable to retrieve your location.";
+      
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          errorMessage = "Location access denied. Please enable location permissions in your browser settings and try again.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorMessage = "Location information is unavailable. Please check your GPS settings or try again in an open area.";
+          break;
+        case error.TIMEOUT:
+          errorMessage = "Location request timed out. Please check your internet connection and try again.";
+          break;
+        default:
+          errorMessage = "An unknown location error occurred. Please try again.";
+          break;
+      }
+      
+      alert(errorMessage);
+      console.error("Geolocation error:", error);
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 15000, // Increased timeout for better accuracy
+      maximumAge: 300000 // 5 minutes
+    }
+  );
+};
+</script>
+
+</body>
+</html>
+
+
+
+
