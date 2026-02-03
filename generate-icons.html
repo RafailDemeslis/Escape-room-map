@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Generate App Icons</title>
+</head>
+<body>
+  <canvas id="canvas192" width="192" height="192" style="border:1px solid #000; margin: 10px;"></canvas>
+  <canvas id="canvas512" width="512" height="512" style="border:1px solid #000; margin: 10px;"></canvas>
+  
+  <script>
+    // Function to create icon
+    function createIcon(canvasId, size) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      
+      // Background
+      ctx.fillStyle = '#701f1f';
+      ctx.fillRect(0, 0, size, size);
+      
+      // Draw lock icon (escape room theme)
+      const centerX = size / 2;
+      const centerY = size / 2;
+      const scale = size / 192;
+      
+      // Lock body
+      ctx.fillStyle = '#fdd835';
+      ctx.fillRect(centerX - 35 * scale, centerY - 10 * scale, 70 * scale, 50 * scale);
+      
+      // Lock shackle
+      ctx.strokeStyle = '#fdd835';
+      ctx.lineWidth = 12 * scale;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY - 10 * scale, 25 * scale, Math.PI, 0, true);
+      ctx.stroke();
+      
+      // Keyhole
+      ctx.fillStyle = '#701f1f';
+      ctx.beginPath();
+      ctx.arc(centerX, centerY + 5 * scale, 8 * scale, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillRect(centerX - 4 * scale, centerY + 5 * scale, 8 * scale, 15 * scale);
+      
+      // Add text
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `bold ${24 * scale}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.fillText('🗝️', centerX, centerY + 55 * scale);
+    }
+    
+    createIcon('canvas192', 192);
+    createIcon('canvas512', 512);
+    
+    // Download function
+    setTimeout(() => {
+      const canvas192 = document.getElementById('canvas192');
+      const canvas512 = document.getElementById('canvas512');
+      
+      // Download 192x192
+      canvas192.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'icon-192.png';
+        a.click();
+      });
+      
+      // Download 512x512
+      setTimeout(() => {
+        canvas512.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'icon-512.png';
+          a.click();
+        });
+      }, 1000);
+      
+    }, 500);
+  </script>
+</body>
+</html>
