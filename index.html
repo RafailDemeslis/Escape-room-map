@@ -164,27 +164,40 @@ input[type="time"] {
 
   #sidebar h2 {
     margin-top: 0;
-    font-size: 18px;
+    font-size: 16px;
+    margin-bottom: 8px;
   }
 
   #sidebar label {
-    font-size: 14px;
+    font-size: 12px;
+    margin-bottom: 3px;
   }
 
   #sidebar input[type="text"], 
   #sidebar input[type="number"], 
   #sidebar select {
-    font-size: 16px;
-    padding: 10px;
+    font-size: 14px;
+    padding: 8px;
+    margin-bottom: 6px;
+  }
+
+  #sidebar hr {
+    margin: 8px 0;
+  }
+
+  #sidebar small {
+    font-size: 10px;
   }
 
   #applyFilters,
   #locateMe,
+  #openPlan,
   #openSubmit {
-    padding: 12px 8px;
-    font-size: 14px;
-    min-height: 44px;
+    padding: 10px 6px;
+    font-size: 13px;
+    min-height: 40px;
     width: 100%;
+    margin-bottom: 6px;
   }
 
   button {
@@ -270,14 +283,39 @@ input[type="time"] {
   #submitPanel {
     position: fixed;
     top: 60px;
-    left: 50%;
-    transform: translateX(-50%);
+    right: 10px;
+    left: auto;
+    transform: none;
     width: 85%;
     max-width: 320px;
     max-height: 70vh;
     margin-top: 0;
     border-radius: 8px;
     z-index: 1600;
+    padding: 10px;
+  }
+
+  #submitPanel h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  #submitPanel label {
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+
+  #submitPanel input,
+  #submitPanel select {
+    font-size: 14px;
+    padding: 8px;
+    margin-bottom: 6px;
+  }
+
+  #submitBtn {
+    font-size: 13px;
+    padding: 10px;
+    min-height: 40px;
   }
 }
 
@@ -804,13 +842,14 @@ input[type="time"] {
 
 @media (max-width: 768px) {
   #planPanel {
-    width: 80%;
-    max-width: 300px;
+    width: 85%;
+    max-width: 320px;
     height: 50vh;
     top: auto;
     bottom: 10px;
-    right: 50%;
-    transform: translateX(50%);
+    right: 10px;
+    left: auto;
+    transform: none;
     border: 6px solid #080808;
     border-radius: 8px;
   }
@@ -826,6 +865,12 @@ input[type="time"] {
 
   .plan-buttons {
     padding: 8px;
+  }
+
+  .plan-buttons button {
+    font-size: 12px;
+    padding: 8px;
+    min-height: 38px;
   }
 }
 
