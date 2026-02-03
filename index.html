@@ -2,7 +2,7 @@
 <html lang="en-GB">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <title>Escape Rooms Map</title>
 
   <!-- PWA Meta Tags -->
@@ -11,8 +11,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Escape Rooms">
   <meta name="description" content="Find and plan escape room adventures">
+  <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -142,10 +145,11 @@ input[type="time"] {
     max-height: none;
     border: none;
     border-right: 6px solid #080808;
-    padding: 70px 10px 10px 10px;
+    padding: 70px 10px 80px 10px;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     z-index: 1500;
+    overflow-y: auto;
   }
 
   #sidebar.mobile-open {
@@ -211,7 +215,7 @@ input[type="time"] {
 @media (max-width: 480px) {
   #sidebar {
     width: 280px;
-    padding: 70px 8px 8px 8px;
+    padding: 70px 8px 80px 8px;
   }
 
   #sidebar input[type="text"], 
@@ -800,11 +804,11 @@ input[type="time"] {
 
 @media (max-width: 768px) {
   #planPanel {
-    width: 85%;
-    max-width: 320px;
-    height: 65vh;
+    width: 80%;
+    max-width: 300px;
+    height: 50vh;
     top: auto;
-    bottom: 20px;
+    bottom: 10px;
     right: 50%;
     transform: translateX(50%);
     border: 6px solid #080808;
@@ -812,7 +816,16 @@ input[type="time"] {
   }
 
   #planPanel h3 {
-    font-size: 16px;
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .plan-section {
+    padding: 10px;
+  }
+
+  .plan-buttons {
+    padding: 8px;
   }
 }
 
