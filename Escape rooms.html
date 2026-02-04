@@ -140,12 +140,12 @@ input[type="time"] {
     position: fixed;
     left: 0;
     top: 0;
-    width: 220px;
+    width: 180px;
     height: 100vh;
-    max-height: none;
+    max-height: 100vh;
     border: none;
     border-right: 6px solid #080808;
-    padding: 60px 8px 10px 8px;
+    padding: 55px 6px 10px 6px;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     z-index: 1500;
@@ -165,31 +165,31 @@ input[type="time"] {
 
   #sidebar h2 {
     margin-top: 0;
-    font-size: 16px;
-    margin-bottom: 6px;
+    font-size: 14px;
+    margin-bottom: 5px;
   }
 
   #sidebar label {
-    font-size: 13px;
-    margin-bottom: 3px;
+    font-size: 11px;
+    margin-bottom: 2px;
   }
 
   #sidebar input[type="text"], 
   #sidebar input[type="number"], 
   #sidebar select {
-    font-size: 14px;
-    padding: 8px;
-    margin-bottom: 6px;
+    font-size: 12px;
+    padding: 6px;
+    margin-bottom: 5px;
   }
 
   #sidebar hr {
-    margin: 8px 0;
+    margin: 6px 0;
   }
 
   #sidebar small {
-    font-size: 11px;
+    font-size: 10px;
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
   }
 
   #applyFilters,
@@ -197,11 +197,11 @@ input[type="time"] {
   #openPlan,
   #openSubmit,
   #installAppBtn {
-    padding: 10px 8px;
-    font-size: 13px;
-    min-height: 44px;
+    padding: 8px 6px;
+    font-size: 11px;
+    min-height: 40px;
     width: 100%;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
   }
 
   #installAppBtn {
@@ -236,8 +236,8 @@ input[type="time"] {
 
 @media (max-width: 480px) {
   #sidebar {
-    width: 200px;
-    padding: 60px 6px 10px 6px;
+    width: 160px;
+    padding: 55px 5px 10px 5px;
   }
 
   #sidebar input[type="text"], 
@@ -851,14 +851,14 @@ input[type="time"] {
 
 @media (max-width: 768px) {
   #planPanel {
-    width: 300px;
-    max-width: 75vw;
-    height: 70vh;
-    max-height: 600px;
-    top: 10px;
-    bottom: auto;
+    width: calc(100vw - 20px);
+    max-width: none;
+    height: 50vh;
+    max-height: 500px;
+    top: auto;
+    bottom: 10px;
     right: 10px;
-    left: auto;
+    left: 10px;
     transform: none;
     border: 6px solid #080808;
     border-radius: 8px;
