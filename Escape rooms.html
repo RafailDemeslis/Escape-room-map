@@ -115,6 +115,12 @@ input[type="time"] {
   animation: pulse 2s infinite;
 }
 
+@media (max-width: 768px) {
+  #installBtn {
+    display: none !important;
+  }
+}
+
 @keyframes pulse {
   0%, 100% { transform: scale(1); box-shadow: 0 6px 16px rgba(0,0,0,0.5); }
   50% { transform: scale(1.08); box-shadow: 0 8px 20px rgba(76,175,80,0.6); }
@@ -204,6 +210,24 @@ input[type="time"] {
     margin-bottom: 4px;
   }
 
+  #sidebar #installAppBtn {
+    background: #4CAF50;
+    border: 2px solid #45a049;
+    margin-bottom: 8px;
+    display: block !important;
+  }
+
+  #actionButtons {
+    display: flex !important;
+    gap: 4px !important;
+    width: 100%;
+  }
+
+  #actionButtons button {
+    flex: 1 !important;
+    min-width: 45% !important;
+  }
+
   #installAppBtn {
     background: #4CAF50;
     border: 2px solid #45a049;
@@ -290,15 +314,17 @@ input[type="time"] {
 /* Mobile styles for submit panel */
 @media (max-width: 768px) {
   #submitPanel {
-    position: fixed;
-    top: 70px;
-    right: 10px;
-    left: auto;
-    transform: none;
-    width: 300px;
-    max-width: 75vw;
-    max-height: 65vh;
-    margin-top: 0;
+    position: fixed !important;
+    width: calc(100vw - 20px) !important;
+    max-width: none !important;
+    height: 45vh !important;
+    max-height: 450px !important;
+    top: auto !important;
+    bottom: 10px !important;
+    right: 10px !important;
+    left: 10px !important;
+    transform: none !important;
+    border: 5px solid #080808;
     border-radius: 8px;
     z-index: 1600;
     padding: 12px;
@@ -1014,6 +1040,8 @@ input[type="time"] {
 
 <div id="layout">
   <aside id="sidebar">
+    <button id="installAppBtn" style="display: none;">📱 Install App</button>
+    
     <h2>Filters</h2>
 
     <label>Category</label>
@@ -1068,15 +1096,10 @@ input[type="time"] {
 
     <hr>
 
-    <button id="openPlan">📅 Plan your escape</button>
-
-    <hr>
-
-    <button id="openSubmit">➕ Submit an escape room</button>
-
-    <hr>
-
-    <button id="installAppBtn" style="display: none;">📱 Install App</button>
+    <div id="actionButtons" style="display: flex; gap: 5px; flex-wrap: wrap;">
+      <button id="openPlan" style="flex: 1; min-width: 45%;">📅 Plan</button>
+      <button id="openSubmit" style="flex: 1; min-width: 45%;">➕ Submit</button>
+    </div>
   </aside>
 
   <div id="map"></div>
