@@ -206,6 +206,9 @@ input[type="time"] {
     font-size: 16px;
   }
 }
+
+
+
   #submitPanel {
   margin-top: 20px;
   padding: 12px;
@@ -1078,6 +1081,7 @@ input[type="time"] {
 
 <!-- Submission panel -->
 <div id="submitPanel" hidden>
+  <button id="closeSubmit" class="panel-close-btn" aria-label="Close">&times;</button>
   <h3>Submit an escape room</h3>
 
   <label for="nameInput">Name *</label>
@@ -2100,6 +2104,11 @@ document.getElementById("openSubmit").onclick = () => {
   document.getElementById("map").classList.add("selecting-location");
 };
 
+document.getElementById("closeSubmit").onclick = () => {
+  document.getElementById("submitPanel").hidden = true;
+  document.getElementById("map").classList.remove("selecting-location");
+};
+
 // GPS functionality - Uses WGS84 coordinate system (EPSG:4326)
 // Compatible with all modern browsers that support Geolocation API
 let userLocationMarker = null;
@@ -2264,8 +2273,6 @@ if (window.innerWidth <= 768) {
 
 </body>
 </html>
-
-
 
 
 
