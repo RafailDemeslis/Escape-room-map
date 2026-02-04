@@ -137,20 +137,20 @@ input[type="time"] {
   }
 
   #sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 180px;
-    height: 100vh;
-    max-height: 100vh;
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 150px !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
     border: none;
-    border-right: 6px solid #080808;
-    padding: 55px 6px 10px 6px;
+    border-right: 4px solid #080808;
+    padding: 50px 4px 8px 4px !important;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     z-index: 1500;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
   }
 
   #sidebar.mobile-open {
@@ -165,31 +165,31 @@ input[type="time"] {
 
   #sidebar h2 {
     margin-top: 0;
-    font-size: 14px;
-    margin-bottom: 5px;
+    font-size: 12px !important;
+    margin-bottom: 4px;
   }
 
   #sidebar label {
-    font-size: 11px;
+    font-size: 10px !important;
     margin-bottom: 2px;
   }
 
   #sidebar input[type="text"], 
   #sidebar input[type="number"], 
   #sidebar select {
-    font-size: 12px;
-    padding: 6px;
-    margin-bottom: 5px;
+    font-size: 11px !important;
+    padding: 4px !important;
+    margin-bottom: 4px;
   }
 
   #sidebar hr {
-    margin: 6px 0;
+    margin: 4px 0 !important;
   }
 
   #sidebar small {
-    font-size: 10px;
+    font-size: 9px !important;
     display: block;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
   }
 
   #applyFilters,
@@ -197,11 +197,11 @@ input[type="time"] {
   #openPlan,
   #openSubmit,
   #installAppBtn {
-    padding: 8px 6px;
-    font-size: 11px;
-    min-height: 40px;
+    padding: 6px 4px !important;
+    font-size: 10px !important;
+    min-height: 36px !important;
     width: 100%;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
   }
 
   #installAppBtn {
@@ -236,8 +236,8 @@ input[type="time"] {
 
 @media (max-width: 480px) {
   #sidebar {
-    width: 160px;
-    padding: 55px 5px 10px 5px;
+    width: 140px !important;
+    padding: 50px 4px 8px 4px !important;
   }
 
   #sidebar input[type="text"], 
@@ -851,16 +851,17 @@ input[type="time"] {
 
 @media (max-width: 768px) {
   #planPanel {
-    width: calc(100vw - 20px);
-    max-width: none;
-    height: 50vh;
-    max-height: 500px;
-    top: auto;
-    bottom: 10px;
-    right: 10px;
-    left: 10px;
-    transform: none;
-    border: 6px solid #080808;
+    position: fixed !important;
+    width: calc(100vw - 20px) !important;
+    max-width: none !important;
+    height: 45vh !important;
+    max-height: 450px !important;
+    top: auto !important;
+    bottom: 10px !important;
+    right: 10px !important;
+    left: 10px !important;
+    transform: none !important;
+    border: 5px solid #080808;
     border-radius: 8px;
   }
 
