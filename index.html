@@ -146,7 +146,7 @@ input[type="time"] {
     position: fixed;
     left: 0;
     top: 0;
-    width: 280px;
+    width: 220px;
     height: 100vh;
     max-height: none;
     border: none;
@@ -155,7 +155,7 @@ input[type="time"] {
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     z-index: 1500;
-    overflow-y: hidden;
+    overflow-y: auto;
     overflow-x: hidden;
   }
 
@@ -242,7 +242,7 @@ input[type="time"] {
 
 @media (max-width: 480px) {
   #sidebar {
-    width: 260px;
+    width: 200px;
     padding: 60px 6px 10px 6px;
   }
 
@@ -857,11 +857,11 @@ input[type="time"] {
 
 @media (max-width: 768px) {
   #planPanel {
-    width: 85%;
-    max-width: 320px;
-    height: 50vh;
-    top: auto;
-    bottom: 10px;
+    width: 280px;
+    max-width: 85vw;
+    height: 85vh;
+    top: 10px;
+    bottom: auto;
     right: 10px;
     left: auto;
     transform: none;
