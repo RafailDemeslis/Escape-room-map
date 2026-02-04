@@ -101,17 +101,19 @@ input[type="time"] {
     position: fixed !important;
     left: 0 !important;
     top: 0 !important;
-    width: 150px !important;
+    width: 280px !important;
     height: 100vh !important;
     max-height: 100vh !important;
     border: none;
     border-right: 4px solid #080808;
-    padding: 50px 4px 8px 4px !important;
+    padding: 55px 10px 10px 10px !important;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     z-index: 1500;
-    overflow-y: auto !important;
+    overflow-y: hidden !important;
     overflow-x: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   #sidebar.mobile-open {
@@ -126,42 +128,42 @@ input[type="time"] {
 
   #sidebar h2 {
     margin-top: 0;
-    font-size: 12px !important;
-    margin-bottom: 4px;
+    font-size: 14px !important;
+    margin-bottom: 6px;
   }
 
   #sidebar label {
-    font-size: 10px !important;
-    margin-bottom: 2px;
+    font-size: 11px !important;
+    margin-bottom: 3px;
   }
 
   #sidebar input[type="text"], 
   #sidebar input[type="number"], 
   #sidebar select {
-    font-size: 11px !important;
-    padding: 4px !important;
-    margin-bottom: 4px;
+    font-size: 12px !important;
+    padding: 6px !important;
+    margin-bottom: 6px;
   }
 
   #sidebar hr {
-    margin: 4px 0 !important;
+    margin: 6px 0 !important;
   }
 
   #sidebar small {
-    font-size: 9px !important;
+    font-size: 10px !important;
     display: block;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
   }
 
   #applyFilters,
   #locateMe,
   #openPlan,
   #openSubmit {
-    padding: 6px 4px !important;
-    font-size: 10px !important;
-    min-height: 36px !important;
+    padding: 8px 6px !important;
+    font-size: 11px !important;
+    min-height: 40px !important;
     width: 100%;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
   #actionButtons {
@@ -177,7 +179,6 @@ input[type="time"] {
     width: auto !important;
     margin-bottom: 0 !important;
   }
-
 
 
 
@@ -206,48 +207,7 @@ input[type="time"] {
   }
 }
 
-@media (max-width: 480px) {
-  #sidebar {
-    width: 140px !important;
-    padding: 50px 4px 8px 4px !important;
-  }
 
-  #sidebar input[type="text"], 
-  #sidebar input[type="number"], 
-  #sidebar select {
-    font-size: 16px;
-    padding: 12px;
-    margin-bottom: 8px;
-  }
-
-  #submitPanel {
-    padding: 10px;
-  }
-
-  #submitPanel h3 {
-    font-size: 16px;
-    margin: 0 0 10px 0;
-  }
-
-  .leaflet-popup-content-wrapper {
-    max-width: 95vw !important;
-    border-radius: 6px !important;
-  }
-
-  .escape-room-popup {
-    font-size: 12px;
-    padding: 8px;
-  }
-
-  .escape-room-popup h3 {
-    font-size: 14px;
-    margin-bottom: 6px;
-  }
-
-  .escape-room-popup h4 {
-    font-size: 12px;
-  }
-}
 
 #submitPanel {
   margin-top: 20px;
@@ -265,17 +225,19 @@ input[type="time"] {
     position: fixed !important;
     width: calc(100vw - 20px) !important;
     max-width: none !important;
-    height: 45vh !important;
-    max-height: 450px !important;
+    height: 50vh !important;
+    max-height: 50vh !important;
     top: auto !important;
     bottom: 10px !important;
     right: 10px !important;
     left: 10px !important;
     transform: none !important;
-    border: 5px solid #080808;
+    border: 4px solid #080808;
     border-radius: 8px;
     z-index: 1600;
-    padding: 12px;
+    padding: 15px;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
   }
 
   #submitPanel h3 {
@@ -828,15 +790,17 @@ input[type="time"] {
     position: fixed !important;
     width: calc(100vw - 20px) !important;
     max-width: none !important;
-    height: 45vh !important;
-    max-height: 450px !important;
+    height: 50vh !important;
+    max-height: 50vh !important;
     top: auto !important;
     bottom: 10px !important;
     right: 10px !important;
     left: 10px !important;
     transform: none !important;
-    border: 5px solid #080808;
+    border: 4px solid #080808;
     border-radius: 8px;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
   }
 
   #planPanel h3 {
@@ -2274,7 +2238,6 @@ if (window.innerWidth <= 768) {
 
 </body>
 </html>
-
 
 
 
