@@ -1,0 +1,2390 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>Escape Rooms Map</title>
+
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#701f1f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Escape Rooms">
+  <meta name="description" content="Find and plan escape room adventures">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!-- Marker clustering -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+
+  <!-- Your CSS -->
+  <style>
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Allow user interaction with input fields */
+input, select, textarea, button {
+  -webkit-user-select: auto;
+  user-select: auto;
+  -webkit-touch-callout: default;
+}
+
+input[type="time"] {
+  -webkit-appearance: auto;
+  appearance: auto;
+  cursor: pointer;
+}
+
+#layout {
+  display: flex;
+  height: 100vh;
+  flex-direction: row;
+}
+
+#sidebar {
+  width: 300px;
+  padding: 12px;
+  overflow-y: auto;
+  background: #701f1f;
+  border: 6px solid #080808;
+  -webkit-overflow-scrolling: touch;
+}
+
+#map {
+  flex: 1;
+  touch-action: manipulation;
+}
+
+/* Hamburger menu button */
+#menuToggle {
+  display: none;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 2000;
+  background: #701f1f;
+  color: white;
+  border: 3px solid #080808;
+  border-radius: 8px;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  padding: 0;
+  line-height: 1;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#menuToggle:active {
+  transform: scale(0.95);
+}
+
+/* Install App Button */
+#installBtn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 15px;
+  z-index: 9999;
+  background: #4CAF50;
+  color: white;
+  border: 3px solid #45a049;
+  border-radius: 50px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+  -webkit-appearance: none;
+  appearance: none;
+  animation: pulse 2s infinite;
+}
+
+@media (max-width: 768px) {
+  #installBtn {
+    display: none !important;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 6px 16px rgba(0,0,0,0.5); }
+  50% { transform: scale(1.08); box-shadow: 0 8px 20px rgba(76,175,80,0.6); }
+}
+
+#installBtn:active {
+  transform: scale(0.95);
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  #menuToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #layout {
+    flex-direction: row;
+  }
+
+  #sidebar {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 150px !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border: none;
+    border-right: 4px solid #080808;
+    padding: 50px 4px 8px 4px !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1500;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  #sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  #map {
+    width: 100%;
+    height: 100vh;
+    max-height: none;
+  }
+
+  #sidebar h2 {
+    margin-top: 0;
+    font-size: 12px !important;
+    margin-bottom: 4px;
+  }
+
+  #sidebar label {
+    font-size: 10px !important;
+    margin-bottom: 2px;
+  }
+
+  #sidebar input[type="text"], 
+  #sidebar input[type="number"], 
+  #sidebar select {
+    font-size: 11px !important;
+    padding: 4px !important;
+    margin-bottom: 4px;
+  }
+
+  #sidebar hr {
+    margin: 4px 0 !important;
+  }
+
+  #sidebar small {
+    font-size: 9px !important;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  #applyFilters,
+  #locateMe,
+  #openPlan,
+  #openSubmit,
+  #installAppBtn {
+    padding: 6px 4px !important;
+    font-size: 10px !important;
+    min-height: 36px !important;
+    width: 100%;
+    margin-bottom: 4px;
+  }
+
+  #sidebar #installAppBtn {
+    background: #4CAF50;
+    border: 2px solid #45a049;
+    margin-bottom: 8px;
+    display: block !important;
+  }
+
+  #actionButtons {
+    display: flex !important;
+    gap: 4px !important;
+    width: 100%;
+  }
+
+  #actionButtons button {
+    flex: 1 !important;
+    min-width: 45% !important;
+  }
+
+  #installAppBtn {
+    background: #4CAF50;
+    border: 2px solid #45a049;
+  }
+
+  button {
+    min-height: 44px;
+  }
+
+  .leaflet-popup-content-wrapper {
+    max-width: 90vw !important;
+  }
+
+  .escape-room-popup {
+    font-size: 13px;
+  }
+
+  .escape-room-popup h3 {
+    font-size: 15px;
+  }
+
+  .popup-section {
+    margin-bottom: 6px;
+  }
+
+  .popup-icon {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  #sidebar {
+    width: 140px !important;
+    padding: 50px 4px 8px 4px !important;
+  }
+
+  #sidebar input[type="text"], 
+  #sidebar input[type="number"], 
+  #sidebar select {
+    font-size: 16px;
+    padding: 12px;
+    margin-bottom: 8px;
+  }
+
+  #submitPanel {
+    padding: 10px;
+  }
+
+  #submitPanel h3 {
+    font-size: 16px;
+    margin: 0 0 10px 0;
+  }
+
+  .leaflet-popup-content-wrapper {
+    max-width: 95vw !important;
+    border-radius: 6px !important;
+  }
+
+  .escape-room-popup {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .escape-room-popup h3 {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .escape-room-popup h4 {
+    font-size: 12px;
+  }
+}
+
+#submitPanel {
+  margin-top: 20px;
+  padding: 12px;
+  background: #9d2b2b;
+  border: 5px solid #080808;
+  max-height: 80vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile styles for submit panel */
+@media (max-width: 768px) {
+  #submitPanel {
+    position: fixed !important;
+    width: calc(100vw - 20px) !important;
+    max-width: none !important;
+    height: 45vh !important;
+    max-height: 450px !important;
+    top: auto !important;
+    bottom: 10px !important;
+    right: 10px !important;
+    left: 10px !important;
+    transform: none !important;
+    border: 5px solid #080808;
+    border-radius: 8px;
+    z-index: 1600;
+    padding: 12px;
+  }
+
+  #submitPanel h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  #submitPanel label {
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+
+  #submitPanel input,
+  #submitPanel select {
+    font-size: 14px;
+    padding: 8px;
+    margin-bottom: 6px;
+  }
+
+  #submitBtn {
+    font-size: 13px;
+    padding: 10px;
+    min-height: 40px;
+  }
+}
+
+#submitPanel input, #submitPanel select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#submitPanel label {
+  display: block;
+  margin-bottom: 5px;
+  color: #fff;
+  font-weight: bold;
+}
+
+#submitBtn {
+  width: 100%;
+  padding: 12px;
+  background: #4CAF50;
+  color: white;
+  border: 2px solid #45a049;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  min-height: 44px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* User location marker styling */
+.user-location-marker {
+  background: none !important;
+  border: none !important;
+  font-size: 24px;
+  color: #27b622;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+/* GPS button styling */
+#locateMe {
+  background: #4CAF50;
+  color: white;
+  border: 2px solid #45a049;
+  padding: 10px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  min-height: 44px;
+  min-width: 44px;
+  width: 100%;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#locateMe:hover:not(:disabled) {
+  background: #45a049;
+}
+
+#locateMe:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+#locateMe:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Filter input styling */
+#sidebar input[type="text"], #sidebar input[type="number"], #sidebar select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#sidebar input[type="text"]:focus, #sidebar input[type="number"]:focus, #sidebar select:focus {
+  border-color: #3388ff;
+  outline: none;
+}
+
+#sidebar label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #fff;
+}
+
+#applyFilters, #openSubmit {
+  width: 100%;
+  padding: 12px;
+  background: #9d2b2b;
+  color: white;
+  border: 2px solid #080808;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  min-height: 44px;
+  min-width: 44px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#applyFilters:active, #openSubmit:active {
+  transform: scale(0.98);
+}
+
+#map.selecting-location {
+  cursor: pointer;
+}
+
+/* Custom marker styling */
+.marker-blue {
+  background: #3388ff;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.marker-green {
+  background: #27b622;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.marker-yellow {
+  background: #fdd835;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.marker-pin-blue {
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 20px solid #3388ff;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.marker-pin-blue::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  top: 8px;
+  left: -4px;
+}
+
+.marker-pin-green {
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 20px solid #27b622;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.marker-pin-green::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  top: 8px;
+  left: -4px;
+}
+
+.marker-pin-red {
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 20px solid #ff4444;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  cursor: pointer;
+}
+
+.marker-pin-red::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  top: 8px;
+  left: -4px;
+}
+
+/* Escape Room Popup Styling */
+.leaflet-popup-content-wrapper {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+  border: 3px solid #fdd835 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 0 10px rgba(253,216,53,0.1) !important;
+}
+
+.leaflet-popup-content {
+  color: #fff !important;
+  font-size: 14px !important;
+  line-height: 1.6;
+  margin: 0 !important;
+}
+
+.leaflet-popup-tip {
+  background: #1a1a1a !important;
+  border-top: 3px solid #fdd835 !important;
+}
+
+.escape-room-popup {
+  padding: 12px;
+}
+
+.escape-room-popup h3 {
+  color: #fdd835;
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  border-bottom: 2px solid #fdd835;
+  padding-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.escape-room-popup h4 {
+  color: #ff6b6b;
+  margin: 8px 0 4px 0;
+  font-size: 13px;
+}
+
+.popup-section {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.popup-icon {
+  font-size: 18px;
+  min-width: 20px;
+  margin-top: 2px;
+}
+
+.popup-text {
+  flex: 1;
+  word-break: break-word;
+}
+
+.popup-text a {
+  color: #3388ff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.popup-text a:hover {
+  text-decoration: underline;
+}
+
+.leaflet-div-icon {
+  background: none !important;
+  border: none !important;
+}
+
+/* Cluster markers styling */
+.cluster-blue {
+  background: #3388ff !important;
+}
+
+.cluster-green {
+  background: #27b622 !important;
+}
+
+.cluster-yellow {
+  background: #fdd835 !important;
+}
+
+.cluster-blue, .cluster-green, .cluster-yellow {
+  border-radius: 50% !important;
+  border: 3px solid white !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white !important;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.cluster-yellow {
+  color: #333 !important;
+}
+
+.cluster-blue div, .cluster-green div, .cluster-yellow div {
+  text-align: center;
+}
+
+/* Plan Panel Styling */
+#planPanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  background: linear-gradient(135deg, #701f1f 0%, #5a1818 100%);
+  border: 6px solid #080808;
+  z-index: 1000;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: -4px 0 8px rgba(0,0,0,0.5);
+}
+
+#planPanel h3 {
+  color: #fdd835;
+  margin: 0 0 15px 0;
+  padding: 15px 15px 0 15px;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.plan-section {
+  padding: 15px;
+  border-bottom: 2px solid #9d2b2b;
+}
+
+.plan-section label {
+  color: #fff;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.plan-section input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+.plan-section .time-input {
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+.room-selector {
+  background: #9d2b2b;
+  padding: 10px;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.room-option {
+  background: #701f1f;
+  border: 2px solid #fdd835;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #fff;
+  transition: all 0.3s;
+}
+
+.room-option:hover {
+  background: #5a1818;
+  border-color: #fff;
+}
+
+.room-option.selected {
+  background: #fdd835;
+  color: #000;
+  border-color: #fdd835;
+}
+
+.itinerary-item {
+  background: #2d2d2d;
+  border-left: 4px solid #fdd835;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.itinerary-room-name {
+  color: #fdd835;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.itinerary-time {
+  color: #3388ff;
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+
+.itinerary-time input[type="time"] {
+  background: #1a1a1a;
+  color: #fff;
+  border: 2px solid #fdd835;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  min-width: 120px;
+  min-height: 44px;
+  font-family: monospace;
+  -webkit-user-select: auto;
+  user-select: auto;
+  -webkit-appearance: menulist-button;
+  appearance: menulist-button;
+}
+
+.itinerary-time input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  font-size: 18px;
+  padding: 5px;
+}
+
+.itinerary-time input[type="time"]:hover {
+  border-color: #fff;
+  background: #2a2a2a;
+}
+
+.itinerary-time input[type="time"]:focus {
+  outline: 2px solid #3388ff;
+  border-color: #3388ff;
+}
+
+.travel-time {
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 5px;
+  padding-top: 8px;
+  border-top: 1px solid #444;
+}
+
+.status-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.status-green {
+  background: #27b622;
+}
+
+.status-yellow {
+  background: #fdd835;
+}
+
+.status-red {
+  background: #ff4444;
+}
+
+.plan-buttons {
+  padding: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.plan-buttons button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  min-height: 44px;
+}
+
+.btn-add {
+  background: #4CAF50;
+  color: white;
+}
+
+.btn-close {
+  background: #cc5555;
+  color: white;
+}
+
+.btn-clear {
+  background: #999;
+  color: white;
+}
+
+.btn-export {
+  background: #3388ff;
+  color: white;
+}
+
+.btn-map {
+  background: #27b622;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  #planPanel {
+    position: fixed !important;
+    width: calc(100vw - 20px) !important;
+    max-width: none !important;
+    height: 45vh !important;
+    max-height: 450px !important;
+    top: auto !important;
+    bottom: 10px !important;
+    right: 10px !important;
+    left: 10px !important;
+    transform: none !important;
+    border: 5px solid #080808;
+    border-radius: 8px;
+  }
+
+  #planPanel h3 {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .plan-section {
+    padding: 12px;
+  }
+
+  .plan-section label {
+    font-size: 14px;
+  }
+
+  .plan-section input {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .plan-buttons {
+    padding: 10px;
+  }
+
+  .plan-buttons {
+    padding: 8px;
+  }
+
+  .plan-buttons button {
+    font-size: 12px;
+    padding: 8px;
+    min-height: 38px;
+  }
+}
+
+/* Trip markers on map */
+.trip-marker {
+  background: #fdd835;
+  color: #000;
+  border: 2px solid #000;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* Calendar Styling */
+.calendar-container {
+  background: #2d2d2d;
+  border: 2px solid #fdd835;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  color: #fdd835;
+}
+
+.calendar-header button {
+  background: #701f1f;
+  color: #fdd835;
+  border: 1px solid #fdd835;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+.calendar-header button:hover {
+  background: #5a1818;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.calendar-weekday {
+  text-align: center;
+  color: #fdd835;
+  font-weight: bold;
+  font-size: 12px;
+  padding: 5px 0;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  color: #ccc;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.calendar-day:hover {
+  background: #3a3a3a;
+  border-color: #fdd835;
+}
+
+.calendar-day.other-month {
+  color: #555;
+  cursor: default;
+}
+
+.calendar-day.today {
+  border: 2px solid #3388ff;
+}
+
+.calendar-day.selected {
+  background: #fdd835;
+  color: #000;
+  border: 2px solid #fdd835;
+  font-weight: bold;
+}
+
+.calendar-day.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+  </style>
+</head>
+
+<body>
+
+<button id="menuToggle" aria-label="Toggle menu">☰</button>
+<button id="installBtn" aria-label="Install App">📱 Install App</button>
+
+<div id="layout">
+  <aside id="sidebar">
+    <button id="installAppBtn" style="display: none;">📱 Install App</button>
+    
+    <h2>Filters</h2>
+
+    <label>Category</label>
+    <select id="category" multiple>
+      <option value="Action">Action</option>
+      <option value="Comedy">Comedy</option>
+      <option value="Horror">Horror</option>
+      <option value="Horror/Action">Horror/Action</option>
+      <option value="Horror/psychological horror">Horror/psychological horror</option>
+      <option value="Horror/psychological horror/Role playing">Horror/psychological horror/Role playing</option>
+      <option value="Horror/psychological horror/splatter">Horror/psychological horror/splatter</option>
+      <option value="Kids">Kids</option>
+      <option value="Kids/Action">Kids/Action</option>
+      <option value="Kids/Sci-fi">Kids/Sci-fi</option>
+      <option value="Outer Space">Outer Space</option>
+      <option value="Portable">Portable</option>
+      <option value="Psychological horror">Psychological horror</option>
+      <option value="Psychological horror/Role playing">Psychological horror/Role playing</option>
+      <option value="Role playing">Role playing</option>
+      <option value="Riddles">Riddles</option>
+      <option value="Riddles/Role playing">Riddles/Role playing</option>
+      <option value="Riddles/Spooky">Riddles/Spooky</option>
+      <option value="Spooky">Spooky</option>
+      <option value="Sci-fi">Sci-fi</option>
+      <option value="VR">VR</option>
+
+    </select>
+
+    <label>Duration (minutes)</label>
+    <input type="number" id="minDuration" placeholder="Min">
+    <input type="number" id="maxDuration" placeholder="Max">
+
+    <label>Year</label>
+    <input type="number" id="minYear" placeholder="From">
+    <input type="number" id="maxYear" placeholder="To">
+
+    <label>Company</label>
+    <input type="text" id="company">
+
+    <label>Escape Room Name</label>
+    <input type="text" id="escapeRoomName" placeholder="Search by name">
+
+    <label>Radius from my location (km)</label>
+    <input type="number" id="radius" placeholder="e.g., 5" min="0.1" step="0.1">
+    <small id="locationStatus" style="color: #ffcccc; font-size: 12px;">Location not set - use "📍 Locate Me" first</small>
+
+    <button id="applyFilters">Apply filters</button>
+
+    <hr>
+
+    <button id="locateMe">📍 Locate Me</button>
+
+    <hr>
+
+    <div id="actionButtons" style="display: flex; gap: 5px; flex-wrap: wrap;">
+      <button id="openPlan" style="flex: 1; min-width: 45%;">📅 Plan</button>
+      <button id="openSubmit" style="flex: 1; min-width: 45%;">➕ Submit</button>
+    </div>
+  </aside>
+
+  <div id="map"></div>
+</div>
+
+<!-- Plan Panel -->
+<div id="planPanel" hidden>
+  <h3>📅 Plan your escape</h3>
+  
+  <div class="plan-section">
+    <label>Select Trip Date:</label>
+    <div id="calendar"></div>
+    <div id="selectedDateDisplay" style="color: #fdd835; text-align: center; margin-top: 10px; font-weight: bold;"></div>
+  </div>
+  
+  <div class="plan-section">
+    <label>Search escape rooms:</label>
+    <input type="text" id="planSearchInput" placeholder="Search by name or company...">
+    <div class="room-selector" id="roomSelector"></div>
+    <button id="addToItinerary" class="btn-add" style="width: 100%; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; min-height: 44px;">Add Selected</button>
+  </div>
+  
+  <div class="plan-section">
+    <label>Your Itinerary:</label>
+    <div id="itineraryList"></div>
+  </div>
+  
+  <div class="plan-buttons">
+    <button id="showTripOnMap" class="btn-map">Show Trip</button>
+  </div>
+
+  <div class="plan-buttons" style="padding-top: 0;">
+    <button id="exportPDF" class="btn-export">📄 Export PDF</button>
+  </div>
+
+  <div class="plan-buttons" style="padding-top: 0;">
+    <button id="clearItinerary" class="btn-clear">Clear All</button>
+    <button id="closePlan" class="btn-close">Close</button>
+  </div>
+</div>
+
+<!-- Submission panel -->
+<div id="submitPanel" hidden>
+  <h3>Submit an escape room</h3>
+
+  <label for="nameInput">Name *</label>
+  <input id="nameInput" placeholder="Name" required>
+  <label for="companyInput">Company *</label>
+  <input id="companyInput" placeholder="Company" required>
+  <label for="durationInput">Duration</label>
+  <input id="durationInput" type="number" placeholder="Duration">
+  <label for="yearInput">Year created</label>
+  <input id="yearInput" type="number" placeholder="Year created">
+  <label for="websiteInput">Website</label>
+  <input id="websiteInput" placeholder="website">
+  <label for="addressInput">Address *</label>
+  <input id="addressInput" placeholder="Address" required>
+
+  <label for="categoryInput">Category *</label>
+  <select id="categoryInput" required>
+    <option value="Action">Action</option>
+      <option value="Comedy">Comedy</option>
+      <option value="Horror">Horror</option>
+      <option value="Horror/Action">Horror/Action</option>
+      <option value="Horror/psychological horror">Horror/psychological horror</option>
+      <option value="Horror/psychological horror/Role playing">Horror/psychological horror/Role playing</option>
+      <option value="Horror/psychological horror/splatter">Horror/psychological horror/splatter</option>
+      <option value="Kids">Kids</option>
+      <option value="Kids/Action">Kids/Action</option>
+      <option value="Kids/Sci-fi">Kids/Sci-fi</option>
+      <option value="Outer Space">Outer Space</option>
+      <option value="Portable">Portable</option>
+      <option value="Psychological horror">Psychological horror</option>
+      <option value="Psychological horror/Role playing">Psychological horror/Role playing</option>
+      <option value="Role playing">Role playing</option>
+      <option value="Riddles">Riddles</option>
+      <option value="Riddles/Role playing">Riddles/Role playing</option>
+      <option value="Riddles/Spooky">Riddles/Spooky</option>
+      <option value="Spooky">Spooky</option>
+      <option value="Sci-fi">Sci-fi</option>
+      <option value="VR">VR</option>
+  </select>
+
+  <p>Click on the map to select location</p>
+  <button id="submitBtn">Submit</button>
+</div>
+
+<!-- Scripts -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+<script>
+const db = supabase.createClient(
+  "https://ypmtgvoadqtcspcrtemy.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwbXRndm9hZHF0Y3NwY3J0ZW15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg0NjE4MjIsImV4cCI6MjA4NDAzNzgyMn0.9m6Wi-y0xZ3BafqHJzGLPgLhsBOuSlTZ3mu4Bq28SGI"
+);
+
+// localStorage helper functions
+const Storage = {
+  saveFilters: function() {
+    const filters = {
+      categories: [...document.getElementById("category").selectedOptions].map(o => o.value),
+      minDuration: document.getElementById("minDuration").value,
+      maxDuration: document.getElementById("maxDuration").value,
+      minYear: document.getElementById("minYear").value,
+      maxYear: document.getElementById("maxYear").value,
+      company: document.getElementById("company").value,
+      escapeRoomName: document.getElementById("escapeRoomName").value,
+      radius: document.getElementById("radius").value
+    };
+    localStorage.setItem("escapeRoomFilters", JSON.stringify(filters));
+  },
+  
+  loadFilters: function() {
+    const saved = localStorage.getItem("escapeRoomFilters");
+    if (saved) {
+      const filters = JSON.parse(saved);
+      
+      // Restore categories
+      if (filters.categories && filters.categories.length > 0) {
+        document.getElementById("category").value = filters.categories;
+      }
+      
+      // Restore other fields
+      if (filters.minDuration) document.getElementById("minDuration").value = filters.minDuration;
+      if (filters.maxDuration) document.getElementById("maxDuration").value = filters.maxDuration;
+      if (filters.minYear) document.getElementById("minYear").value = filters.minYear;
+      if (filters.maxYear) document.getElementById("maxYear").value = filters.maxYear;
+      if (filters.company) document.getElementById("company").value = filters.company;
+      if (filters.escapeRoomName) document.getElementById("escapeRoomName").value = filters.escapeRoomName;
+      if (filters.radius) document.getElementById("radius").value = filters.radius;
+    }
+  },
+  
+  saveMapState: function() {
+    const center = map.getCenter();
+    const zoom = map.getZoom();
+    localStorage.setItem("escapeRoomMapState", JSON.stringify({
+      lat: center.lat,
+      lng: center.lng,
+      zoom: zoom
+    }));
+  },
+  
+  loadMapState: function() {
+    const saved = localStorage.getItem("escapeRoomMapState");
+    if (saved) {
+      const state = JSON.parse(saved);
+      map.setView([state.lat, state.lng], state.zoom);
+    }
+  }
+};
+
+const map = L.map("map", {
+  maxZoom: 17,
+  zoomControl: true,
+  touchZoom: true,
+  doubleClickZoom: true,
+  scrollWheelZoom: true,
+  boxZoom: true,
+  keyboard: true,
+  tap: true
+}).setView([37.9838, 23.7275], 12);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "© OpenStreetMap contributors"
+}).addTo(map);
+
+const markers = L.markerClusterGroup({
+  iconCreateFunction: function(cluster) {
+    const count = cluster.getChildCount();
+    let clusterClass = 'cluster-blue';
+    let size = '40px';
+
+    // Determine cluster color and size based on count
+    if (count >= 50) {
+      clusterClass = 'cluster-yellow';
+      size = '60px';
+    } else if (count >= 10) {
+      clusterClass = 'cluster-green';
+      size = '50px';
+    } else {
+      clusterClass = 'cluster-blue';
+      size = '40px';
+    }
+
+    return L.divIcon({
+      html: `<div>${count}</div>`,
+      className: clusterClass,
+      iconSize: [size, size],
+      iconAnchor: [parseInt(size)/2, parseInt(size)/2]
+    });
+  },
+  maxClusterRadius: 80,
+  disableClusteringAtZoom: 18
+});
+map.addLayer(markers);
+
+// Trip visualization layer
+const tripLayer = L.layerGroup().addTo(map);
+let tripLine = null;
+
+// Haversine formula to calculate distance between two WGS84 coordinates in kilometers
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Earth's radius in kilometers
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+async function loadEscapeRooms() {
+  if (!map.hasLayer(markers)) {
+    map.addLayer(markers);
+  }
+  markers.clearLayers();
+
+  let query = db
+    .from("Escape_Rooms")
+    .select("*")
+    .eq("Status", "approved")
+    .eq("Operational", "Yes")
+
+  const categories = [...document.getElementById("category").selectedOptions]
+    .map(o => o.value);
+
+  if (categories.length) query = query.in("Category", categories);
+
+  const minDuration = document.getElementById("minDuration").value;
+  const maxDuration = document.getElementById("maxDuration").value;
+  if (minDuration) query = query.gte("Duration", minDuration);
+  if (maxDuration) query = query.lte("Duration", maxDuration);
+
+  const minYear = document.getElementById("minYear").value;
+  const maxYear = document.getElementById("maxYear").value;
+  if (minYear) query = query.gte("Year of S", minYear);
+  if (maxYear) query = query.lte("Year of S", maxYear);
+
+  const company = document.getElementById("company").value;
+  if (company) query = query.ilike("Company", `%${company}%`);
+
+  const escapeRoomName = document.getElementById("escapeRoomName").value;
+  if (escapeRoomName) query = query.ilike("Escape room", `%${escapeRoomName}%`);
+
+  const { data, error } = await query;
+  console.log('Query result:', data, error);
+  if (error) return console.error(error);
+
+  // Client-side filtering for radius
+  const radius = parseFloat(document.getElementById("radius").value);
+  let filteredData = data;
+
+  if (radius > 0 && userLocation) {
+    filteredData = data.filter(r => {
+      const distance = calculateDistance(userLocation.lat, userLocation.lng, r.Lat, r.Lon);
+      return distance <= radius;
+    });
+    console.log(`Filtered ${data.length} rooms to ${filteredData.length} within ${radius}km radius`);
+  } else if (radius > 0 && !userLocation) {
+    alert("Please set your location first using the '📍 Locate Me' button to use radius filtering.");
+    return;
+  }
+
+  // Count rooms by company
+  const companyCount = {};
+  filteredData.forEach(r => {
+    companyCount[r.Company] = (companyCount[r.Company] || 0) + 1;
+  });
+
+  filteredData.forEach(r => {
+    let popupContent = `
+      <div class="escape-room-popup">
+        <h3>🔐 ${r["Escape room"]}</h3>
+        <h4>${r.Company}</h4>
+        
+        <div class="popup-section">
+          <div class="popup-icon">🎭</div>
+          <div class="popup-text"><strong>Category:</strong> ${r.Category}</div>
+        </div>
+        
+        <div class="popup-section">
+          <div class="popup-icon">⏱️</div>
+          <div class="popup-text"><strong>Duration:</strong> ${r.Duration} minutes</div>
+        </div>
+        
+        <div class="popup-section">
+          <div class="popup-icon">📍</div>
+          <div class="popup-text"><strong>Address:</strong> ${r.Address}</div>
+        </div>
+        
+        <div class="popup-section">
+          <div class="popup-icon">🎬</div>
+          <div class="popup-text"><strong>Actors:</strong> ${r.Actors === 'Yes' || r.Actors === true ? '✓ Yes' : '✗ No'}</div>
+        </div>
+        
+        <div class="popup-section">
+          <div class="popup-icon">📅</div>
+          <div class="popup-text"><strong>Year Created:</strong> ${r["Year of S"]}</div>
+        </div>
+        
+        <div class="popup-section">
+          <div class="popup-icon">🌐</div>
+          <div class="popup-text"><strong>Website:</strong> ${r.website ? `<a href="${r.website}" target="_blank">${r.website}</a>` : 'N/A'}</div>
+        </div>
+    `;
+    
+    // Add distance if user location is available
+    if (userLocation) {
+      const distance = calculateDistance(userLocation.lat, userLocation.lng, r.Lat, r.Lon);
+      popupContent += `
+        <div class="popup-section">
+          <div class="popup-icon">📏</div>
+          <div class="popup-text"><strong>Distance:</strong> ${distance.toFixed(1)} km</div>
+        </div>
+      `;
+    }
+    
+    popupContent += `</div>`;
+
+    // All escape rooms use red pin markers
+    const marker = L.marker([r.Lat, r.Lon], {
+      icon: L.divIcon({
+        html: `<div class="marker-pin-red"></div>`,
+        className: 'leaflet-div-icon',
+        iconSize: [30, 40],
+        iconAnchor: [15, 40]
+      })
+    }).bindPopup(popupContent);
+
+    markers.addLayer(marker);
+  });
+}
+
+document.getElementById("applyFilters").onclick = loadEscapeRooms;
+
+// Load saved filters and map state on page load
+window.addEventListener('load', function() {
+  Storage.loadFilters();
+  Storage.loadMapState();
+  Storage.loadTripDateTime();
+  loadEscapeRooms();
+});
+
+// Save filters when they change
+document.getElementById("category").addEventListener('change', Storage.saveFilters);
+document.getElementById("minDuration").addEventListener('change', Storage.saveFilters);
+document.getElementById("maxDuration").addEventListener('change', Storage.saveFilters);
+document.getElementById("minYear").addEventListener('change', Storage.saveFilters);
+document.getElementById("maxYear").addEventListener('change', Storage.saveFilters);
+document.getElementById("company").addEventListener('change', Storage.saveFilters);
+document.getElementById("escapeRoomName").addEventListener('change', Storage.saveFilters);
+document.getElementById("radius").addEventListener('change', Storage.saveFilters);
+
+// Save map state when it changes
+map.on('moveend', Storage.saveMapState);
+map.on('zoomend', Storage.saveMapState);
+
+// ===== PLAN YOUR ESCAPE FEATURE =====
+let allEscapeRooms = [];
+let itinerary = [];
+let selectedTripDate = new Date();
+
+function combineDateAndTime(dateObj, timeStr) {
+  const [h, m] = timeStr.split(":").map(Number);
+  return new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate(), h || 0, m || 0, 0, 0);
+}
+
+function formatTimeHHMM(dateStr) {
+  const d = new Date(dateStr);
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  return `${hh}:${mm}`;
+}
+
+// Calendar functionality
+class Calendar {
+  constructor() {
+    this.currentDate = new Date(selectedTripDate);
+    this.selectedDate = new Date(selectedTripDate);
+    this.render();
+  }
+
+  render() {
+    const container = document.getElementById("calendar");
+    if (!container) return;
+    
+    const year = this.currentDate.getFullYear();
+    const month = this.currentDate.getMonth();
+    
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"];
+    
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+    
+    let html = `
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <button onclick="window.calendarInstance.prevMonth()">← Prev</button>
+          <span>${monthNames[month]} ${year}</span>
+          <button onclick="window.calendarInstance.nextMonth()">Next →</button>
+        </div>
+        <div class="calendar-weekdays">
+          <div class="calendar-weekday">Sun</div>
+          <div class="calendar-weekday">Mon</div>
+          <div class="calendar-weekday">Tue</div>
+          <div class="calendar-weekday">Wed</div>
+          <div class="calendar-weekday">Thu</div>
+          <div class="calendar-weekday">Fri</div>
+          <div class="calendar-weekday">Sat</div>
+        </div>
+        <div class="calendar-days">
+    `;
+    
+    // Add empty cells for days before month starts
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      html += `<div class="calendar-day other-month"></div>`;
+    }
+    
+    // Add days of month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      date.setHours(0, 0, 0, 0);
+      
+      const isToday = date.getTime() === today.getTime();
+      const isSelected = date.getTime() === this.selectedDate.getTime();
+      const isPast = date.getTime() < today.getTime();
+      
+      let classes = 'calendar-day';
+      if (isToday) classes += ' today';
+      if (isSelected) classes += ' selected';
+      if (isPast) classes += ' disabled';
+      
+      const dateStr = date.toISOString().split('T')[0];
+      html += `<div class="${classes}" onclick="window.calendarInstance.selectDate('${dateStr}')">${day}</div>`;
+    }
+    
+    html += `</div></div>`;
+    container.innerHTML = html;
+    
+    this.updateDisplay();
+  }
+
+  prevMonth() {
+    this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+    this.render();
+  }
+
+  nextMonth() {
+    this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+    this.render();
+  }
+
+  selectDate(dateStr) {
+    const selected = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (selected < today) return;
+    
+    this.selectedDate = selected;
+    selectedTripDate = selected;
+    Storage.saveTripDateTime();
+    this.render();
+  }
+
+  updateDisplay() {
+    const display = document.getElementById("selectedDateDisplay");
+    if (!display) return;
+    
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    display.textContent = `📅 Trip Date: ${this.selectedDate.toLocaleDateString('en-US', options)}`;
+  }
+}
+
+// Calculate speed based on time of day (rush hour is slower)
+function getSpeedByTime(date) {
+  const hour = new Date(date).getHours();
+  // 7-9am and 4-7pm: 30 km/h (rush hour)
+  // Rest: 50 km/h
+  if ((hour >= 7 && hour <= 9) || (hour >= 16 && hour <= 19)) {
+    return 30;
+  }
+  return 50;
+}
+
+// Calculate travel time between two escape rooms
+function calculateTravelTime(room1, room2, departureTime) {
+  const distance = calculateDistance(room1.Lat, room1.Lon, room2.Lat, room2.Lon);
+  const speed = getSpeedByTime(departureTime);
+  const travelTimeHours = distance / speed;
+  const travelTimeMinutes = Math.round(travelTimeHours * 60);
+  return { distance, travelTimeMinutes, speed };
+}
+
+// Get timing status (green/yellow/red)
+function getTimingStatus(room1, room2, departureTime, room1Duration) {
+  const { travelTimeMinutes } = calculateTravelTime(room1, room2, departureTime);
+  
+  // departure + room1 duration + travel time should be before room2 start time
+  const departTime = new Date(departureTime);
+  const arrivalTime = new Date(departTime.getTime() + (room1Duration + travelTimeMinutes) * 60000);
+  const room2StartTime = new Date(room2.scheduledTime);
+  
+  const timeGap = (room2StartTime - arrivalTime) / 60000; // minutes
+  
+  if (timeGap >= 30) return 'green'; // More than 30 minutes buffer
+  if (timeGap >= 0) return 'yellow'; // Some buffer but tight
+  return 'red'; // Late arrival
+}
+
+// Update room selector
+async function updateRoomSelector() {
+  const searchTerm = document.getElementById("planSearchInput").value.toLowerCase();
+  const selector = document.getElementById("roomSelector");
+  
+  let filtered = allEscapeRooms.filter(r => 
+    r["Escape room"].toLowerCase().includes(searchTerm) ||
+    r.Company.toLowerCase().includes(searchTerm)
+  );
+  
+  selector.innerHTML = filtered.map(r => `
+    <div class="room-option" data-id="${r.id}">
+      <strong>${r["Escape room"]}</strong><br>
+      <small>${r.Company} • ${r.Duration}min</small>
+    </div>
+  `).join('');
+  
+  document.querySelectorAll('.room-option').forEach(el => {
+    el.addEventListener('click', function() {
+      this.classList.toggle('selected');
+    });
+  });
+}
+
+// Open plan panel
+document.getElementById("openPlan").onclick = async () => {
+  document.getElementById("planPanel").hidden = false;
+  
+  // Initialize calendar if not already done
+  if (!window.calendarInstance) {
+    window.calendarInstance = new Calendar();
+  } else {
+    window.calendarInstance.render();
+  }
+
+  // Load all rooms if not loaded
+  if (allEscapeRooms.length === 0) {
+    const { data } = await db
+      .from("Escape_Rooms")
+      .select("*")
+      .eq("Status", "approved")
+      .eq("Operational", "Yes");
+    allEscapeRooms = data || [];
+  }
+
+  Storage.loadItinerary();
+  updateItinerary();
+  
+  updateRoomSelector();
+};
+
+// Add selected rooms to itinerary
+document.getElementById("addToItinerary").onclick = () => {
+  const selected = document.querySelectorAll('.room-option.selected');
+  
+  if (selected.length === 0) {
+    alert("Please select at least one escape room");
+    return;
+  }
+  
+  selected.forEach(el => {
+    const roomId = el.dataset.id;
+    const room = allEscapeRooms.find(r => r.id == roomId);
+    
+    if (!itinerary.some(item => item.id === roomId)) {
+      const baseTime = combineDateAndTime(selectedTripDate, "09:00");
+      const defaultTime = new Date(baseTime.getTime() + itinerary.length * 120 * 60000); // Add 2 hours per room
+
+      itinerary.push({
+        ...room,
+        scheduledTime: defaultTime.toISOString().slice(0, 16),
+        index: itinerary.length
+      });
+    }
+  });
+  
+  updateItinerary();
+  selected.forEach(el => el.classList.remove('selected'));
+};
+
+// Update itinerary display
+function updateItinerary() {
+  const list = document.getElementById("itineraryList");
+  
+  if (itinerary.length === 0) {
+    list.innerHTML = '<p style="color: #aaa; text-align: center;">No rooms planned yet</p>';
+    return;
+  }
+  
+  list.innerHTML = itinerary.map((item, idx) => {
+    let travelInfo = '';
+    let statusClass = '';
+    
+    if (idx > 0) {
+      const prevRoom = itinerary[idx - 1];
+      const { distance, travelTimeMinutes } = calculateTravelTime(
+        prevRoom, item, prevRoom.scheduledTime
+      );
+      const status = getTimingStatus(prevRoom, item, prevRoom.scheduledTime, prevRoom.Duration);
+      statusClass = `status-${status}`;
+      
+      const travelMinutes = travelTimeMinutes;
+      const travelHours = Math.floor(travelMinutes / 60);
+      const travelMins = travelMinutes % 60;
+      const timeStr = travelHours > 0 ? `${travelHours}h${travelMins}m` : `${travelMins}m`;
+      
+      travelInfo = `<div class="travel-time"><span class="status-indicator ${statusClass}"></span>Travel: ${distance.toFixed(1)}km • ${timeStr}</div>`;
+    }
+    
+    return `
+      <div class="itinerary-item">
+        <div class="itinerary-room-name">🎭 ${item["Escape room"]}</div>
+        <div style="font-size: 12px; color: #ccc;">${item.Company}</div>
+        <div class="itinerary-time">
+          📅 <input type="time" value="${formatTimeHHMM(item.scheduledTime)}" onchange="updateItemTime(${idx}, this.value)" title="Click to select time (24h format)" step="900">
+        </div>
+        <div style="font-size: 12px; color: #3388ff;">⏱️ Duration: ${item.Duration}min</div>
+        ${travelInfo}
+        <button onclick="removeFromItinerary(${idx})" style="margin-top: 8px; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">Remove</button>
+      </div>
+    `;
+  }).join('');
+  
+  Storage.saveItinerary();
+}
+
+// Update item time
+window.updateItemTime = (idx, newTime) => {
+  // Keep the exact time selected by user without timezone conversion
+  const dateStr = selectedTripDate.toISOString().split('T')[0];
+  itinerary[idx].scheduledTime = `${dateStr}T${newTime}`;
+  updateItinerary();
+};
+
+// Remove from itinerary
+window.removeFromItinerary = (idx) => {
+  itinerary.splice(idx, 1);
+  itinerary = itinerary.map((item, i) => ({ ...item, index: i }));
+  updateItinerary();
+};
+
+// Clear itinerary
+document.getElementById("clearItinerary").onclick = () => {
+  if (confirm("Clear entire itinerary?")) {
+    itinerary = [];
+    updateItinerary();
+  }
+};
+
+// Close plan panel
+document.getElementById("closePlan").onclick = () => {
+  document.getElementById("planPanel").hidden = true;
+  if (!map.hasLayer(markers)) {
+    map.addLayer(markers);
+  }
+};
+
+// Plan search
+document.getElementById("planSearchInput").addEventListener('input', updateRoomSelector);
+
+
+// Add itinerary storage
+Storage.saveItinerary = function() {
+  const toSave = itinerary.map(r => ({
+    id: r.id,
+    scheduledTime: r.scheduledTime
+  }));
+  localStorage.setItem("escapeRoomItinerary", JSON.stringify(toSave));
+};
+
+Storage.loadItinerary = function() {
+  const saved = localStorage.getItem("escapeRoomItinerary");
+  if (saved && allEscapeRooms.length > 0) {
+    const plan = JSON.parse(saved);
+    itinerary = plan.map(p => {
+      const room = allEscapeRooms.find(r => r.id === p.id);
+      if (!room) return null;
+      return { ...room, scheduledTime: p.scheduledTime };
+    }).filter(r => r && r.Lat && r.Lon && !isNaN(r.Lat) && !isNaN(r.Lon));
+    
+    // Save cleaned itinerary back
+    if (itinerary.length !== plan.length) {
+      Storage.saveItinerary();
+    }
+  }
+};
+
+Storage.saveTripDateTime = function() {
+  localStorage.setItem("escapeRoomTripDate", selectedTripDate.toISOString().split("T")[0]);
+};
+
+Storage.loadTripDateTime = function() {
+  const dateStr = localStorage.getItem("escapeRoomTripDate");
+  if (dateStr) {
+    selectedTripDate = new Date(dateStr);
+  }
+};
+
+// Clean up invalid items from itinerary
+function cleanItinerary() {
+  const originalLength = itinerary.length;
+  itinerary = itinerary.filter(item => 
+    item.Lat && item.Lon && !isNaN(item.Lat) && !isNaN(item.Lon)
+  );
+  if (itinerary.length !== originalLength) {
+    console.log(`Removed ${originalLength - itinerary.length} invalid items from itinerary`);
+    Storage.saveItinerary();
+    updateItinerary();
+  }
+}
+
+// Visualize trip on map
+function renderTripOnMap() {
+  // Clean up invalid items first
+  cleanItinerary();
+  
+  if (map.hasLayer(markers)) {
+    map.removeLayer(markers);
+  }
+  tripLayer.clearLayers();
+  if (tripLine) {
+    map.removeLayer(tripLine);
+    tripLine = null;
+  }
+
+  if (!itinerary.length) {
+    alert("No rooms in itinerary to show on map");
+    return;
+  }
+
+  // Group by company and location to count games at each place
+  const locationGroups = [];
+  const routePoints = [];
+  
+  itinerary.forEach((r) => {
+    // Find if this location already exists in our groups
+    const existingGroup = locationGroups.find(g => 
+      g.Company === r.Company && 
+      Math.abs(g.Lat - r.Lat) < 0.0001 && 
+      Math.abs(g.Lon - r.Lon) < 0.0001
+    );
+    
+    if (existingGroup) {
+      existingGroup.rooms.push(r);
+    } else {
+      locationGroups.push({
+        Company: r.Company,
+        Address: r.Address,
+        Lat: r.Lat,
+        Lon: r.Lon,
+        rooms: [r]
+      });
+    }
+  });
+
+  // Create markers showing count of games at each location
+  locationGroups.forEach((group) => {
+    const roomCount = group.rooms.length;
+    const roomList = group.rooms.map(r => 
+      `<div style="margin: 5px 0;">🔐 ${r["Escape room"]} - ${formatTimeHHMM(r.scheduledTime)}</div>`
+    ).join('');
+    
+    const marker = L.marker([group.Lat, group.Lon], {
+      icon: L.divIcon({
+        html: `<div class=\"trip-marker\">${roomCount}</div>`,
+        className: 'leaflet-div-icon',
+        iconSize: [26, 26],
+        iconAnchor: [13, 13]
+      })
+    }).bindPopup(`
+      <div class=\"escape-room-popup\">
+        <h4>${group.Company}</h4>
+        <div class=\"popup-section\"><div class=\"popup-icon\">🎮</div><div class=\"popup-text\"><strong>${roomCount} game${roomCount > 1 ? 's' : ''}</strong></div></div>
+        ${roomList}
+        <div class=\"popup-section\"><div class=\"popup-icon\">📍</div><div class=\"popup-text\">${group.Address}</div></div>
+      </div>
+    `);
+    tripLayer.addLayer(marker);
+    routePoints.push([group.Lat, group.Lon]);
+  });
+
+  // Show route line connecting locations in visit order
+  if (routePoints.length > 1) {
+    tripLine = L.polyline(routePoints, { 
+      color: '#8e44ad', 
+      weight: 4, 
+      opacity: 0.9
+    }).addTo(map);
+    map.fitBounds(tripLine.getBounds(), { padding: [30, 30] });
+  } else if (routePoints.length === 1) {
+    map.setView(routePoints[0], 13);
+  }
+}
+
+document.getElementById("showTripOnMap").onclick = () => {
+  renderTripOnMap();
+};
+
+// Export itinerary as PDF
+document.getElementById("exportPDF").onclick = async () => {
+  if (itinerary.length === 0) {
+    alert("No rooms in itinerary to export");
+    return;
+  }
+
+  // Show loading message
+  const exportBtn = document.getElementById("exportPDF");
+  const originalText = exportBtn.textContent;
+  exportBtn.textContent = "⏳ Generating PDF...";
+  exportBtn.disabled = true;
+
+  try {
+    // First, render the trip on map to show route lines
+    renderTripOnMap();
+    
+    // Wait longer for map tiles and route lines to fully render
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Capture the map as an image using dom-to-image for better route rendering
+    const mapElement = document.getElementById('map');
+    let mapImageData;
+    
+    try {
+      // Try dom-to-image first (better for complex elements like map routes)
+      mapImageData = await domtoimage.toJpeg(mapElement, { 
+        quality: 0.9,
+        bgcolor: '#ffffff'
+      });
+    } catch (e) {
+      // Fallback to html2canvas
+      const mapCanvas = await html2canvas(mapElement, {
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        scale: 2,
+        logging: false
+      });
+      mapImageData = mapCanvas.toDataURL('image/jpeg', 0.9);
+    }
+
+    // Create PDF
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+    
+    const pageWidth = pdf.internal.pageSize.width;
+    const pageHeight = pdf.internal.pageSize.height;
+    const margin = 15;
+    const maxWidth = pageWidth - (2 * margin);
+    
+    // Title
+    pdf.setFontSize(18);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Escape Room Trip Plan', pageWidth / 2, 20, { align: 'center' });
+    
+    // Trip date
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'normal');
+    const dateStr = selectedTripDate.toLocaleDateString('en-GB', { 
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+    });
+    pdf.text(`Trip Date: ${dateStr}`, pageWidth / 2, 28, { align: 'center' });
+    
+    // Add map image with route
+    const mapImgWidth = maxWidth;
+    const mapImgHeight = 75;
+    pdf.addImage(mapImageData, 'JPEG', margin, 35, mapImgWidth, mapImgHeight);
+    
+    let yPos = 35 + mapImgHeight + 8;
+    
+    // Itinerary title
+    pdf.setFontSize(14);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Itinerary:', margin, yPos);
+    yPos += 8;
+    
+    // Render each room separately to avoid cutting in the middle
+    for (let idx = 0; idx < itinerary.length; idx++) {
+      const item = itinerary[idx];
+      
+      // Create HTML for this single room
+      const roomDiv = document.createElement('div');
+      roomDiv.style.position = 'absolute';
+      roomDiv.style.left = '-9999px';
+      roomDiv.style.width = '700px';
+      roomDiv.style.backgroundColor = '#ffffff';
+      roomDiv.style.padding = '10px';
+      roomDiv.style.fontFamily = 'Arial, sans-serif';
+      roomDiv.style.color = '#000000';
+      
+      roomDiv.innerHTML = `
+        <div style="padding: 10px; border-left: 4px solid #8e44ad; background: #f9f9f9;">
+          <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">${idx + 1}. ${item["Escape room"]}</div>
+          <div style="font-size: 13px; margin-bottom: 4px;"><strong>Company:</strong> ${item.Company}</div>
+          <div style="font-size: 13px; margin-bottom: 4px;"><strong>Time:</strong> ${formatTimeHHMM(item.scheduledTime)}</div>
+          <div style="font-size: 13px; margin-bottom: 4px;"><strong>Duration:</strong> ${item.Duration} minutes</div>
+          <div style="font-size: 13px; margin-bottom: 4px;"><strong>Address:</strong> ${item.Address}</div>
+          ${idx > 0 ? `<div style="font-size: 12px; font-style: italic; color: #666; margin-top: 6px;">Distance from previous: ${calculateTravelTime(itinerary[idx - 1], item, itinerary[idx - 1].scheduledTime).distance.toFixed(1)} km</div>` : ''}
+        </div>
+      `;
+      
+      document.body.appendChild(roomDiv);
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Capture this room as image
+      const roomCanvas = await html2canvas(roomDiv, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+        logging: false
+      });
+      const roomImageData = roomCanvas.toDataURL('image/png', 1.0);
+      document.body.removeChild(roomDiv);
+      
+      // Calculate image dimensions
+      const roomImgWidth = maxWidth;
+      const roomImgHeight = (roomCanvas.height / roomCanvas.width) * roomImgWidth;
+      
+      // Check if room fits on current page, if not add new page
+      if (yPos + roomImgHeight > pageHeight - 15) {
+        pdf.addPage();
+        yPos = 20;
+      }
+      
+      // Add room image
+      pdf.addImage(roomImageData, 'PNG', margin, yPos, roomImgWidth, roomImgHeight);
+      yPos += roomImgHeight + 3;
+    }
+    
+    // Add summary
+    const totalDuration = itinerary.reduce((sum, r) => sum + (r.Duration || 0), 0);
+    
+    // Check if summary fits, if not add new page
+    if (yPos + 30 > pageHeight - 15) {
+      pdf.addPage();
+      yPos = 20;
+    }
+    
+    yPos += 5;
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Trip Summary', margin, yPos);
+    yPos += 7;
+    
+    pdf.setFontSize(10);
+    pdf.setFont(undefined, 'normal');
+    pdf.text(`Total rooms: ${itinerary.length}`, margin + 3, yPos);
+    yPos += 5;
+    pdf.text(`Total play time: ${Math.floor(totalDuration / 60)}h ${totalDuration % 60}m`, margin + 3, yPos);
+    
+    // Save the PDF
+    const filename = `escape-trip-${selectedTripDate.toISOString().split('T')[0]}.pdf`;
+    pdf.save(filename);
+    
+    // Reset button
+    exportBtn.textContent = originalText;
+    exportBtn.disabled = false;
+  } catch (error) {
+    console.error('PDF generation error:', error);
+    alert('Error generating PDF: ' + error.message);
+    exportBtn.textContent = originalText;
+    exportBtn.disabled = false;
+  }
+};
+
+let selectedLatLng = null;
+let selectedLocationMarker = null;
+
+map.on("click", e => {
+  selectedLatLng = e.latlng;
+  document.getElementById("map").classList.remove("selecting-location");
+
+  // Add marker at selected location
+  if (selectedLocationMarker) {
+    map.removeLayer(selectedLocationMarker);
+  }
+  selectedLocationMarker = L.marker(selectedLatLng).addTo(map).bindPopup("Location selected");
+});
+
+document.getElementById("submitBtn").onclick = async () => {
+  console.log("Submit button clicked");
+  if (!selectedLatLng) {
+    alert("Select a location on the map");
+    return;
+  }
+
+  const name = document.getElementById("nameInput").value.trim();
+  if (!name) {
+    alert("Name is required");
+    return;
+  }
+
+  const company = document.getElementById("companyInput").value.trim();
+  if (!company) {
+    alert("Company is required");
+    return;
+  }
+
+  const category = document.getElementById("categoryInput").value;
+  if (!category) {
+    alert("Category is required");
+    return;
+  }
+
+  const address = document.getElementById("addressInput").value.trim();
+  if (!address) {
+    alert("Address is required");
+    return;
+  }
+
+  try {
+    const { data, error } = await db.from("Escape_Rooms").insert({
+      "Escape room": document.getElementById("nameInput").value,
+      Company: document.getElementById("companyInput").value,
+      Duration: document.getElementById("durationInput").value,
+      "Year of S": document.getElementById("yearInput").value,
+      website: document.getElementById("websiteInput").value,
+      Address: document.getElementById("addressInput").value,
+      Category: document.getElementById("categoryInput").value,
+      Lat: selectedLatLng.lat,
+      Lon: selectedLatLng.lng,
+      City: "Athens",
+      Country: "Greece",
+      Status: "pending",
+    });
+
+    if (error) {
+      console.error("Insert error:", error);
+      alert("Error submitting: " + error.message);
+    } else {
+      alert("Submitted for review!");
+      // Optionally reload the map or clear form
+    }
+  } catch (err) {
+    console.error("Submit error:", err);
+    alert("Error: " + err.message);
+  }
+};
+
+document.getElementById("openSubmit").onclick = () => {
+  console.log("Open submit clicked");
+  document.getElementById("submitPanel").hidden = false;
+  document.getElementById("map").classList.add("selecting-location");
+};
+
+// GPS functionality - Uses WGS84 coordinate system (EPSG:4326)
+// Compatible with all modern browsers that support Geolocation API
+let userLocationMarker = null;
+let userLocation = null; // Store user's current location for radius filtering
+let isLocating = false;
+
+document.getElementById("locateMe").onclick = () => {
+  if (isLocating) return; // Prevent multiple simultaneous requests
+  
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by this browser. Please update your browser or use a different device.");
+    return;
+  }
+  
+  isLocating = true;
+  const button = document.getElementById("locateMe");
+  const originalText = button.textContent;
+  button.textContent = "🔄 Locating...";
+  button.disabled = true;
+  
+  // Request precise location with high accuracy
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      // Reset button state
+      isLocating = false;
+      button.textContent = originalText;
+      button.disabled = false;
+      
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const accuracy = position.coords.accuracy;
+      
+      // Validate WGS84 coordinate ranges
+      if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        alert("Invalid coordinates received. Please try again.");
+        return;
+      }
+      
+      console.log(`GPS Location (WGS84): Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}, Accuracy: ±${accuracy.toFixed(0)}m`);
+      
+      // Store user location for radius filtering
+      userLocation = { lat, lng };
+      localStorage.setItem("escapeRoomUserLocation", JSON.stringify(userLocation));
+      
+      // Update location status indicator
+      document.getElementById("locationStatus").textContent = "✓ Location set - radius filter available";
+      document.getElementById("locationStatus").style.color = "#ccffcc";
+      
+      // Remove existing user location marker if it exists
+      if (userLocationMarker) {
+        map.removeLayer(userLocationMarker);
+      }
+      
+      // Create a marker for user location with accuracy circle
+      const accuracyRadius = Math.max(accuracy, 10); // Minimum 10m radius for visibility
+      
+      userLocationMarker = L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: 'user-location-marker',
+          html: '📍',
+          iconSize: [25, 25],
+          iconAnchor: [12, 25]
+        })
+      }).addTo(map);
+      
+      // Add accuracy circle
+      const accuracyCircle = L.circle([lat, lng], {
+        color: '#3388ff',
+        fillColor: '#3388ff',
+        fillOpacity: 0.1,
+        radius: accuracyRadius,
+        weight: 2
+      }).addTo(map);
+      
+      // Store circle reference for cleanup
+      userLocationMarker.accuracyCircle = accuracyCircle;
+      
+      // Enhanced popup with WGS84 coordinates and accuracy
+      userLocationMarker.bindPopup(`
+        <strong>You are here!</strong><br>
+        <small>WGS84 Coordinates:</small><br>
+        Latitude: ${lat.toFixed(6)}°<br>
+        Longitude: ${lng.toFixed(6)}°<br>
+      `);
+      
+      // Center the map on the user's location with appropriate zoom
+      const zoomLevel = accuracy > 100 ? 13 : accuracy > 50 ? 14 : 16;
+      map.setView([lat, lng], zoomLevel);
+      
+      // Auto-remove marker after 10 minutes
+      setTimeout(() => {
+        if (userLocationMarker) {
+          map.removeLayer(userLocationMarker);
+          if (userLocationMarker.accuracyCircle) {
+            map.removeLayer(userLocationMarker.accuracyCircle);
+          }
+          userLocationMarker = null;
+          userLocation = null; // Clear stored location
+          localStorage.removeItem("escapeRoomUserLocation");
+          // Reset location status indicator
+          document.getElementById("locationStatus").textContent = "Location not set - use \"📍 Locate Me\" first";
+          document.getElementById("locationStatus").style.color = "#ffcccc";
+        }
+      }, 600000); // 10 minutes
+    },
+    (error) => {
+      // Reset button state
+      isLocating = false;
+      button.textContent = originalText;
+      button.disabled = false;
+      
+      let errorMessage = "Unable to retrieve your location.";
+      
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          errorMessage = "Location access denied. Please enable location permissions:\n\n" +
+            "• iOS: Settings > Privacy > Location Services > This App > Always\n" +
+            "• Android: Settings > Apps > Permissions > Location\n" +
+            "• Desktop: Check browser location prompt or settings\n\n" +
+            "Then try again.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorMessage = "Location information is unavailable. Please check your GPS settings or try again in an open area.";
+          break;
+        case error.TIMEOUT:
+          errorMessage = "Location request timed out. Please check your internet connection and try again.";
+          break;
+        default:
+          errorMessage = "An unknown location error occurred. Please try again.";
+          break;
+      }
+      
+      alert(errorMessage);
+      console.error("Geolocation error:", error);
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 15000, // Increased timeout for better accuracy
+      maximumAge: 0 // Always get fresh location
+    }
+  );
+};
+
+// Mobile menu toggle
+document.getElementById('menuToggle').onclick = () => {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('mobile-open');
+};
+
+// Close mobile menu when clicking on the map (only on mobile)
+if (window.innerWidth <= 768) {
+  map.on('click', () => {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar.classList.contains('mobile-open')) {
+      sidebar.classList.remove('mobile-open');
+    }
+  });
+}
+
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(registration => {
+        console.log('Service Worker registered:', registration);
+      })
+      .catch(error => {
+        console.log('Service Worker registration failed:', error);
+      });
+  });
+}
+
+// PWA Install prompt with button
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+const installAppBtn = document.getElementById('installAppBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show the install button in menu on mobile, floating on desktop
+  if (window.innerWidth <= 768) {
+    installAppBtn.style.display = 'block';
+  } else {
+    installBtn.style.display = 'block';
+  }
+});
+
+// Handle both install buttons
+const handleInstall = async () => {
+  if (!deferredPrompt) {
+    return;
+  }
+  
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  
+  if (outcome === 'accepted') {
+    console.log('User accepted the install prompt');
+  }
+  
+  deferredPrompt = null;
+  installBtn.style.display = 'none';
+  installAppBtn.style.display = 'none';
+};
+
+installBtn.addEventListener('click', handleInstall);
+installAppBtn.addEventListener('click', handleInstall);
+
+// Hide install button if app is already installed
+window.addEventListener('appinstalled', () => {
+  installBtn.style.display = 'none';
+  installAppBtn.style.display = 'none';
+  deferredPrompt = null;
+});
+</script>
+
+</body>
+</html>
+
+
+
+
