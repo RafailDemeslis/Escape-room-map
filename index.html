@@ -4,18 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <title>Escape Rooms Map</title>
-
-  <!-- PWA Meta Tags -->
-  <meta name="theme-color" content="#701f1f">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Escape Rooms">
   <meta name="description" content="Find and plan escape room adventures">
-  <meta name="mobile-web-app-capable" content="yes">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -94,41 +83,7 @@ input[type="time"] {
   transform: scale(0.95);
 }
 
-/* Install App Button */
-#installBtn {
-  display: none;
-  position: fixed;
-  bottom: 20px;
-  right: 15px;
-  z-index: 9999;
-  background: #4CAF50;
-  color: white;
-  border: 3px solid #45a049;
-  border-radius: 50px;
-  padding: 12px 16px;
-  font-size: 13px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
-  -webkit-appearance: none;
-  appearance: none;
-  animation: pulse 2s infinite;
-}
 
-@media (max-width: 768px) {
-  #installBtn {
-    display: none !important;
-  }
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); box-shadow: 0 6px 16px rgba(0,0,0,0.5); }
-  50% { transform: scale(1.08); box-shadow: 0 8px 20px rgba(76,175,80,0.6); }
-}
-
-#installBtn:active {
-  transform: scale(0.95);
-}
 
 /* Mobile responsive styles */
 @media (max-width: 768px) {
@@ -201,20 +156,12 @@ input[type="time"] {
   #applyFilters,
   #locateMe,
   #openPlan,
-  #openSubmit,
-  #installAppBtn {
+  #openSubmit {
     padding: 6px 4px !important;
     font-size: 10px !important;
     min-height: 36px !important;
     width: 100%;
     margin-bottom: 4px;
-  }
-
-  #sidebar #installAppBtn {
-    background: #4CAF50;
-    border: 2px solid #45a049;
-    margin-bottom: 8px;
-    display: block !important;
   }
 
   #actionButtons {
@@ -228,10 +175,7 @@ input[type="time"] {
     min-width: 45% !important;
   }
 
-  #installAppBtn {
-    background: #4CAF50;
-    border: 2px solid #45a049;
-  }
+
 
   button {
     min-height: 44px;
@@ -1036,12 +980,9 @@ input[type="time"] {
 <body>
 
 <button id="menuToggle" aria-label="Toggle menu">☰</button>
-<button id="installBtn" aria-label="Install App">📱 Install App</button>
 
 <div id="layout">
   <aside id="sidebar">
-    <button id="installAppBtn" style="display: none;">📱 Install App</button>
-    
     <h2>Filters</h2>
 
     <label>Category</label>
@@ -2324,62 +2265,7 @@ if (window.innerWidth <= 768) {
   });
 }
 
-// Register Service Worker for PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(registration => {
-        console.log('Service Worker registered:', registration);
-      })
-      .catch(error => {
-        console.log('Service Worker registration failed:', error);
-      });
-  });
-}
 
-// PWA Install prompt with button
-let deferredPrompt;
-const installBtn = document.getElementById('installBtn');
-const installAppBtn = document.getElementById('installAppBtn');
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  // Show the install button in menu on mobile, floating on desktop
-  if (window.innerWidth <= 768) {
-    installAppBtn.style.display = 'block';
-  } else {
-    installBtn.style.display = 'block';
-  }
-});
-
-// Handle both install buttons
-const handleInstall = async () => {
-  if (!deferredPrompt) {
-    return;
-  }
-  
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  
-  if (outcome === 'accepted') {
-    console.log('User accepted the install prompt');
-  }
-  
-  deferredPrompt = null;
-  installBtn.style.display = 'none';
-  installAppBtn.style.display = 'none';
-};
-
-installBtn.addEventListener('click', handleInstall);
-installAppBtn.addEventListener('click', handleInstall);
-
-// Hide install button if app is already installed
-window.addEventListener('appinstalled', () => {
-  installBtn.style.display = 'none';
-  installAppBtn.style.display = 'none';
-  deferredPrompt = null;
-});
 </script>
 
 </body>
