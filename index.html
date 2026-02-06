@@ -984,6 +984,7 @@ input[type="time"] {
 
     <label>Category</label>
     <select id="category" multiple>
+      <option value="Any" selected>Any</option>
       <option value="Action">Action</option>
       <option value="Comedy">Comedy</option>
       <option value="Horror">Horror</option>
@@ -1089,11 +1090,11 @@ input[type="time"] {
   <label for="companyInput">Company *</label>
   <input id="companyInput" placeholder="Company" required>
   <label for="durationInput">Duration</label>
-  <input id="durationInput" type="number" placeholder="Duration">
+  <input id="durationInput" type="number" placeholder="Duration (optional)">
   <label for="yearInput">Year created</label>
-  <input id="yearInput" type="number" placeholder="Year created">
+  <input id="yearInput" type="number" placeholder="Year created (optional)">
   <label for="websiteInput">Website</label>
-  <input id="websiteInput" placeholder="website">
+  <input id="websiteInput" placeholder="Website (optional)">
   <label for="addressInput">Address *</label>
   <input id="addressInput" placeholder="Address" required>
 
@@ -1272,7 +1273,11 @@ async function loadEscapeRooms() {
   const categories = [...document.getElementById("category").selectedOptions]
     .map(o => o.value);
 
-  if (categories.length) query = query.in("Category", categories);
+  // Don't filter by category if "Any" is selected
+  const hasAny = categories.includes("Any");
+  if (categories.length && !hasAny) {
+    // Note: Supabase filtering done client-side for partial matching
+  }
 
   const minDuration = document.getElementById("minDuration").value;
   const maxDuration = document.getElementById("maxDuration").value;
@@ -1294,16 +1299,25 @@ async function loadEscapeRooms() {
   console.log('Query result:', data, error);
   if (error) return console.error(error);
 
+  // Client-side filtering for category with partial matching
+  let filteredData = data;
+  if (categories.length && !hasAny) {
+    filteredData = data.filter(room => {
+      const roomCategory = (room.Category || '').toLowerCase();
+      // Check if any selected category is contained in the room's category (case-insensitive)
+      return categories.some(selectedCat => roomCategory.includes(selectedCat.toLowerCase()));
+    });
+  }
+
   // Client-side filtering for radius
   const radius = parseFloat(document.getElementById("radius").value);
-  let filteredData = data;
 
   if (radius > 0 && userLocation) {
-    filteredData = data.filter(r => {
+    filteredData = filteredData.filter(r => {
       const distance = calculateDistance(userLocation.lat, userLocation.lng, r.Lat, r.Lon);
       return distance <= radius;
     });
-    console.log(`Filtered ${data.length} rooms to ${filteredData.length} within ${radius}km radius`);
+    console.log(`Filtered to ${filteredData.length} rooms within ${radius}km radius`);
   } else if (radius > 0 && !userLocation) {
     alert("Please set your location first using the '📍 Locate Me' button to use radius filtering.");
     return;
@@ -1398,6 +1412,22 @@ document.getElementById("maxYear").addEventListener('change', Storage.saveFilter
 document.getElementById("company").addEventListener('change', Storage.saveFilters);
 document.getElementById("escapeRoomName").addEventListener('change', Storage.saveFilters);
 document.getElementById("radius").addEventListener('change', Storage.saveFilters);
+
+// Add Enter key support for filter inputs
+function handleFilterEnter(event) {
+  if (event.key === 'Enter') {
+    document.getElementById("applyFilters").click();
+  }
+}
+
+document.getElementById("category").addEventListener('keypress', handleFilterEnter);
+document.getElementById("minDuration").addEventListener('keypress', handleFilterEnter);
+document.getElementById("maxDuration").addEventListener('keypress', handleFilterEnter);
+document.getElementById("minYear").addEventListener('keypress', handleFilterEnter);
+document.getElementById("maxYear").addEventListener('keypress', handleFilterEnter);
+document.getElementById("company").addEventListener('keypress', handleFilterEnter);
+document.getElementById("escapeRoomName").addEventListener('keypress', handleFilterEnter);
+document.getElementById("radius").addEventListener('keypress', handleFilterEnter);
 
 // Save map state when it changes
 map.on('moveend', Storage.saveMapState);
@@ -2070,12 +2100,17 @@ document.getElementById("submitBtn").onclick = async () => {
   }
 
   try {
+    // Convert empty strings to null for optional numeric fields
+    const durationValue = document.getElementById("durationInput").value.trim();
+    const yearValue = document.getElementById("yearInput").value.trim();
+    const websiteValue = document.getElementById("websiteInput").value.trim();
+    
     const { data, error } = await db.from("Escape_Rooms").insert({
       "Escape room": document.getElementById("nameInput").value,
       Company: document.getElementById("companyInput").value,
-      Duration: document.getElementById("durationInput").value,
-      "Year of S": document.getElementById("yearInput").value,
-      website: document.getElementById("websiteInput").value,
+      Duration: durationValue ? parseInt(durationValue) : null,
+      "Year of S": yearValue ? parseInt(yearValue) : null,
+      website: websiteValue || null,
       Address: document.getElementById("addressInput").value,
       Category: document.getElementById("categoryInput").value,
       Lat: selectedLatLng.lat,
