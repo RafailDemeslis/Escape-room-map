@@ -15,6 +15,76 @@
   <!-- Your CSS -->
   <style>
 
+:root {
+  /* Classic Theme (default) */
+  --primary-bg: #701f1f;
+  --secondary-bg: #9d2b2b;
+  --accent-color: #fdd835;
+  --border-color: #080808;
+  --text-color: #fff;
+  --button-hover: #5a1818;
+}
+
+/* Midnight Blue Theme */
+body[data-theme="midnight"] {
+  --primary-bg: #1a2332;
+  --secondary-bg: #2d3e50;
+  --accent-color: #3498db;
+  --border-color: #0a0f16;
+  --text-color: #ecf0f1;
+  --button-hover: #1c2938;
+}
+
+/* Forest Green Theme */
+body[data-theme="forest"] {
+  --primary-bg: #1b4d3e;
+  --secondary-bg: #2d7a5f;
+  --accent-color: #52c896;
+  --border-color: #0d2419;
+  --text-color: #e8f5e9;
+  --button-hover: #163d31;
+}
+
+/* Royal Purple Theme */
+body[data-theme="royal"] {
+  --primary-bg: #3d1e5f;
+  --secondary-bg: #5b2c8a;
+  --accent-color: #b19cd9;
+  --border-color: #1a0d2e;
+  --text-color: #f3e5f5;
+  --button-hover: #2f1848;
+}
+
+/* Steampunk Theme */
+body[data-theme="steampunk"] {
+  --primary-bg: #4a3121;
+  --secondary-bg: #6b4423;
+  --accent-color: #d4af37;
+  --border-color: #2d1f15;
+  --text-color: #f5e6d3;
+  --button-hover: #3a2618;
+}
+
+/* Ice Theme */
+body[data-theme="ice"] {
+  --primary-bg: #1e3a4f;
+  --secondary-bg: #2e5266;
+  --accent-color: #64b5f6;
+  --border-color: #0f1d28;
+  --text-color: #e1f5fe;
+  --button-hover: #1a2f3f;
+}
+
+/* Neon Theme */
+body[data-theme="neon"] {
+  --primary-bg: #1a1a2e;
+  --secondary-bg: #16213e;
+  --accent-color: #0f3460;
+  --border-color: #e94560;
+  --text-color: #00fff5;
+  --button-hover: #0e1929;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -47,8 +117,8 @@ input[type="time"] {
   width: 300px;
   padding: 12px;
   overflow-y: auto;
-  background: #701f1f;
-  border: 6px solid #080808;
+  background: var(--primary-bg);
+  border: 6px solid var(--border-color);
   -webkit-overflow-scrolling: touch;
 }
 
@@ -64,9 +134,9 @@ input[type="time"] {
   top: 10px;
   left: 10px;
   z-index: 2000;
-  background: #701f1f;
-  color: white;
-  border: 3px solid #080808;
+  background: var(--primary-bg);
+  color: var(--text-color);
+  border: 3px solid var(--border-color);
   border-radius: 8px;
   width: 50px;
   height: 50px;
@@ -212,8 +282,8 @@ input[type="time"] {
   #submitPanel {
   margin-top: 20px;
   padding: 12px;
-  background: #9d2b2b;
-  border: 5px solid #080808;
+  background: var(--secondary-bg);
+  border: 5px solid var(--border-color);
   max-height: 80vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -226,7 +296,7 @@ input[type="time"] {
   right: 10px;
   background: transparent;
   border: none;
-  color: #fff;
+  color: var(--text-color);
   font-size: 30px;
   font-weight: bold;
   cursor: pointer;
@@ -241,7 +311,7 @@ input[type="time"] {
   }
 
   .panel-close-btn:hover {
-  color: #fdd835;
+  color: var(--accent-color);
   }
 
   .panel-close-btn:active {
@@ -308,7 +378,7 @@ input[type="time"] {
 #submitPanel label {
   display: block;
   margin-bottom: 5px;
-  color: #fff;
+  color: var(--text-color);
   font-weight: bold;
 }
 
@@ -389,15 +459,15 @@ input[type="time"] {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
-  color: #fff;
+  color: var(--text-color);
 }
 
 #applyFilters, #openSubmit {
   width: 100%;
   padding: 12px;
-  background: #9d2b2b;
-  color: white;
-  border: 2px solid #080808;
+  background: var(--secondary-bg);
+  color: var(--text-color);
+  border: 2px solid var(--border-color);
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
@@ -409,6 +479,10 @@ input[type="time"] {
   margin-bottom: 10px;
   -webkit-appearance: none;
   appearance: none;
+}
+
+#applyFilters:hover, #openSubmit:hover {
+  background: var(--button-hover);
 }
 
 #applyFilters:active, #openSubmit:active {
@@ -615,8 +689,8 @@ input[type="time"] {
   right: 0;
   width: 400px;
   height: 100vh;
-  background: linear-gradient(135deg, #701f1f 0%, #5a1818 100%);
-  border: 6px solid #080808;
+  background: linear-gradient(135deg, var(--primary-bg) 0%, var(--button-hover) 100%);
+  border: 6px solid var(--border-color);
   z-index: 1000;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -624,7 +698,7 @@ input[type="time"] {
 }
 
 #planPanel h3 {
-  color: #fdd835;
+  color: var(--accent-color);
   margin: 0 0 15px 0;
   padding: 15px 15px 0 15px;
   font-size: 18px;
@@ -634,11 +708,11 @@ input[type="time"] {
 
 .plan-section {
   padding: 15px;
-  border-bottom: 2px solid #9d2b2b;
+  border-bottom: 2px solid var(--secondary-bg);
 }
 
 .plan-section label {
-  color: #fff;
+  color: var(--text-color);
   font-weight: bold;
   display: block;
   margin-bottom: 5px;
@@ -660,7 +734,7 @@ input[type="time"] {
 }
 
 .room-selector {
-  background: #9d2b2b;
+  background: var(--secondary-bg);
   padding: 10px;
   border-radius: 4px;
   max-height: 200px;
@@ -669,38 +743,38 @@ input[type="time"] {
 }
 
 .room-option {
-  background: #701f1f;
-  border: 2px solid #fdd835;
+  background: var(--primary-bg);
+  border: 2px solid var(--accent-color);
   padding: 10px;
   margin-bottom: 8px;
   border-radius: 4px;
   cursor: pointer;
-  color: #fff;
+  color: var(--text-color);
   transition: all 0.3s;
 }
 
 .room-option:hover {
-  background: #5a1818;
-  border-color: #fff;
+  background: var(--button-hover);
+  border-color: var(--text-color);
 }
 
 .room-option.selected {
-  background: #fdd835;
+  background: var(--accent-color);
   color: #000;
-  border-color: #fdd835;
+  border-color: var(--accent-color);
 }
 
 .itinerary-item {
   background: #2d2d2d;
-  border-left: 4px solid #fdd835;
+  border-left: 4px solid var(--accent-color);
   padding: 12px;
   margin-bottom: 10px;
   border-radius: 4px;
-  color: #fff;
+  color: var(--text-color);
 }
 
 .itinerary-room-name {
-  color: #fdd835;
+  color: var(--accent-color);
   font-weight: bold;
   margin-bottom: 5px;
 }
@@ -713,8 +787,8 @@ input[type="time"] {
 
 .itinerary-time input[type="time"] {
   background: #1a1a1a;
-  color: #fff;
-  border: 2px solid #fdd835;
+  color: var(--text-color);
+  border: 2px solid var(--accent-color);
   padding: 8px 12px;
   border-radius: 4px;
   font-size: 16px;
@@ -735,7 +809,7 @@ input[type="time"] {
 }
 
 .itinerary-time input[type="time"]:hover {
-  border-color: #fff;
+  border-color: var(--text-color);
   background: #2a2a2a;
 }
 
@@ -867,7 +941,7 @@ input[type="time"] {
 
 /* Trip markers on map */
 .trip-marker {
-  background: #fdd835;
+  background: var(--accent-color);
   color: #000;
   border: 2px solid #000;
   border-radius: 50%;
@@ -883,7 +957,7 @@ input[type="time"] {
 /* Calendar Styling */
 .calendar-container {
   background: #2d2d2d;
-  border: 2px solid #fdd835;
+  border: 2px solid var(--accent-color);
   border-radius: 6px;
   padding: 10px;
   margin-bottom: 10px;
@@ -894,13 +968,13 @@ input[type="time"] {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
-  color: #fdd835;
+  color: var(--accent-color);
 }
 
 .calendar-header button {
-  background: #701f1f;
-  color: #fdd835;
-  border: 1px solid #fdd835;
+  background: var(--primary-bg);
+  color: var(--accent-color);
+  border: 1px solid var(--accent-color);
   padding: 5px 10px;
   cursor: pointer;
   border-radius: 3px;
@@ -908,7 +982,7 @@ input[type="time"] {
 }
 
 .calendar-header button:hover {
-  background: #5a1818;
+  background: var(--button-hover);
 }
 
 .calendar-weekdays {
@@ -920,7 +994,7 @@ input[type="time"] {
 
 .calendar-weekday {
   text-align: center;
-  color: #fdd835;
+  color: var(--accent-color);
   font-weight: bold;
   font-size: 12px;
   padding: 5px 0;
@@ -948,7 +1022,7 @@ input[type="time"] {
 
 .calendar-day:hover {
   background: #3a3a3a;
-  border-color: #fdd835;
+  border-color: var(--accent-color);
 }
 
 .calendar-day.other-month {
@@ -961,9 +1035,9 @@ input[type="time"] {
 }
 
 .calendar-day.selected {
-  background: #fdd835;
+  background: var(--accent-color);
   color: #000;
-  border: 2px solid #fdd835;
+  border: 2px solid var(--accent-color);
   font-weight: bold;
 }
 
@@ -981,6 +1055,17 @@ input[type="time"] {
 <div id="layout">
   <aside id="sidebar">
     <h2>Filters</h2>
+
+    <label>Theme</label>
+    <select id="themeSelector">
+      <option value="classic">🔴 Classic Red</option>
+      <option value="midnight">🌙 Midnight Blue</option>
+      <option value="forest">🌲 Forest Green</option>
+      <option value="royal">👑 Royal Purple</option>
+      <option value="steampunk">⚙️ Steampunk</option>
+      <option value="ice">❄️ Ice</option>
+      <option value="neon">💠 Neon</option>
+    </select>
 
     <label>Category</label>
     <select id="category" multiple>
@@ -1154,6 +1239,16 @@ const Storage = {
       radius: document.getElementById("radius").value
     };
     localStorage.setItem("escapeRoomFilters", JSON.stringify(filters));
+  },
+  
+  saveTheme: function(theme) {
+    localStorage.setItem("escapeRoomTheme", theme);
+  },
+  
+  loadTheme: function() {
+    const theme = localStorage.getItem("escapeRoomTheme") || "classic";
+    document.body.setAttribute("data-theme", theme);
+    document.getElementById("themeSelector").value = theme;
   },
   
   loadFilters: function() {
@@ -1397,10 +1492,18 @@ document.getElementById("applyFilters").onclick = loadEscapeRooms;
 
 // Load saved filters and map state on page load
 window.addEventListener('load', function() {
+  Storage.loadTheme();
   Storage.loadFilters();
   Storage.loadMapState();
   Storage.loadTripDateTime();
   loadEscapeRooms();
+});
+
+// Theme selector handler
+document.getElementById("themeSelector").addEventListener('change', function() {
+  const theme = this.value;
+  document.body.setAttribute("data-theme", theme);
+  Storage.saveTheme(theme);
 });
 
 // Save filters when they change
