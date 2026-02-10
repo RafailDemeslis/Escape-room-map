@@ -1067,7 +1067,7 @@ input[type="time"] {
 }
 
 /* Logo Styling */
-a:has(.map-corner-logo) {
+.logo-link {
   position: absolute;
   bottom: 45px;
   right: 25px;
@@ -1085,6 +1085,7 @@ a:has(.map-corner-logo) {
   image-rendering: crisp-edges;
   filter: contrast(1.15) brightness(1.08) saturate(1.1);
   transition: transform 0.3s ease;
+  will-change: transform;
 }
 
 .map-corner-logo:hover {
@@ -1092,7 +1093,7 @@ a:has(.map-corner-logo) {
 }
 
 @media (max-width: 768px) {
-  a:has(.map-corner-logo) {
+  .logo-link {
     bottom: 30px;
     right: 20px;
   }
@@ -1192,7 +1193,7 @@ a:has(.map-corner-logo) {
   </aside>
 
   <div id="map"></div>
-  <a href="https://www.instagram.com/escapermap/" target="_blank" rel="noopener noreferrer" title="Follow us on Instagram">
+  <a href="https://www.instagram.com/escapermap/" target="_blank" rel="noopener noreferrer" title="Follow us on Instagram" class="logo-link">
     <img src="logo.png" alt="Escape Rooms Map" class="map-corner-logo">
   </a>
 </div>
