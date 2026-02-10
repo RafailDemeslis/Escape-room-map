@@ -10,6 +10,20 @@
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="apple-touch-icon" href="logo.png">
 
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://escapermap.com">
+  <meta property="og:title" content="Escape Rooms Map">
+  <meta property="og:description" content="Find and plan escape room adventures">
+  <meta property="og:image" content="https://escapermap.com/logo.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:url" content="https://escapermap.com">
+  <meta property="twitter:title" content="Escape Rooms Map">
+  <meta property="twitter:description" content="Find and plan escape room adventures">
+  <meta property="twitter:image" content="https://escapermap.com/logo.png">
+
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
@@ -1049,10 +1063,37 @@ input[type="time"] {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Logo Styling */
+.sidebar-logo {
+  display: block;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 15px auto;
+  border-radius: 70%;
+  object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
   </style>
 </head>
 
 <body>
+
+<!-- Structured Data for Search Engines -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Escape Rooms Map",
+  "description": "Find and plan escape room adventures",
+  "url": "https://escapermap.com",
+  "applicationCategory": "TravelApplication",
+  "operatingSystem": "Any",
+  "image": "https://escapermap.com/logo.png",
+  "logo": "https://escapermap.com/logo.png"
+}
+</script>
 
 <button id="menuToggle" aria-label="Toggle menu">☰</button>
 
