@@ -1067,12 +1067,41 @@ input[type="time"] {
 /* Logo Styling */
 .sidebar-logo {
   display: block;
-  width: 150px;
-  height: 150px;
+  width: 80px;
+  height: 80px;
   margin: 0 auto 15px auto;
-  border-radius: 70%;
+  border-radius: 50%;
   object-fit: cover;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.map-corner-logo {
+  position: absolute;
+  bottom: 30px;
+  right: 10px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  z-index: 1000;
+  background: white;
+  padding: 3px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.map-corner-logo:hover {
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .map-corner-logo {
+    width: 50px;
+    height: 60px;
+    bottom: 20px;
+    right: 10px;
+  }
 }
 
   </style>
@@ -1164,6 +1193,7 @@ input[type="time"] {
   </aside>
 
   <div id="map"></div>
+  <img src="logo.png" alt="Escape Rooms Map" class="map-corner-logo" title="Escape Rooms Map">
 </div>
 
 <!-- Plan Panel -->
