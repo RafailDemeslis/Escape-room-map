@@ -1073,21 +1073,13 @@ input[type="time"] {
       <option value="Action">Action</option>
       <option value="Comedy">Comedy</option>
       <option value="Horror">Horror</option>
-      <option value="Horror/Action">Horror/Action</option>
-      <option value="Horror/psychological horror">Horror/psychological horror</option>
-      <option value="Horror/psychological horror/Role playing">Horror/psychological horror/Role playing</option>
-      <option value="Horror/psychological horror/splatter">Horror/psychological horror/splatter</option>
       <option value="Kids">Kids</option>
-      <option value="Kids/Action">Kids/Action</option>
-      <option value="Kids/Sci-fi">Kids/Sci-fi</option>
       <option value="Outer Space">Outer Space</option>
       <option value="Portable">Portable</option>
       <option value="Psychological horror">Psychological horror</option>
-      <option value="Psychological horror/Role playing">Psychological horror/Role playing</option>
       <option value="Role playing">Role playing</option>
       <option value="Riddles">Riddles</option>
-      <option value="Riddles/Role playing">Riddles/Role playing</option>
-      <option value="Riddles/Spooky">Riddles/Spooky</option>
+      <option value="Splatter">Splatter</option>
       <option value="Spooky">Spooky</option>
       <option value="Sci-fi">Sci-fi</option>
       <option value="VR">VR</option>
@@ -1183,27 +1175,19 @@ input[type="time"] {
   <label for="addressInput">Address *</label>
   <input id="addressInput" placeholder="Address" required>
 
-  <label for="categoryInput">Category *</label>
-  <select id="categoryInput" required>
+  <label for="categoryInput">Category * (hold Ctrl/Cmd to select multiple)</label>
+  <select id="categoryInput" multiple required>
     <option value="Action">Action</option>
       <option value="Comedy">Comedy</option>
       <option value="Horror">Horror</option>
-      <option value="Horror/Action">Horror/Action</option>
-      <option value="Horror/psychological horror">Horror/psychological horror</option>
-      <option value="Horror/psychological horror/Role playing">Horror/psychological horror/Role playing</option>
-      <option value="Horror/psychological horror/splatter">Horror/psychological horror/splatter</option>
       <option value="Kids">Kids</option>
-      <option value="Kids/Action">Kids/Action</option>
-      <option value="Kids/Sci-fi">Kids/Sci-fi</option>
       <option value="Outer Space">Outer Space</option>
       <option value="Portable">Portable</option>
       <option value="Psychological horror">Psychological horror</option>
-      <option value="Psychological horror/Role playing">Psychological horror/Role playing</option>
       <option value="Role playing">Role playing</option>
       <option value="Riddles">Riddles</option>
-      <option value="Riddles/Role playing">Riddles/Role playing</option>
-      <option value="Riddles/Spooky">Riddles/Spooky</option>
       <option value="Spooky">Spooky</option>
+      <option value="Splatter">Splatter</option>
       <option value="Sci-fi">Sci-fi</option>
       <option value="VR">VR</option>
   </select>
@@ -2190,11 +2174,13 @@ document.getElementById("submitBtn").onclick = async () => {
     return;
   }
 
-  const category = document.getElementById("categoryInput").value;
-  if (!category) {
-    alert("Category is required");
+  const categorySelect = document.getElementById("categoryInput");
+  const selectedCategories = [...categorySelect.selectedOptions].map(o => o.value);
+  if (selectedCategories.length === 0) {
+    alert("At least one category is required");
     return;
   }
+  const category = selectedCategories.join(", ");
 
   const address = document.getElementById("addressInput").value.trim();
   if (!address) {
@@ -2215,7 +2201,7 @@ document.getElementById("submitBtn").onclick = async () => {
       "Year of S": yearValue ? parseInt(yearValue) : null,
       website: websiteValue || null,
       Address: document.getElementById("addressInput").value,
-      Category: document.getElementById("categoryInput").value,
+      Category: category,
       Lat: selectedLatLng.lat,
       Lon: selectedLatLng.lng,
       City: "Athens",
