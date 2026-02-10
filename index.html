@@ -7,10 +7,10 @@
   <meta name="description" content="Find and plan escape room adventures">
 
   <!-- Favicon and Logo -->
-  <link rel="icon" type="image/png" sizes="32x32" href="/logo.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/logo.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/logo.png">
-  <link rel="shortcut icon" href="/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+  <link rel="shortcut icon" href="logo.png">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
@@ -1067,40 +1067,26 @@ input[type="time"] {
 }
 
 /* Logo Styling */
-.sidebar-logo {
-  display: block;
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 15px auto;
-  border-radius: 50%;
-  object-fit: cover;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-}
-
 .map-corner-logo {
   position: absolute;
-  bottom: 30px;
-  right: 10px;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  bottom: 35px;
+  right: 15px;
+  width: 120px;
+  height: 120px;
   z-index: 1000;
-  background: white;
-  padding: 3px;
   cursor: pointer;
-  transition: transform 0.2s;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 .map-corner-logo:hover {
-  transform: scale(1.1);
+  transform: scale(1.2);
 }
 
 @media (max-width: 768px) {
   .map-corner-logo {
-    width: 50px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     bottom: 20px;
     right: 10px;
   }
@@ -1195,7 +1181,7 @@ input[type="time"] {
   </aside>
 
   <div id="map"></div>
-  <img src="/logo.png" alt="Escape Rooms Map" class="map-corner-logo" title="Escape Rooms Map">
+  <img src="logo.png" alt="Escape Rooms Map" class="map-corner-logo" title="Escape Rooms Map">
 </div>
 
 <!-- Plan Panel -->
@@ -2474,7 +2460,6 @@ if (window.innerWidth <= 768) {
 
 </body>
 </html>
-
 
 
 
