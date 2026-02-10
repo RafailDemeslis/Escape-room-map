@@ -1067,38 +1067,29 @@ input[type="time"] {
 }
 
 /* Logo Styling */
-a:has(.map-corner-logo) {
+.map-corner-logo {
   position: absolute;
   bottom: 40px;
   right: 20px;
-  z-index: 1000;
-  display: block;
-  transition: transform 0.2s;
-}
-
-a:has(.map-corner-logo):hover {
-  transform: scale(1.1);
-}
-
-.map-corner-logo {
   width: 150px;
   height: 150px;
+  z-index: 1000;
   cursor: pointer;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
   filter: contrast(1.1) brightness(1.05);
-  display: block;
+}
+
+.map-corner-logo:hover {
+  transform: scale(1.1);
 }
 
 @media (max-width: 768px) {
-  a:has(.map-corner-logo) {
-    bottom: 25px;
-    right: 15px;
-  }
-  
   .map-corner-logo {
     width: 100px;
     height: 100px;
+    bottom: 25px;
+    right: 15px;
   }
 }
 
@@ -1191,9 +1182,7 @@ a:has(.map-corner-logo):hover {
   </aside>
 
   <div id="map"></div>
-  <a href="https://www.instagram.com/escapermap/" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram">
-    <img src="logo.png" alt="Escape Rooms Map" class="map-corner-logo" title="Follow us on Instagram">
-  </a>
+  <img src="logo.png" alt="Escape Rooms Map" class="map-corner-logo" title="Escape Rooms Map">
 </div>
 
 <!-- Plan Panel -->
