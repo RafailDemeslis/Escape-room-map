@@ -173,6 +173,10 @@ input[type="time"] {
   transform: scale(0.95);
 }
 
+.sidebar-close-btn {
+  display: none;
+}
+
 
 
 /* Mobile responsive styles */
@@ -196,7 +200,7 @@ input[type="time"] {
     max-height: 100vh !important;
     border: none;
     border-right: 4px solid #080808;
-    padding: 55px 10px 10px 10px !important;
+    padding: 42px 10px 10px 10px !important;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     z-index: 1500;
@@ -209,6 +213,35 @@ input[type="time"] {
 
   #sidebar.mobile-open {
     transform: translateX(0);
+  }
+
+  body.sidebar-open #menuToggle {
+    display: none !important;
+  }
+
+  .sidebar-close-btn {
+    display: flex;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--secondary-bg);
+    color: var(--text-color);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 1601;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .sidebar-close-btn:active {
+    transform: scale(0.95);
   }
 
   #map {
@@ -1129,6 +1162,7 @@ input[type="time"] {
 
 <div id="layout">
   <aside id="sidebar">
+    <button id="closeSidebar" class="sidebar-close-btn" aria-label="Close filters">×</button>
     <h2>Filters</h2>
 
     <label>Theme</label>
@@ -2462,22 +2496,30 @@ document.getElementById("locateMe").onclick = () => {
 // Mobile menu toggle
 document.getElementById('menuToggle').onclick = () => {
   const sidebar = document.getElementById('sidebar');
-  sidebar.classList.toggle('mobile-open');
+  const isOpen = sidebar.classList.contains('mobile-open');
+  if (isOpen) {
+    closeMobileSidebar();
+  } else {
+    sidebar.classList.add('mobile-open');
+    document.body.classList.add('sidebar-open');
+  }
 };
 
 function closeMobileSidebar() {
   if (window.matchMedia('(max-width: 768px)').matches) {
     document.getElementById('sidebar').classList.remove('mobile-open');
+    document.body.classList.remove('sidebar-open');
   }
 }
+
+document.getElementById('closeSidebar').onclick = () => {
+  closeMobileSidebar();
+};
 
 // Close mobile menu when clicking on the map (only on mobile)
 if (window.innerWidth <= 768) {
   map.on('click', () => {
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar.classList.contains('mobile-open')) {
-      sidebar.classList.remove('mobile-open');
-    }
+    closeMobileSidebar();
   });
 }
 
