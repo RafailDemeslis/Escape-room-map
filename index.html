@@ -1875,13 +1875,37 @@ function getSortedItineraryByTime() {
 }
 
 function getGoogleMapsLink(address, lat, lon) {
-  if (address && String(address).trim()) {
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  const fallbackUrl = 'https://www.google.com/maps';
+
+  const sanitizeText = (value) => {
+    if (typeof value !== 'string') return '';
+    return value
+      .normalize('NFC')
+      .replace(/[\u0000-\u001F\u007F]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
+  const isValidCoordinate = (value, min, max) => {
+    return Number.isFinite(value) && value >= min && value <= max;
+  };
+
+  try {
+    if (isValidCoordinate(lat, -90, 90) && isValidCoordinate(lon, -180, 180)) {
+      const encodedCoordinates = encodeURIComponent(`${lat},${lon}`);
+      return `https://www.google.com/maps/search/?api=1&query=${encodedCoordinates}&hl=el`;
+    }
+
+    const safeAddress = sanitizeText(String(address || ''));
+    if (safeAddress) {
+      const encodedAddress = encodeURIComponent(safeAddress);
+      return `https://www.google.com/maps/search/?api=1&query=${encodedAddress}&hl=el`;
+    }
+  } catch (err) {
+    console.error('Failed to build Google Maps URL:', err);
   }
-  if (typeof lat === 'number' && typeof lon === 'number') {
-    return `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
-  }
-  return 'https://www.google.com/maps';
+
+  return fallbackUrl;
 }
 
 // Update room selector
@@ -2405,7 +2429,7 @@ document.getElementById("exportPDF").onclick = async () => {
         yPos = 20;
       }
 
-      const roomLabel = `${idx + 1}. ${item["Escape room"]}`;
+      const roomLabel = `Stop ${idx + 1}`;
       pdf.text(roomLabel, margin + 2, yPos);
       yPos += 4;
 
