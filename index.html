@@ -208,12 +208,12 @@ body.sidebar-open {
   }
 
   #sidebar {
-  position: fixed !important;
+    position: fixed !important;
     left: 0 !important;
-    top: 0 !important;
+    top: env(safe-area-inset-top) !important;
     width: 280px !important;
-    height: 130dvh !important;
-    max-height: 130dvh !important;
+    height: calc(100dvh - env(safe-area-inset-top)) !important;
+    max-height: calc(100dvh - env(safe-area-inset-top)) !important;
     border: none;
     border-right: 4px solid #080808;
     padding: 42px 10px 10px 10px !important;
@@ -228,6 +228,12 @@ body.sidebar-open {
     touch-action: pan-y;
   }
 
+  body.in-app-browser #sidebar {
+    top: 0 !important;
+    height: 90dvh !important;
+    max-height: 90dvh !important;
+  }
+
   .sidebar-content {
     flex: 1 1 auto;
     min-height: 0;
@@ -237,7 +243,17 @@ body.sidebar-open {
     overscroll-behavior: contain;
     touch-action: pan-y;
     padding-right: 2px;
-    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    padding-bottom: calc(110px + env(safe-area-inset-bottom));
+  }
+
+  body.in-app-browser .sidebar-content {
+    padding-bottom: calc(150px + env(safe-area-inset-bottom));
+  }
+
+  #category[multiple] {
+    min-height: 88px !important;
+    max-height: 120px !important;
+    overflow-y: auto !important;
   }
 
   #sidebar.mobile-open {
@@ -323,7 +339,7 @@ body.sidebar-open {
     display: flex !important;
     gap: 4px !important;
     width: 100%;
-    margin-bottom: 6px;
+    margin-bottom: calc(18px + env(safe-area-inset-bottom));
     margin-top: 0;
   }
 
@@ -1352,6 +1368,15 @@ const db = supabase.createClient(
   "https://ypmtgvoadqtcspcrtemy.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwbXRndm9hZHF0Y3NwY3J0ZW15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg0NjE4MjIsImV4cCI6MjA4NDAzNzgyMn0.9m6Wi-y0xZ3BafqHJzGLPgLhsBOuSlTZ3mu4Bq28SGI"
 );
+
+function isInAppBrowser() {
+  const ua = navigator.userAgent || "";
+  return /Instagram|FBAN|FBAV|FB_IAB|Line|wv/i.test(ua);
+}
+
+if (window.matchMedia('(max-width: 768px)').matches && isInAppBrowser()) {
+  document.body.classList.add('in-app-browser');
+}
 
 // localStorage helper functions
 const Storage = {
