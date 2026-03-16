@@ -177,10 +177,22 @@ input[type="time"] {
   display: none;
 }
 
+.multi-select-hint {
+  display: inline;
+}
+
+body.sidebar-open {
+  overflow: hidden;
+}
+
 
 
 /* Mobile responsive styles */
 @media (max-width: 768px) {
+  .multi-select-hint {
+    display: none;
+  }
+
   #menuToggle {
     display: flex;
     align-items: center;
@@ -209,6 +221,8 @@ input[type="time"] {
     display: flex !important;
     flex-direction: column !important;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
   }
 
   #sidebar.mobile-open {
@@ -1287,7 +1301,7 @@ input[type="time"] {
   <label for="addressInput">Address *</label>
   <input id="addressInput" placeholder="Address" required>
 
-  <label for="categoryInput">Category * (hold Ctrl/Cmd to select multiple)</label>
+  <label for="categoryInput">Category *<span class="multi-select-hint"> (hold Ctrl to select multiple)</span></label>
   <select id="categoryInput" multiple required>
     <option value="Action">Action</option>
       <option value="Comedy">Comedy</option>
