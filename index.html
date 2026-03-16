@@ -1054,6 +1054,14 @@ body.sidebar-open {
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 
+.trip-start-marker,
+.trip-end-marker,
+.trip-start-end-marker {
+  font-size: 24px;
+  line-height: 1;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
 /* Calendar Styling */
 .calendar-container {
   background: #2d2d2d;
@@ -1850,6 +1858,32 @@ function getTimingStatus(room1, room2, departureTime, room1Duration) {
   return 'red'; // Late arrival
 }
 
+function getStatusComment(status) {
+  if (status === 'green') {
+    return '🟢 Green: good timing.';
+  }
+  if (status === 'yellow') {
+    return '🟠 Orange: tight timing.';
+  }
+  return '🔴 Red: not enough time buffer.';
+}
+
+function getSortedItineraryByTime() {
+  return [...itinerary].sort((a, b) => {
+    return new Date(a.scheduledTime) - new Date(b.scheduledTime);
+  });
+}
+
+function getGoogleMapsLink(address, lat, lon) {
+  if (address && String(address).trim()) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  }
+  if (typeof lat === 'number' && typeof lon === 'number') {
+    return `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+  }
+  return 'https://www.google.com/maps';
+}
+
 // Update room selector
 async function updateRoomSelector() {
   const searchTerm = document.getElementById("planSearchInput").value.toLowerCase();
@@ -1957,7 +1991,7 @@ function updateItinerary() {
       const travelMins = travelMinutes % 60;
       const timeStr = travelHours > 0 ? `${travelHours}h${travelMins}m` : `${travelMins}m`;
       
-      travelInfo = `<div class="travel-time"><span class="status-indicator ${statusClass}"></span>Travel: ${distance.toFixed(1)}km • ${timeStr}</div>`;
+      travelInfo = `<div class="travel-time"><span class="status-indicator ${statusClass}"></span>Estimated travel time: ${distance.toFixed(1)}km • ${timeStr}</div>`;
     }
     
     return `
@@ -2081,11 +2115,13 @@ function renderTripOnMap() {
     return;
   }
 
+  const sortedItinerary = getSortedItineraryByTime();
+
   // Group by company and location to count games at each place
   const locationGroups = [];
   const routePoints = [];
   
-  itinerary.forEach((r) => {
+  sortedItinerary.forEach((r) => {
     // Find if this location already exists in our groups
     const existingGroup = locationGroups.find(g => 
       g.Company === r.Company && 
@@ -2143,6 +2179,44 @@ function renderTripOnMap() {
   } else if (routePoints.length === 1) {
     map.setView(routePoints[0], 13);
   }
+
+  const startRoom = sortedItinerary[0];
+  const endRoom = sortedItinerary[sortedItinerary.length - 1];
+  const sameStartAndEnd =
+    startRoom.Lat === endRoom.Lat && startRoom.Lon === endRoom.Lon;
+
+  if (sameStartAndEnd) {
+    const startEndMarker = L.marker([startRoom.Lat, startRoom.Lon], {
+      icon: L.divIcon({
+        html: '<div class="trip-start-end-marker">🔑🔒</div>',
+        className: 'leaflet-div-icon',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30]
+      })
+    }).bindPopup('<strong>Start & Finish</strong>');
+    tripLayer.addLayer(startEndMarker);
+  } else {
+    const startMarker = L.marker([startRoom.Lat, startRoom.Lon], {
+      icon: L.divIcon({
+        html: '<div class="trip-start-marker">🔑</div>',
+        className: 'leaflet-div-icon',
+        iconSize: [24, 24],
+        iconAnchor: [12, 24]
+      })
+    }).bindPopup('<strong>Start point</strong>');
+
+    const endMarker = L.marker([endRoom.Lat, endRoom.Lon], {
+      icon: L.divIcon({
+        html: '<div class="trip-end-marker">🔒</div>',
+        className: 'leaflet-div-icon',
+        iconSize: [24, 24],
+        iconAnchor: [12, 24]
+      })
+    }).bindPopup('<strong>Final point</strong>');
+
+    tripLayer.addLayer(startMarker);
+    tripLayer.addLayer(endMarker);
+  }
 }
 
 document.getElementById("showTripOnMap").onclick = () => {
@@ -2155,6 +2229,8 @@ document.getElementById("exportPDF").onclick = async () => {
     alert("No rooms in itinerary to export");
     return;
   }
+
+  const pdfItinerary = getSortedItineraryByTime();
 
   // Show loading message
   const exportBtn = document.getElementById("exportPDF");
@@ -2227,9 +2303,17 @@ document.getElementById("exportPDF").onclick = async () => {
     yPos += 8;
     
     // Render each room separately to avoid cutting in the middle
-    for (let idx = 0; idx < itinerary.length; idx++) {
-      const item = itinerary[idx];
-      
+    for (let idx = 0; idx < pdfItinerary.length; idx++) {
+      const item = pdfItinerary[idx];
+      let transferComment = '';
+
+      if (idx > 0) {
+        const prevItem = pdfItinerary[idx - 1];
+        const { distance, travelTimeMinutes } = calculateTravelTime(prevItem, item, prevItem.scheduledTime);
+        const status = getTimingStatus(prevItem, item, prevItem.scheduledTime, prevItem.Duration);
+        transferComment = `<div style="font-size: 12px; margin-top: 6px; color: #444;"><strong>Estimated travel time:</strong> ${distance.toFixed(1)} km • ${travelTimeMinutes} min<br>${getStatusComment(status)}</div>`;
+      }
+
       // Create HTML for this single room
       const roomDiv = document.createElement('div');
       roomDiv.style.position = 'absolute';
@@ -2247,7 +2331,7 @@ document.getElementById("exportPDF").onclick = async () => {
           <div style="font-size: 13px; margin-bottom: 4px;"><strong>Time:</strong> ${formatTimeHHMM(item.scheduledTime)}</div>
           <div style="font-size: 13px; margin-bottom: 4px;"><strong>Duration:</strong> ${item.Duration} minutes</div>
           <div style="font-size: 13px; margin-bottom: 4px;"><strong>Address:</strong> ${item.Address}</div>
-          ${idx > 0 ? `<div style="font-size: 12px; font-style: italic; color: #666; margin-top: 6px;">Distance from previous: ${calculateTravelTime(itinerary[idx - 1], item, itinerary[idx - 1].scheduledTime).distance.toFixed(1)} km</div>` : ''}
+          ${transferComment}
         </div>
       `;
       
@@ -2279,7 +2363,7 @@ document.getElementById("exportPDF").onclick = async () => {
     }
     
     // Add summary
-    const totalDuration = itinerary.reduce((sum, r) => sum + (r.Duration || 0), 0);
+    const totalDuration = pdfItinerary.reduce((sum, r) => sum + (r.Duration || 0), 0);
     
     // Check if summary fits, if not add new page
     if (yPos + 30 > pageHeight - 15) {
@@ -2295,9 +2379,41 @@ document.getElementById("exportPDF").onclick = async () => {
     
     pdf.setFontSize(10);
     pdf.setFont(undefined, 'normal');
-    pdf.text(`Total rooms: ${itinerary.length}`, margin + 3, yPos);
+    pdf.text(`Total rooms: ${pdfItinerary.length}`, margin + 3, yPos);
     yPos += 5;
     pdf.text(`Total play time: ${Math.floor(totalDuration / 60)}h ${totalDuration % 60}m`, margin + 3, yPos);
+
+    yPos += 8;
+    if (yPos > pageHeight - 20) {
+      pdf.addPage();
+      yPos = 20;
+    }
+
+    pdf.setFontSize(11);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Google Maps links', margin, yPos);
+    yPos += 6;
+
+    pdf.setFontSize(9);
+    pdf.setFont(undefined, 'normal');
+    for (let idx = 0; idx < pdfItinerary.length; idx++) {
+      const item = pdfItinerary[idx];
+      const mapsUrl = getGoogleMapsLink(item.Address, item.Lat, item.Lon);
+
+      if (yPos > pageHeight - 15) {
+        pdf.addPage();
+        yPos = 20;
+      }
+
+      const roomLabel = `${idx + 1}. ${item["Escape room"]}`;
+      pdf.text(roomLabel, margin + 2, yPos);
+      yPos += 4;
+
+      pdf.setTextColor(20, 102, 204);
+      pdf.textWithLink('Open in Google Maps', margin + 8, yPos, { url: mapsUrl });
+      pdf.setTextColor(0, 0, 0);
+      yPos += 6;
+    }
     
     // Save the PDF
     const filename = `escape-trip-${selectedTripDate.toISOString().split('T')[0]}.pdf`;
