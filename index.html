@@ -200,10 +200,11 @@ input[type="time"] {
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     z-index: 1500;
-    overflow-y: hidden !important;
+    overflow-y: auto !important;
     overflow-x: hidden !important;
     display: flex !important;
     flex-direction: column !important;
+    -webkit-overflow-scrolling: touch;
   }
 
   #sidebar.mobile-open {
@@ -1549,7 +1550,10 @@ async function loadEscapeRooms() {
   });
 }
 
-document.getElementById("applyFilters").onclick = loadEscapeRooms;
+document.getElementById("applyFilters").onclick = () => {
+  closeMobileSidebar();
+  loadEscapeRooms();
+};
 
 // Load saved filters and map state on page load
 window.addEventListener('load', function() {
@@ -1781,6 +1785,7 @@ async function updateRoomSelector() {
 
 // Open plan panel
 document.getElementById("openPlan").onclick = async () => {
+  closeMobileSidebar();
   document.getElementById("planPanel").hidden = false;
   
   // Initialize calendar if not already done
@@ -2301,6 +2306,7 @@ document.getElementById("submitBtn").onclick = async () => {
 
 document.getElementById("openSubmit").onclick = () => {
   console.log("Open submit clicked");
+  closeMobileSidebar();
   document.getElementById("submitPanel").hidden = false;
   document.getElementById("map").classList.add("selecting-location");
 };
@@ -2458,6 +2464,12 @@ document.getElementById('menuToggle').onclick = () => {
   const sidebar = document.getElementById('sidebar');
   sidebar.classList.toggle('mobile-open');
 };
+
+function closeMobileSidebar() {
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    document.getElementById('sidebar').classList.remove('mobile-open');
+  }
+}
 
 // Close mobile menu when clicking on the map (only on mobile)
 if (window.innerWidth <= 768) {
