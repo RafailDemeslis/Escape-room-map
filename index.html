@@ -212,8 +212,8 @@ body.sidebar-open {
     left: 0 !important;
     top: 0 !important;
     width: 280px !important;
-    height: 100vh !important;
-    max-height: 100vh !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
     border: none;
     border-right: 4px solid #080808;
     padding: 42px 10px 10px 10px !important;
@@ -235,7 +235,9 @@ body.sidebar-open {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    touch-action: pan-y;
     padding-right: 2px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
   }
 
   #sidebar.mobile-open {
@@ -321,7 +323,13 @@ body.sidebar-open {
     display: flex !important;
     gap: 4px !important;
     width: 100%;
-    margin-bottom: 4px;
+    margin-bottom: 0;
+    margin-top: auto;
+    position: sticky;
+    bottom: 0;
+    background: var(--primary-bg);
+    padding-top: 6px;
+    z-index: 2;
   }
 
   #actionButtons button {
