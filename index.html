@@ -114,6 +114,271 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+.auth-panel {
+  margin-bottom: 14px;
+  padding: 12px;
+  background: var(--secondary-bg);
+  border: 3px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.auth-panel h2 {
+  margin: 0 0 8px 0;
+}
+
+.auth-summary,
+.auth-note,
+.auth-status {
+  color: var(--text-color);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.auth-summary {
+  margin-bottom: 10px;
+}
+
+.auth-status {
+  display: block;
+  margin-top: 8px;
+  min-height: 18px;
+}
+
+.auth-status.error {
+  color: #ffd3d3;
+}
+
+.auth-status.success {
+  color: #ccffcc;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.auth-buttons button {
+  flex: 1;
+}
+
+.auth-google,
+.auth-logout {
+  width: 100%;
+}
+
+.auth-google {
+  background: #ffffff;
+  color: #1f1f1f;
+  border: 2px solid #d0d0d0;
+}
+
+.auth-google:hover:not(:disabled) {
+  background: #f3f3f3;
+}
+
+.auth-note {
+  display: block;
+  margin-top: 8px;
+}
+
+/* Avatar Styling */
+.user-avatar {
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  z-index: 2000;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid var(--border-color);
+  cursor: pointer;
+  display: none;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d0d0d0;
+}
+
+.user-avatar:hover {
+  transform: scale(1.1);
+}
+
+.avatar-dropdown {
+  position: absolute;
+  top: 110px;
+  right: 20px;
+  background: var(--secondary-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 150px;
+  z-index: 2001;
+  display: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.avatar-dropdown a, .avatar-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.avatar-dropdown a:hover, .avatar-dropdown button:hover {
+  background: var(--button-hover);
+}
+
+.page-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.55);
+  z-index: 2200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.page-card {
+  width: 100%;
+  max-width: 520px;
+  background: var(--secondary-bg);
+  border: 4px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 32px rgba(0,0,0,0.35);
+  color: var(--text-color);
+  overflow-y: auto;
+  max-height: calc(100vh - 40px);
+  position: relative;
+}
+
+.page-card h3 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  font-size: 20px;
+}
+
+.profile-field {
+  margin-bottom: 14px;
+}
+
+.profile-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.profile-field input,
+.profile-field select {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #555;
+  border-radius: 8px;
+  background: #111;
+  color: var(--text-color);
+}
+
+.photo-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  line-height: 1;
+  margin: 0 auto 12px auto;
+  background-color: #222;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  text-align: center;
+  overflow: hidden;
+}
+
+.default-avatar-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 auto 14px auto;
+  width: fit-content;
+}
+
+.default-avatar-list button {
+  width: 100%;
+  height: 48px;
+  border-radius: 12px;
+  border: 2px solid #555;
+  background: #111;
+  color: var(--text-color);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.default-avatar-list button.selected {
+  border-color: var(--accent-color);
+  background: var(--accent-color);
+  color: #000;
+}
+
+.page-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.page-actions button {
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.page-actions .btn-cancel {
+  background: transparent;
+  color: var(--text-color);
+}
+
+.page-actions .btn-save {
+  background: var(--accent-color);
+  color: #000;
+  border-color: var(--accent-color);
+}
+
+@media (max-width: 768px) {
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    top: 5px;
+    right: 5px;
+  }
+
+  .avatar-dropdown {
+    top: 55px;
+    right: 5px;
+    min-width: 130px;
+  }
+}
+
 /* Allow user interaction with input fields */
 input, select, textarea, button {
   -webkit-user-select: auto;
@@ -589,10 +854,6 @@ body.sidebar-open {
   transform: scale(0.98);
 }
 
-#map.selecting-location {
-  cursor: pointer;
-}
-
 /* Custom marker styling */
 .marker-blue {
   background: #3388ff;
@@ -877,6 +1138,30 @@ body.sidebar-open {
   color: var(--accent-color);
   font-weight: bold;
   margin-bottom: 5px;
+}
+
+.saved-plan-item,
+.submitted-room-item {
+  background: #1f1f1f;
+  border: 1px solid #444;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.saved-plan-actions,
+.submitted-room-status {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.submitted-room-header {
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-bottom: 6px;
 }
 
 .itinerary-time {
@@ -1218,6 +1503,32 @@ body.sidebar-open {
   <aside id="sidebar">
     <button id="closeSidebar" class="sidebar-close-btn" aria-label="Close filters">×</button>
     <div class="sidebar-content">
+    <div id="authPanel" class="auth-panel">
+      <h2>Account</h2>
+      <div id="authSummary" class="auth-summary">Sign in to save your preferences and access future features.</div>
+
+      <div id="authGuestFields">
+        <label for="authEmail">Email</label>
+        <input id="authEmail" type="email" placeholder="you@example.com" autocomplete="email">
+
+        <label for="authPassword">Password</label>
+        <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password">
+
+        <div class="auth-buttons">
+          <button id="loginButton" type="button">Log in</button>
+          <button id="signupButton" type="button">Create account</button>
+        </div>
+
+        <button id="continueAsGuest" type="button" style="width: 100%; margin-top: 8px;">Continue as Guest</button>
+      </div>
+
+      <div id="authUserActions" hidden>
+        <small class="auth-note">Your preferences are saved for this account.</small>
+      </div>
+
+      <small id="authStatus" class="auth-status"> </small>
+    </div>
+
     <h2>Filters</h2>
 
     <label>Theme</label>
@@ -1284,6 +1595,72 @@ body.sidebar-open {
   </aside>
 
   <div id="map"></div>
+  <div id="userAvatar" class="user-avatar" title="Click for menu"></div>
+  <div id="avatarDropdown" class="avatar-dropdown">
+    <button id="profileBtn">Profile</button>
+    <button id="savedPlansBtn">Saved Plans</button>
+    <button id="submittedRoomsBtn">Submitted Rooms</button>
+    <button id="logoutBtn">Log Out</button>
+  </div>
+
+  <div id="profilePage" class="page-overlay" hidden>
+    <div class="page-card">
+      <h3>Profile</h3>
+      <div class="profile-field">
+        <label for="profileName">Full Name</label>
+        <input id="profileName" type="text" placeholder="First Last">
+      </div>
+      <div class="profile-field">
+        <label for="profileAge">Age</label>
+        <input id="profileAge" type="number" placeholder="Your age" min="1" max="120">
+      </div>
+      <div class="profile-field">
+        <label for="profileGender">Gender</label>
+        <select id="profileGender">
+          <option value="">Select one</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="profile-field">
+        <label>Photo</label>
+        <div id="profilePhotoPreview" class="photo-preview">?</div>
+        <input id="profilePhotoFile" type="file" accept="image/*">
+      </div>
+      <div class="profile-field">
+        <label>Or choose a default avatar</label>
+        <div class="default-avatar-list" id="defaultAvatarList"></div>
+      </div>
+      <div class="page-actions">
+        <button id="profileCancel" class="btn-cancel" type="button">Cancel</button>
+        <button id="profileSave" class="btn-save" type="button">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="savedPlansPage" class="page-overlay" hidden>
+    <div class="page-card">
+      <h3>Saved Plans</h3>
+      <div id="savedPlansList" style="max-height: calc(100vh - 220px); overflow-y: auto; margin-bottom: 12px;"></div>
+      <div class="page-actions">
+        <button id="savedPlansClear" class="btn-clear" type="button">Clear all</button>
+        <button id="savedPlansBack" class="btn-cancel" type="button">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="submittedRoomsPage" class="page-overlay" hidden>
+    <div class="page-card">
+      <h3>Submitted Rooms</h3>
+      <div id="submittedRoomsList" style="max-height: calc(100vh - 220px); overflow-y: auto; margin-bottom: 12px;"></div>
+      <div class="page-actions">
+        <button id="submittedRoomsRefresh" class="btn-map" type="button">Refresh</button>
+        <button id="submittedRoomsBack" class="btn-cancel" type="button">Back</button>
+      </div>
+    </div>
+  </div>
+
   <a href="https://www.instagram.com/escapermap/" target="_blank" rel="noopener noreferrer" title="Follow us on Instagram" class="logo-link">
     <img src="logo.png" alt="Escape Rooms Map" class="map-corner-logo">
   </a>
@@ -1312,7 +1689,9 @@ body.sidebar-open {
   </div>
   
   <div class="plan-buttons">
+    <button id="savePlan" class="btn-add">💾 Save Plan</button>
     <button id="showTripOnMap" class="btn-map">Show Trip</button>
+    <button id="openRouteInGoogleMaps" class="btn-map">🗺️ Route in Maps</button>
   </div>
 
   <div class="plan-buttons" style="padding-top: 0;">
@@ -1360,8 +1739,24 @@ body.sidebar-open {
       <option value="VR">VR</option>
   </select>
 
-  <p>Click on the map to select location</p>
   <button id="submitBtn">Submit</button>
+</div>
+
+<!-- Submission confirmation modal -->
+<div id="submitConfirmationModal" class="page-overlay" style="display: none;">
+  <div class="page-card" style="max-width: 500px;">
+    <h3 style="color: #27b622; margin-bottom: 20px;">✅ Submission Successful!</h3>
+    <p style="margin-bottom: 15px;">Your escape room has been submitted for review. You can track its status in the <strong>Submitted Rooms</strong> section.</p>
+    
+    <div id="submittedRoomDetails" style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <!-- Room details will be populated here -->
+    </div>
+    
+    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+      <button id="closeConfirmationModal" style="background: #666; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Close</button>
+      <button id="viewSubmittedRooms" style="background: #27b622; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">View Submitted Rooms</button>
+    </div>
+  </div>
 </div>
 
 <!-- Scripts -->
@@ -1371,11 +1766,34 @@ body.sidebar-open {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 const db = supabase.createClient(
   "https://ypmtgvoadqtcspcrtemy.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwbXRndm9hZHF0Y3NwY3J0ZW15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg0NjE4MjIsImV4cCI6MjA4NDAzNzgyMn0.9m6Wi-y0xZ3BafqHJzGLPgLhsBOuSlTZ3mu4Bq28SGI"
 );
+
+const STORAGE_KEYS = {
+  filters: "filters",
+  theme: "theme",
+  mapState: "mapState",
+  itinerary: "itinerary",
+  tripDate: "tripDate",
+  userLocation: "userLocation",
+  profile: "profile"
+};
+
+const DEFAULT_MAP_VIEW = {
+  lat: 37.9838,
+  lng: 23.7275,
+  zoom: 12
+};
+
+let currentUser = null;
+let currentProfile = null;
+let authInitialized = false;
 
 function isInAppBrowser() {
   const ua = navigator.userAgent || "";
@@ -1384,6 +1802,808 @@ function isInAppBrowser() {
 
 if (window.matchMedia('(max-width: 768px)').matches && isInAppBrowser()) {
   document.body.classList.add('in-app-browser');
+}
+
+function getStoragePrefix() {
+  return "escapeRoom:";
+}
+
+function getStorageKey(key) {
+  return `${getStoragePrefix()}${key}`;
+}
+
+function setStoredValue(key, value) {
+  localStorage.setItem(getStorageKey(key), value);
+}
+
+function getStoredValue(key) {
+  return localStorage.getItem(getStorageKey(key));
+}
+
+function removeStoredValue(key) {
+  localStorage.removeItem(getStorageKey(key));
+}
+
+function loadProfile() {
+  const saved = getStoredValue(STORAGE_KEYS.profile);
+  if (!saved) {
+    currentProfile = null;
+    return;
+  }
+
+  try {
+    currentProfile = JSON.parse(saved);
+  } catch (error) {
+    console.error("Failed to load profile:", error);
+    currentProfile = null;
+  }
+}
+
+function saveProfile() {
+  if (!currentProfile) return;
+  setStoredValue(STORAGE_KEYS.profile, JSON.stringify(currentProfile));
+}
+
+function getProfileInitials(name) {
+  if (!name) return "?";
+  const parts = name.trim().split(/\s+/);
+  const first = parts[0] || "";
+  const second = parts[1] || "";
+  return (first.charAt(0) + second.charAt(0)).toUpperCase() || first.charAt(0).toUpperCase();
+}
+
+function renderProfilePreview() {
+  const preview = document.getElementById("profilePhotoPreview");
+  if (!preview || !currentProfile) return;
+
+  preview.style.backgroundImage = "";
+  preview.innerHTML = "";
+
+  if (currentProfile.photoType === "upload" && currentProfile.photoValue) {
+    preview.style.backgroundImage = `url(${currentProfile.photoValue})`;
+  } else if (currentProfile.photoType === "avatar" && currentProfile.photoValue) {
+    preview.textContent = currentProfile.photoValue;
+  } else {
+    const initials = getProfileInitials(currentProfile.fullName || currentUser?.email || "?");
+    preview.textContent = initials;
+  }
+}
+
+function openProfilePage() {
+  if (!currentUser) {
+    setAuthStatus("Please sign in to edit your profile.", "error");
+    document.getElementById("authPanel").style.display = "block";
+    return;
+  }
+
+  const page = document.getElementById("profilePage");
+  page.hidden = false;
+  page.style.display = "flex";
+
+  currentProfile = currentProfile || {
+    fullName: "",
+    age: "",
+    gender: "",
+    photoType: "initials",
+    photoValue: ""
+  };
+
+  document.getElementById("profileName").value = currentProfile.fullName || "";
+  document.getElementById("profileAge").value = currentProfile.age || "";
+  document.getElementById("profileGender").value = currentProfile.gender || "";
+  document.getElementById("profilePhotoFile").value = "";
+  renderProfilePreview();
+  renderAvatarOptions();
+}
+
+function closeProfilePage() {
+  const page = document.getElementById("profilePage");
+  if (page) {
+    page.hidden = true;
+    page.style.display = "none";
+  }
+}
+
+function renderAvatarOptions() {
+  const container = document.getElementById("defaultAvatarList");
+  if (!container) return;
+
+  container.innerHTML = ESCAPE_ROOM_AVATARS.map(avatar => {
+    const selected = currentProfile?.photoType === "avatar" && currentProfile.photoValue === avatar.emoji;
+    return `<button type="button" class="avatar-option${selected ? ' selected' : ''}" data-avatar="${avatar.emoji}" title="${avatar.label}">${avatar.emoji}</button>`;
+  }).join("");
+
+  container.querySelectorAll(".avatar-option").forEach(button => {
+    button.addEventListener("click", () => {
+      currentProfile.photoType = "avatar";
+      currentProfile.photoValue = button.dataset.avatar;
+      renderProfilePreview();
+      renderAvatarOptions();
+    });
+  });
+}
+
+function handleProfileFileChange() {
+  const fileInput = document.getElementById("profilePhotoFile");
+  if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+  reader.onload = () => {
+    currentProfile.photoType = "upload";
+    currentProfile.photoValue = reader.result;
+    renderProfilePreview();
+    renderAvatarOptions();
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveProfileChanges() {
+  currentProfile.fullName = document.getElementById("profileName").value.trim();
+  currentProfile.age = document.getElementById("profileAge").value;
+  currentProfile.gender = document.getElementById("profileGender").value;
+
+  if (!currentProfile.fullName) {
+    alert("Please enter your full name.");
+    return;
+  }
+
+  saveProfile();
+  renderProfilePreview();
+  updateAuthUI();
+  closeProfilePage();
+  setAuthStatus("Profile saved.", "success");
+}
+
+function showPageOverlay(pageId) {
+  const pages = ["profilePage", "savedPlansPage", "submittedRoomsPage"];
+  pages.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.hidden = id !== pageId;
+      el.style.display = id === pageId ? 'flex' : 'none';
+    }
+  });
+}
+
+function hideAllPageOverlays() {
+  showPageOverlay(null);
+}
+
+// Storage keys for played rooms
+const STORAGE_KEYS_PLAYED = {
+  playedRooms: "escapeRoom:playedRooms"
+};
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].toLowerCase().split(',').map(h => h.trim());
+  const rooms = [];
+  
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',').map(v => v.trim());
+    const room = {};
+    headers.forEach((header, idx) => {
+      room[header] = values[idx];
+    });
+    if (room.name || room.company) {
+      rooms.push(room);
+    }
+  }
+  return rooms;
+}
+
+async function parsePDF(arrayBuffer) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+  let text = '';
+  
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const textContent = await page.getTextContent();
+    text += textContent.items.map(item => item.str).join(' ') + '\n';
+  }
+  
+  return extractRoomsFromText(text);
+}
+
+async function parseDOCX(arrayBuffer) {
+  const result = await mammoth.extractRawText({ arrayBuffer });
+  return extractRoomsFromText(result.value);
+}
+
+function parseXLSX(arrayBuffer) {
+  const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+  const rooms = [];
+  workbook.SheetNames.forEach(sheetName => {
+    const sheet = workbook.Sheets[sheetName];
+    const json = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+    json.forEach(row => {
+      if (row.name || row.Name || row.company || row.Company) {
+        rooms.push(row);
+      }
+    });
+  });
+  return rooms;
+}
+
+function extractRoomsFromText(text) {
+  const rooms = [];
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  
+  lines.forEach(line => {
+    const parts = line.split(/[-–—:|]/).map(p => p.trim()).filter(Boolean);
+    if (parts.length >= 2) {
+      const name = parts[0];
+      const company = parts[1];
+      if (name.length > 2 && company.length > 2) {
+        rooms.push({ name, company });
+      }
+    } else if (line.length > 5 && line.split(' ').length <= 6) {
+      rooms.push({ name: line, company: '' });
+    }
+  });
+  
+  return rooms;
+}
+
+function parseJSON(text) {
+  try {
+    const data = JSON.parse(text);
+    if (Array.isArray(data)) {
+      return data.filter(item => item.name || item.Name || item.company || item.Company);
+    }
+    return [];
+  } catch (e) {
+    console.error("Failed to parse JSON:", e);
+    return [];
+  }
+}
+
+function normalizeString(str) {
+  return (str || "").toLowerCase().trim();
+}
+
+// Build index for faster matching
+let roomIndexByName = {};
+let roomIndexByCompany = {};
+
+function buildRoomIndex() {
+  roomIndexByName = {};
+  roomIndexByCompany = {};
+  
+  cachedAllRooms.forEach(room => {
+    const name = normalizeString(room['Escape room'] || room.Name || "");
+    const company = normalizeString(room.Company || "");
+    
+    if (name) {
+      const nameWords = name.split(/\s+/);
+      nameWords.forEach(word => {
+        if (word.length > 2) {
+          if (!roomIndexByName[word]) roomIndexByName[word] = [];
+          roomIndexByName[word].push(room);
+        }
+      });
+    }
+    
+    if (company) {
+      const companyWords = company.split(/\s+/);
+      companyWords.forEach(word => {
+        if (word.length > 2) {
+          if (!roomIndexByCompany[word]) roomIndexByCompany[word] = [];
+          roomIndexByCompany[word].push(room);
+        }
+      });
+    }
+  });
+}
+
+function matchRoomWithDatabase(uploadedRoom) {
+  const uploadedName = normalizeString(uploadedRoom.name || uploadedRoom.Name || "");
+  const uploadedCompany = normalizeString(uploadedRoom.company || uploadedRoom.Company || "");
+
+  if (!uploadedName && !uploadedCompany) return null;
+
+  let candidates = new Set();
+  
+  // Get candidates from name index
+  if (uploadedName) {
+    const nameWords = uploadedName.split(/\s+/).filter(w => w.length > 2);
+    nameWords.forEach(word => {
+      if (roomIndexByName[word]) {
+        roomIndexByName[word].forEach(room => candidates.add(room.id));
+      }
+    });
+  }
+  
+  // Get candidates from company index
+  if (uploadedCompany) {
+    const companyWords = uploadedCompany.split(/\s+/).filter(w => w.length > 2);
+    companyWords.forEach(word => {
+      if (roomIndexByCompany[word]) {
+        roomIndexByCompany[word].forEach(room => candidates.add(room.id));
+      }
+    });
+  }
+
+  // Find best match from candidates
+  let bestMatch = null;
+  let bestScore = 0;
+
+  candidates.forEach(roomId => {
+    const room = cachedAllRooms.find(r => r.id === roomId);
+    if (!room) return;
+    
+    const dbName = normalizeString(room['Escape room'] || room.Name || "");
+    const dbCompany = normalizeString(room.Company || "");
+    
+    let score = 0;
+    
+    // Calculate similarity score
+    if (uploadedName && dbName) {
+      const nameOverlap = calculateStringSimilarity(uploadedName, dbName);
+      score += nameOverlap * 2; // Name match weighted higher
+    }
+    
+    if (uploadedCompany && dbCompany) {
+      const companyOverlap = calculateStringSimilarity(uploadedCompany, dbCompany);
+      score += companyOverlap;
+    }
+    
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = room;
+    }
+  });
+
+  return bestScore > 0 ? bestMatch : null;
+}
+
+function calculateStringSimilarity(str1, str2) {
+  const shorter = str1.length < str2.length ? str1 : str2;
+  const longer = str1.length < str2.length ? str2 : str1;
+  
+  if (longer.includes(shorter)) return 1.0;
+  
+  let matches = 0;
+  const shorter_words = shorter.split(/\s+/);
+  const longer_words = longer.split(/\s+/);
+  
+  shorter_words.forEach(word => {
+    if (longer_words.some(w => w === word || w.includes(word) || word.includes(w))) {
+      matches++;
+    }
+  });
+  
+  return matches / longer_words.length;
+}
+
+function savePlayedRooms(roomIds) {
+  localStorage.setItem(STORAGE_KEYS_PLAYED.playedRooms, JSON.stringify(roomIds));
+}
+
+function loadPlayedRooms() {
+  const saved = localStorage.getItem(STORAGE_KEYS_PLAYED.playedRooms);
+  return saved ? JSON.parse(saved) : [];
+}
+
+function displayPlayedRooms() {
+  const playedRoomIds = loadPlayedRooms();
+  const container = document.getElementById("myRoomsMatchedList");
+  
+  if (playedRoomIds.length === 0) {
+    container.innerHTML = "<p style='color: #aaa; font-size: 13px; margin: 0;'>No rooms matched or uploaded yet.</p>";
+    return;
+  }
+
+  let html = "";
+  playedRoomIds.forEach(roomId => {
+    const room = allEscapeRooms.find(r => r.id === roomId);
+    if (room) {
+      html += `
+        <div style="padding: 10px; border-bottom: 1px solid #555; font-size: 13px;">
+          <strong>${room.Name || "Unknown"}</strong><br>
+          <small style="color: #aaa;">${room.Company || "Unknown Company"}</small>
+        </div>
+      `;
+    }
+  });
+  
+  container.innerHTML = html || "<p style='color: #aaa; font-size: 13px; margin: 0;'>No rooms available.</p>";
+}
+
+async function fetchEscapeallProfile(url) {
+  try {
+    // Extract user ID from URL
+    const userIdMatch = url.match(/Profile\/([a-f0-9-]+)/i);
+    if (!userIdMatch) {
+      throw new Error("Invalid Escapeall URL format");
+    }
+    
+    const userId = userIdMatch[1];
+    
+    // Try to fetch profile data from Escapeall API
+    // Note: This may not work due to CORS restrictions without a backend proxy
+    const apiUrl = `https://www.escapeall.gr/api/users/${userId}`;
+    
+    try {
+      const response = await fetch(apiUrl);
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Extract rooms from the profile data
+        let rooms = [];
+        if (data.playedRooms && Array.isArray(data.playedRooms)) {
+          rooms = data.playedRooms;
+        } else if (data.rooms && Array.isArray(data.rooms)) {
+          rooms = data.rooms;
+        }
+        
+        return rooms;
+      }
+    } catch (apiError) {
+      console.log("API fetch failed, attempting profile page scrape...");
+    }
+    
+    // Fallback: Try to fetch and parse the profile page
+    const proxyUrl = `https://cors-anywhere.herokuapp.com/${url}`;
+    const response = await fetch(proxyUrl);
+    
+    if (!response.ok) {
+      throw new Error("Failed to fetch Escapeall profile. Make sure the URL is public and accessible.");
+    }
+    
+    const html = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    
+    // Look for room listings in the profile page
+    const rooms = [];
+    const roomElements = doc.querySelectorAll('[class*="room"], [class*="played"], [data-room]');
+    
+    roomElements.forEach(elem => {
+      const roomName = elem.textContent?.trim();
+      if (roomName && roomName.length > 3) {
+        rooms.push({ name: roomName, company: '' });
+      }
+    });
+    
+    return rooms;
+  } catch (error) {
+    console.error("Error fetching Escapeall profile:", error);
+    throw error;
+  }
+}
+
+function initializeMyRooms() {
+  displayPlayedRooms();
+}
+
+function initializeProfileData() {
+  loadProfile();
+  if (!currentProfile) {
+    currentProfile = {
+      fullName: "",
+      age: "",
+      gender: "",
+      photoType: "initials",
+      photoValue: ""
+    };
+  }
+}
+
+function getProfileAvatarPreview() {
+  if (!currentProfile) return "?";
+  if (currentProfile.photoType === "upload" && currentProfile.photoValue) return currentProfile.photoValue;
+  if (currentProfile.photoType === "avatar" && currentProfile.photoValue) return currentProfile.photoValue;
+  return getProfileInitials(currentProfile.fullName || currentUser?.email || "?");
+}
+
+function setAuthStatus(message, type) {
+  const status = document.getElementById("authStatus");
+  status.textContent = message || " ";
+  status.className = "auth-status";
+  if (type) {
+    status.classList.add(type);
+  }
+}
+
+function getUserStorageSuffix() {
+  const userKey = currentUser?.id || currentUser?.email || 'guest';
+  return String(userKey).replace(/[@.\s]/g, '_');
+}
+
+function getSavedPlansStorageKey() {
+  return `${getStoragePrefix()}savedPlans:${getUserStorageSuffix()}`;
+}
+
+function getSubmittedRoomsStorageKey() {
+  return `${getStoragePrefix()}submittedRooms:${getUserStorageSuffix()}`;
+}
+
+function saveSavedPlans(plans) {
+  localStorage.setItem(getSavedPlansStorageKey(), JSON.stringify(plans || []));
+}
+
+function loadSavedPlans() {
+  const saved = localStorage.getItem(getSavedPlansStorageKey());
+  return saved ? JSON.parse(saved) : [];
+}
+
+function saveSubmittedRooms(submissions) {
+  localStorage.setItem(getSubmittedRoomsStorageKey(), JSON.stringify(submissions || []));
+}
+
+function loadStoredSubmittedRooms() {
+  const saved = localStorage.getItem(getSubmittedRoomsStorageKey());
+  return saved ? JSON.parse(saved) : [];
+}
+
+function renderSavedPlansPage() {
+  const plans = loadSavedPlans();
+  const list = document.getElementById("savedPlansList");
+  if (!list) return;
+
+  if (plans.length === 0) {
+    list.innerHTML = '<p style="color: #aaa; margin: 0 0 10px 0;">No saved plans yet. Save your current itinerary from the Plan panel.</p>';
+    return;
+  }
+
+  list.innerHTML = plans.map((plan, index) => {
+    return `
+      <div class="saved-plan-item">
+        <div>
+          <strong>${plan.name}</strong>
+          <div style="font-size: 13px; color: #ccc; margin-top: 4px;">
+            ${plan.rooms.length} room${plan.rooms.length === 1 ? '' : 's'} • ${new Date(plan.savedAt).toLocaleString('en-GB')}
+          </div>
+        </div>
+        <div class="saved-plan-actions">
+          <button type="button" class="btn-map" onclick="loadSavedPlan(${index})">Load</button>
+          <button type="button" class="btn-clear" onclick="deleteSavedPlan(${index})">Delete</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.saveCurrentPlan = function() {
+  if (!itinerary.length) {
+    alert("Please add rooms to your itinerary before saving.");
+    return;
+  }
+
+  const defaultName = `Trip plan ${new Date().toLocaleDateString('en-GB')}`;
+  const planName = prompt("Enter a name for this saved plan:", defaultName);
+
+  if (planName === null) return;
+  if (!planName.trim()) {
+    alert("Please enter a valid plan name.");
+    return;
+  }
+
+  const savedPlans = loadSavedPlans();
+  savedPlans.unshift({
+    id: Date.now().toString(),
+    name: planName.trim(),
+    date: selectedTripDate.toISOString().split("T")[0],
+    savedAt: new Date().toISOString(),
+    rooms: itinerary.map(item => ({ ...item }))
+  });
+
+  saveSavedPlans(savedPlans);
+  renderSavedPlansPage();
+  alert("Plan saved to Saved Plans.");
+};
+
+window.loadSavedPlan = function(index) {
+  const savedPlans = loadSavedPlans();
+  const plan = savedPlans[index];
+  if (!plan) return;
+
+  itinerary = plan.rooms.map(item => ({ ...item }));
+  selectedTripDate = new Date(plan.date);
+  if (!window.calendarInstance) {
+    window.calendarInstance = new Calendar();
+  }
+  window.calendarInstance.currentDate = new Date(selectedTripDate);
+  window.calendarInstance.selectedDate = new Date(selectedTripDate);
+  window.calendarInstance.render();
+  updateItinerary();
+  document.getElementById("planPanel").hidden = false;
+};
+
+window.deleteSavedPlan = function(index) {
+  if (!confirm("Delete this saved plan?")) return;
+  const savedPlans = loadSavedPlans();
+  savedPlans.splice(index, 1);
+  saveSavedPlans(savedPlans);
+  renderSavedPlansPage();
+};
+
+async function loadSubmittedRooms() {
+  const list = document.getElementById("submittedRoomsList");
+  if (!list) return;
+
+  const submissions = loadStoredSubmittedRooms();
+
+  if (submissions.length === 0) {
+    list.innerHTML = '<p style="color: #aaa; margin: 0;">No submitted rooms yet. Submit a room from the submission panel.</p>';
+    return;
+  }
+
+  const idsToRefresh = submissions.filter(item => item.dbId).map(item => item.dbId);
+  if (idsToRefresh.length > 0) {
+    const { data, error } = await db.from("Escape_Rooms").select("id,Status").in("id", idsToRefresh);
+    if (!error && Array.isArray(data)) {
+      const statusMap = new Map(data.map(item => [item.id, item.Status]));
+      submissions.forEach(item => {
+        if (item.dbId && statusMap.has(item.dbId)) {
+          item.status = statusMap.get(item.dbId);
+        }
+      });
+      saveSubmittedRooms(submissions);
+    }
+  }
+
+  list.innerHTML = submissions.map((submission) => {
+    const statusClass = submission.status === 'confirmed' ? 'status-green'
+      : submission.status === 'rejected' ? 'status-red'
+      : 'status-yellow';
+
+    return `
+      <div class="submitted-room-item">
+        <div class="submitted-room-header">🔐 ${submission.name}</div>
+        <div style="font-size: 13px; color: #ccc; margin: 4px 0;">
+          ${submission.company}${submission.address ? ' • ' + submission.address : ''}
+        </div>
+        <div class="submitted-room-status">
+          <span class="status-indicator ${statusClass}"></span>
+          <strong>${submission.status || 'pending'}</strong>
+        </div>
+        <div style="font-size: 12px; color: #aaa; margin-top: 6px;">
+          Submitted ${new Date(submission.submittedAt).toLocaleString('en-GB')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function showMyRoomsStatus(message, type) {
+  const status = document.getElementById("myRoomsStatus");
+  if (!status) return;
+  status.textContent = message || "";
+  status.style.color = type === 'success' ? '#8cff8c' : type === 'error' ? '#ff8c8c' : '#ddd';
+}
+
+function setLocationStatus(hasLocation) {
+  const el = document.getElementById("locationStatus");
+  if (!el) return;
+
+  if (hasLocation) {
+    el.textContent = "✓ Location set - radius filter available";
+    el.style.color = "#ccffcc";
+    return;
+  }
+
+  el.textContent = 'Location not set - use "📍 Locate Me" first';
+  el.style.color = "#ffcccc";
+}
+
+const DEFAULT_AVATARS = ['🧑‍🔬', '🕵️', '🤔', '😨', '🧗', '👨‍🎤', '🏃', '🧌'];
+const ESCAPE_ROOM_AVATARS = [
+  { emoji: '🧑‍🔬', label: 'Investigator' },
+  { emoji: '🕵️', label: 'Detective' },
+  { emoji: '🤔', label: 'Curious' },
+  { emoji: '😨', label: 'Scared' },
+  { emoji: '🧗', label: 'Adventurer' },
+  { emoji: '👨‍🎤', label: 'Performer' },
+  { emoji: '🏃', label: 'Runner' },
+  { emoji: '🧌', label: 'Mystery' }
+];
+
+function getDefaultAvatar(userId) {
+  const hash = userId.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+  return DEFAULT_AVATARS[hash % DEFAULT_AVATARS.length];
+}
+
+function updateAuthUI() {
+  loadProfile();  // Ensure profile is loaded from localStorage
+  
+  const summary = document.getElementById("authSummary");
+  const guestFields = document.getElementById("authGuestFields");
+  const userActions = document.getElementById("authUserActions");
+  const authPanel = document.getElementById("authPanel");
+  const avatar = document.getElementById("userAvatar");
+
+  if (currentUser) {
+    const email = currentUser.email || "Signed in user";
+    const name = currentUser.user_metadata?.full_name || email.split('@')[0];
+    const photo = currentProfile?.photoType === 'upload' ? currentProfile.photoValue
+      : currentProfile?.photoType === 'avatar' ? currentProfile.photoValue
+      : currentUser.user_metadata?.avatar_url || getDefaultAvatar(currentUser.id);
+    const isImageUrl = typeof photo === 'string' && /^(https?:\/\/|data:)/.test(photo);
+
+    avatar.style.backgroundImage = isImageUrl ? `url(${photo})` : 'none';
+    avatar.textContent = isImageUrl ? '' : (photo || getProfileInitials(currentProfile?.fullName || name));
+    avatar.title = `Signed in as ${name}. Click for menu.`;
+    avatar.style.display = 'block';
+
+    authPanel.style.display = 'none';
+  } else {
+    avatar.style.display = 'none';
+    authPanel.style.display = 'block';
+    summary.textContent = "Sign in to save your preferences and access future features.";
+    guestFields.hidden = false;
+    userActions.hidden = true;
+  }
+}
+
+function setAuthBusy(isBusy) {
+  ["loginButton", "signupButton"].forEach((id) => {
+    const button = document.getElementById(id);
+    if (button) {
+      button.disabled = isBusy;
+    }
+  });
+}
+
+function getAuthFormValues() {
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+  return { email, password };
+}
+
+function clearAuthForm() {
+  document.getElementById("authPassword").value = "";
+}
+
+async function applyScopedState() {
+  initializeProfileData();
+  Storage.loadTheme();
+  Storage.loadFilters();
+  Storage.loadMapState();
+  Storage.loadTripDateTime();
+  Storage.loadUserLocation();
+  itinerary = [];
+
+  // Pre-cache all escape rooms on init
+  await cacheAllEscapeRooms();
+  loadEscapeRooms();
+
+  if (allEscapeRooms.length > 0) {
+    Storage.loadItinerary();
+  }
+
+  loadEscapeRooms();
+
+  if (!document.getElementById("planPanel").hidden) {
+    updateItinerary();
+  }
+}
+
+async function initializeAuth() {
+  db.auth.onAuthStateChange((_event, session) => {
+    currentUser = session?.user || null;
+    updateAuthUI();
+
+    if (authInitialized) {
+      setAuthStatus(currentUser ? "Signed in." : "Signed out.", currentUser ? "success" : "");
+      applyScopedState();
+    }
+  });
+
+  const { data, error } = await db.auth.getSession();
+  if (error) {
+    console.error("Auth session error:", error);
+    setAuthStatus(error.message, "error");
+  }
+
+  currentUser = data.session?.user || null;
+  updateAuthUI();
+  authInitialized = true;
 }
 
 // localStorage helper functions
@@ -1399,27 +2619,29 @@ const Storage = {
       escapeRoomName: document.getElementById("escapeRoomName").value,
       radius: document.getElementById("radius").value
     };
-    localStorage.setItem("escapeRoomFilters", JSON.stringify(filters));
+    setStoredValue(STORAGE_KEYS.filters, JSON.stringify(filters));
   },
   
   saveTheme: function(theme) {
-    localStorage.setItem("escapeRoomTheme", theme);
+    setStoredValue(STORAGE_KEYS.theme, theme);
   },
   
   loadTheme: function() {
-    const theme = localStorage.getItem("escapeRoomTheme") || "classic";
+    const theme = getStoredValue(STORAGE_KEYS.theme) || "classic";
     document.body.setAttribute("data-theme", theme);
     document.getElementById("themeSelector").value = theme;
   },
   
   loadFilters: function() {
-    const saved = localStorage.getItem("escapeRoomFilters");
+    const saved = getStoredValue(STORAGE_KEYS.filters);
     if (saved) {
       const filters = JSON.parse(saved);
       
       // Restore categories
-      if (filters.categories && filters.categories.length > 0) {
-        document.getElementById("category").value = filters.categories;
+      if (Array.isArray(filters.categories) && filters.categories.length > 0) {
+        [...document.getElementById("category").options].forEach((option) => {
+          option.selected = filters.categories.includes(option.value);
+        });
       }
       
       // Restore other fields
@@ -1430,13 +2652,25 @@ const Storage = {
       if (filters.company) document.getElementById("company").value = filters.company;
       if (filters.escapeRoomName) document.getElementById("escapeRoomName").value = filters.escapeRoomName;
       if (filters.radius) document.getElementById("radius").value = filters.radius;
+      return;
     }
+
+    [...document.getElementById("category").options].forEach((option) => {
+      option.selected = option.value === "Any";
+    });
+    document.getElementById("minDuration").value = "";
+    document.getElementById("maxDuration").value = "";
+    document.getElementById("minYear").value = "";
+    document.getElementById("maxYear").value = "";
+    document.getElementById("company").value = "";
+    document.getElementById("escapeRoomName").value = "";
+    document.getElementById("radius").value = "";
   },
   
   saveMapState: function() {
     const center = map.getCenter();
     const zoom = map.getZoom();
-    localStorage.setItem("escapeRoomMapState", JSON.stringify({
+    setStoredValue(STORAGE_KEYS.mapState, JSON.stringify({
       lat: center.lat,
       lng: center.lng,
       zoom: zoom
@@ -1444,11 +2678,43 @@ const Storage = {
   },
   
   loadMapState: function() {
-    const saved = localStorage.getItem("escapeRoomMapState");
+    const saved = getStoredValue(STORAGE_KEYS.mapState);
     if (saved) {
       const state = JSON.parse(saved);
       map.setView([state.lat, state.lng], state.zoom);
+      return;
     }
+
+    map.setView([DEFAULT_MAP_VIEW.lat, DEFAULT_MAP_VIEW.lng], DEFAULT_MAP_VIEW.zoom);
+  },
+
+  saveUserLocation: function(location) {
+    setStoredValue(STORAGE_KEYS.userLocation, JSON.stringify(location));
+  },
+
+  loadUserLocation: function() {
+    const saved = getStoredValue(STORAGE_KEYS.userLocation);
+    if (!saved) {
+      userLocation = null;
+      setLocationStatus(false);
+      return;
+    }
+
+    try {
+      userLocation = JSON.parse(saved);
+      setLocationStatus(Boolean(userLocation));
+    } catch (error) {
+      console.error("Failed to restore stored location:", error);
+      userLocation = null;
+      removeStoredValue(STORAGE_KEYS.userLocation);
+      setLocationStatus(false);
+    }
+  },
+
+  removeUserLocation: function() {
+    removeStoredValue(STORAGE_KEYS.userLocation);
+    userLocation = null;
+    setLocationStatus(false);
   }
 };
 
@@ -1460,8 +2726,10 @@ const map = L.map("map", {
   scrollWheelZoom: true,
   boxZoom: true,
   keyboard: true,
-  tap: true
-}).setView([37.9838, 23.7275], 12);
+  tap: true,
+  preferCanvas: true,
+  renderer: L.canvas({ padding: 0.5 })
+}).setView([DEFAULT_MAP_VIEW.lat, DEFAULT_MAP_VIEW.lng], DEFAULT_MAP_VIEW.zoom);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap contributors"
@@ -1493,7 +2761,12 @@ const markers = L.markerClusterGroup({
     });
   },
   maxClusterRadius: 80,
-  disableClusteringAtZoom: 18
+  disableClusteringAtZoom: 18,
+  chunkedLoading: true,
+  chunkInterval: 50,
+  removeOutsideVisibleBounds: true,
+  spiderfyOnMaxZoom: false,
+  showCoverageOnHover: false
 });
 map.addLayer(markers);
 
@@ -1520,71 +2793,62 @@ async function loadEscapeRooms() {
   }
   markers.clearLayers();
 
-  let query = db
-    .from("Escape_Rooms")
-    .select("*")
-    .eq("Status", "approved")
-    .eq("Operational", "Yes")
+  // Use cached data instead of querying Supabase again
+  let data = cachedAllRooms;
+  if (data.length === 0) {
+    data = await cacheAllEscapeRooms();
+  }
 
+  // Extract filter values
   const categories = [...document.getElementById("category").selectedOptions]
     .map(o => o.value);
-
-  // Don't filter by category if "Any" is selected
   const hasAny = categories.includes("Any");
-  if (categories.length && !hasAny) {
-    // Note: Supabase filtering done client-side for partial matching
-  }
+  const minDuration = parseInt(document.getElementById("minDuration").value) || 0;
+  const maxDuration = parseInt(document.getElementById("maxDuration").value) || Infinity;
+  const minYear = parseInt(document.getElementById("minYear").value) || 0;
+  const maxYear = parseInt(document.getElementById("maxYear").value) || Infinity;
+  const company = document.getElementById("company").value.toLowerCase();
+  const escapeRoomName = document.getElementById("escapeRoomName").value.toLowerCase();
+  const radius = parseFloat(document.getElementById("radius").value) || 0;
 
-  const minDuration = document.getElementById("minDuration").value;
-  const maxDuration = document.getElementById("maxDuration").value;
-  if (minDuration) query = query.gte("Duration", minDuration);
-  if (maxDuration) query = query.lte("Duration", maxDuration);
-
-  const minYear = document.getElementById("minYear").value;
-  const maxYear = document.getElementById("maxYear").value;
-  if (minYear) query = query.gte("Year of S", minYear);
-  if (maxYear) query = query.lte("Year of S", maxYear);
-
-  const company = document.getElementById("company").value;
-  if (company) query = query.ilike("Company", `%${company}%`);
-
-  const escapeRoomName = document.getElementById("escapeRoomName").value;
-  if (escapeRoomName) query = query.ilike("Escape room", `%${escapeRoomName}%`);
-
-  const { data, error } = await query;
-  console.log('Query result:', data, error);
-  if (error) return console.error(error);
-
-  // Client-side filtering for category with partial matching
-  let filteredData = data;
-  if (categories.length && !hasAny) {
-    filteredData = data.filter(room => {
-      const roomCategory = (room.Category || '').toLowerCase();
-      // Check if any selected category is contained in the room's category (case-insensitive)
-      return categories.some(selectedCat => roomCategory.includes(selectedCat.toLowerCase()));
-    });
-  }
-
-  // Client-side filtering for radius
-  const radius = parseFloat(document.getElementById("radius").value);
-
-  if (radius > 0 && userLocation) {
-    filteredData = filteredData.filter(r => {
+  // Apply all filters in single pass (more efficient than chaining)
+  let filteredData = data.filter(r => {
+    // Duration filter
+    if (r.Duration && (r.Duration < minDuration || r.Duration > maxDuration)) return false;
+    
+    // Year filter
+    if (r["Year of S"] && (r["Year of S"] < minYear || r["Year of S"] > maxYear)) return false;
+    
+    // Company filter
+    if (company && !String(r.Company || '').toLowerCase().includes(company)) return false;
+    
+    // Room name filter
+    if (escapeRoomName && !String(r["Escape room"] || '').toLowerCase().includes(escapeRoomName)) return false;
+    
+    // Category filter (only if not "Any")
+    if (categories.length && !hasAny) {
+      const roomCategory = (r.Category || '').toLowerCase();
+      if (!categories.some(cat => roomCategory.includes(cat.toLowerCase()))) return false;
+    }
+    
+    // Radius filter
+    if (radius > 0) {
+      if (!userLocation) {
+        alert("Please set your location first using the '📍 Locate Me' button to use radius filtering.");
+        return false;
+      }
       const distance = calculateDistance(userLocation.lat, userLocation.lng, r.Lat, r.Lon);
-      return distance <= radius;
-    });
-    console.log(`Filtered to ${filteredData.length} rooms within ${radius}km radius`);
-  } else if (radius > 0 && !userLocation) {
-    alert("Please set your location first using the '📍 Locate Me' button to use radius filtering.");
-    return;
-  }
-
-  // Count rooms by company
-  const companyCount = {};
-  filteredData.forEach(r => {
-    companyCount[r.Company] = (companyCount[r.Company] || 0) + 1;
+      if (distance > radius) return false;
+    }
+    
+    return true;
   });
 
+  cachedFilteredRooms = filteredData;
+  console.log(`Loaded ${filteredData.length} rooms (from cache of ${data.length})`);
+
+  // Batch render markers for faster DOM updates
+  const markerBatch = [];
   filteredData.forEach(r => {
     let popupContent = `
       <div class="escape-room-popup">
@@ -1620,6 +2884,10 @@ async function loadEscapeRooms() {
           <div class="popup-icon">🌐</div>
           <div class="popup-text"><strong>Website:</strong> ${r.website ? `<a href="${r.website}" target="_blank">${r.website}</a>` : 'N/A'}</div>
         </div>
+        <div class="popup-section">
+          <div class="popup-icon">🗺️</div>
+          <div class="popup-text"><strong>Directions:</strong> <a href="${getGoogleMapsDirectionsLink(r.Lat, r.Lon, 'driving')}" target="_blank">Car</a> | <a href="${getGoogleMapsDirectionsLink(r.Lat, r.Lon, 'walking')}" target="_blank">Walk</a></div>
+        </div>
     `;
     
     // Add distance if user location is available
@@ -1645,22 +2913,28 @@ async function loadEscapeRooms() {
       })
     }).bindPopup(popupContent);
 
-    markers.addLayer(marker);
+    markerBatch.push(marker);
   });
+  
+  // Add all markers at once (batch operation is faster)
+  markers.addLayers(markerBatch);
 }
 
-document.getElementById("applyFilters").onclick = () => {
-  closeMobileSidebar();
-  loadEscapeRooms();
-};
+// Debounce filter application for faster UX
+function debounceApplyFilters() {
+  clearTimeout(filterDebounceTimer);
+  filterDebounceTimer = setTimeout(() => {
+    closeMobileSidebar();
+    loadEscapeRooms();
+  }, FILTER_DEBOUNCE_MS);
+}
+
+document.getElementById("applyFilters").onclick = debounceApplyFilters;
 
 // Load saved filters and map state on page load
-window.addEventListener('load', function() {
-  Storage.loadTheme();
-  Storage.loadFilters();
-  Storage.loadMapState();
-  Storage.loadTripDateTime();
-  loadEscapeRooms();
+window.addEventListener('load', async function() {
+  await initializeAuth();
+  applyScopedState();
 });
 
 // Theme selector handler
@@ -1671,14 +2945,38 @@ document.getElementById("themeSelector").addEventListener('change', function() {
 });
 
 // Save filters when they change
-document.getElementById("category").addEventListener('change', Storage.saveFilters);
-document.getElementById("minDuration").addEventListener('change', Storage.saveFilters);
-document.getElementById("maxDuration").addEventListener('change', Storage.saveFilters);
-document.getElementById("minYear").addEventListener('change', Storage.saveFilters);
-document.getElementById("maxYear").addEventListener('change', Storage.saveFilters);
-document.getElementById("company").addEventListener('change', Storage.saveFilters);
-document.getElementById("escapeRoomName").addEventListener('change', Storage.saveFilters);
-document.getElementById("radius").addEventListener('change', Storage.saveFilters);
+document.getElementById("category").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+document.getElementById("minDuration").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+document.getElementById("maxDuration").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+document.getElementById("minYear").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+document.getElementById("maxYear").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+document.getElementById("company").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+document.getElementById("escapeRoomName").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+document.getElementById("radius").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
 
 // Add Enter key support for filter inputs
 function handleFilterEnter(event) {
@@ -1687,18 +2985,54 @@ function handleFilterEnter(event) {
   }
 }
 
+// Debounce text input for faster live search
+function debounceTextInput(event) {
+  event.preventDefault();
+  Storage.saveFilters();
+  debounceApplyFilters();
+}
+
 document.getElementById("category").addEventListener('keypress', handleFilterEnter);
 document.getElementById("minDuration").addEventListener('keypress', handleFilterEnter);
 document.getElementById("maxDuration").addEventListener('keypress', handleFilterEnter);
 document.getElementById("minYear").addEventListener('keypress', handleFilterEnter);
 document.getElementById("maxYear").addEventListener('keypress', handleFilterEnter);
-document.getElementById("company").addEventListener('keypress', handleFilterEnter);
-document.getElementById("escapeRoomName").addEventListener('keypress', handleFilterEnter);
+document.getElementById("company").addEventListener('keyup', debounceTextInput);
+document.getElementById("escapeRoomName").addEventListener('keyup', debounceTextInput);
 document.getElementById("radius").addEventListener('keypress', handleFilterEnter);
 
 // Save map state when it changes
 map.on('moveend', Storage.saveMapState);
 map.on('zoomend', Storage.saveMapState);
+
+// ===== PERFORMANCE: CACHED DATA & DEBOUNCING =====
+let cachedAllRooms = [];
+let cachedFilteredRooms = [];
+let filterDebounceTimer = null;
+const FILTER_DEBOUNCE_MS = 300;
+
+// Pre-cache all escape rooms on first load to avoid repeated Supabase queries
+async function cacheAllEscapeRooms() {
+  if (cachedAllRooms.length > 0) return cachedAllRooms;
+  try {
+    const { data, error } = await db
+      .from("Escape_Rooms")
+      .select("id,*")
+      .eq("Status", "approved")
+      .eq("Operational", "Yes")
+      .limit(5000);
+    if (error) {
+      console.error('Cache error:', error);
+      return [];
+    }
+    cachedAllRooms = data || [];
+    buildRoomIndex();
+    return cachedAllRooms;
+  } catch (err) {
+    console.error('Cache fetch failed:', err);
+    return [];
+  }
+}
 
 // ===== PLAN YOUR ESCAPE FEATURE =====
 let allEscapeRooms = [];
@@ -2026,6 +3360,9 @@ function updateItinerary() {
           📅 <input type="time" value="${formatTimeHHMM(item.scheduledTime)}" onchange="updateItemTime(${idx}, this.value)" title="Click to select time (24h format)" step="900">
         </div>
         <div style="font-size: 12px; color: #3388ff;">⏱️ Duration: ${item.Duration}min</div>
+        <div style="font-size: 12px; margin-top: 4px;">
+          <a href="${getGoogleMapsLink(item.Address, item.Lat, item.Lon)}" target="_blank" style="color: #27b622; text-decoration: none;">🗺️ View in Maps</a>
+        </div>
         ${travelInfo}
         <button onclick="removeFromItinerary(${idx})" style="margin-top: 8px; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">Remove</button>
       </div>
@@ -2066,6 +3403,10 @@ document.getElementById("closePlan").onclick = () => {
   }
 };
 
+document.getElementById("savePlan").onclick = () => {
+  window.saveCurrentPlan();
+};
+
 // Plan search
 document.getElementById("planSearchInput").addEventListener('input', updateRoomSelector);
 
@@ -2076,11 +3417,11 @@ Storage.saveItinerary = function() {
     id: r.id,
     scheduledTime: r.scheduledTime
   }));
-  localStorage.setItem("escapeRoomItinerary", JSON.stringify(toSave));
+  setStoredValue(STORAGE_KEYS.itinerary, JSON.stringify(toSave));
 };
 
 Storage.loadItinerary = function() {
-  const saved = localStorage.getItem("escapeRoomItinerary");
+  const saved = getStoredValue(STORAGE_KEYS.itinerary);
   if (saved && allEscapeRooms.length > 0) {
     const plan = JSON.parse(saved);
     itinerary = plan.map(p => {
@@ -2097,14 +3438,17 @@ Storage.loadItinerary = function() {
 };
 
 Storage.saveTripDateTime = function() {
-  localStorage.setItem("escapeRoomTripDate", selectedTripDate.toISOString().split("T")[0]);
+  setStoredValue(STORAGE_KEYS.tripDate, selectedTripDate.toISOString().split("T")[0]);
 };
 
 Storage.loadTripDateTime = function() {
-  const dateStr = localStorage.getItem("escapeRoomTripDate");
+  const dateStr = getStoredValue(STORAGE_KEYS.tripDate);
   if (dateStr) {
     selectedTripDate = new Date(dateStr);
+    return;
   }
+
+  selectedTripDate = new Date();
 };
 
 // Clean up invalid items from itinerary
@@ -2243,8 +3587,47 @@ function renderTripOnMap() {
   }
 }
 
+function openItineraryInGoogleMaps() {
+  const sortedItinerary = getSortedItineraryByTime();
+  
+  if (sortedItinerary.length === 0) {
+    alert("No rooms in itinerary to show route");
+    return;
+  }
+  
+  if (sortedItinerary.length === 1) {
+    // Single stop - just search for it
+    const room = sortedItinerary[0];
+    const url = getGoogleMapsLink(room.Address, room.Lat, room.Lon);
+    window.open(url, '_blank');
+    return;
+  }
+  
+  // Multiple stops - build directions URL
+  const origin = `${sortedItinerary[0].Lat},${sortedItinerary[0].Lon}`;
+  const destination = `${sortedItinerary[sortedItinerary.length - 1].Lat},${sortedItinerary[sortedItinerary.length - 1].Lon}`;
+  
+  let waypoints = '';
+  if (sortedItinerary.length > 2) {
+    // Middle stops as waypoints
+    const middleStops = sortedItinerary.slice(1, -1);
+    waypoints = middleStops.map(room => `${room.Lat},${room.Lon}`).join('|');
+  }
+  
+  let url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=driving`;
+  if (waypoints) {
+    url += `&waypoints=${encodeURIComponent(waypoints)}`;
+  }
+  
+  window.open(url, '_blank');
+}
+
 document.getElementById("showTripOnMap").onclick = () => {
   renderTripOnMap();
+};
+
+document.getElementById("openRouteInGoogleMaps").onclick = () => {
+  openItineraryInGoogleMaps();
 };
 
 // Export itinerary as PDF
@@ -2454,26 +3837,294 @@ document.getElementById("exportPDF").onclick = async () => {
   }
 };
 
-let selectedLatLng = null;
-let selectedLocationMarker = null;
+let locationWatchId = null;
+let isFollowingUser = false;
 
-map.on("click", e => {
-  selectedLatLng = e.latlng;
-  document.getElementById("map").classList.remove("selecting-location");
+function isValidCoordinate(value, min, max) {
+  return Number.isFinite(value) && value >= min && value <= max;
+}
 
-  // Add marker at selected location
-  if (selectedLocationMarker) {
-    map.removeLayer(selectedLocationMarker);
+function getGoogleMapsDirectionsLink(lat, lon, mode = 'driving') {
+  const fallbackUrl = 'https://www.google.com/maps';
+  if (!isValidCoordinate(lat, -90, 90) || !isValidCoordinate(lon, -180, 180)) {
+    return fallbackUrl;
   }
-  selectedLocationMarker = L.marker(selectedLatLng).addTo(map).bindPopup("Location selected");
+
+  const destination = `${lat},${lon}`;
+  let url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}&travelmode=${mode}`;
+
+  if (userLocation && isValidCoordinate(userLocation.lat, -90, 90) && isValidCoordinate(userLocation.lng, -180, 180)) {
+    url += `&origin=${encodeURIComponent(`${userLocation.lat},${userLocation.lng}`)}`;
+  }
+
+  return url;
+}
+
+function stopFollowingLocation() {
+  if (locationWatchId !== null) {
+    navigator.geolocation.clearWatch(locationWatchId);
+    locationWatchId = null;
+  }
+  isFollowingUser = false;
+  const button = document.getElementById("locateMe");
+  if (button) {
+    button.textContent = '📍 Locate Me';
+    button.disabled = false;
+  }
+}
+
+function updateUserLocationMarker(lat, lng, accuracy) {
+  userLocation = { lat, lng };
+  Storage.saveUserLocation(userLocation);
+  setLocationStatus(true);
+
+  if (userLocationMarker) {
+    userLocationMarker.setLatLng([lat, lng]);
+    if (userLocationMarker.accuracyCircle) {
+      userLocationMarker.accuracyCircle.setLatLng([lat, lng]);
+      userLocationMarker.accuracyCircle.setRadius(Math.max(accuracy, 10));
+    }
+  } else {
+    userLocationMarker = L.marker([lat, lng], {
+      icon: L.divIcon({
+        className: 'user-location-marker',
+        html: '📍',
+        iconSize: [25, 25],
+        iconAnchor: [12, 25]
+      })
+    }).addTo(map);
+
+    const accuracyCircle = L.circle([lat, lng], {
+      color: '#3388ff',
+      fillColor: '#3388ff',
+      fillOpacity: 0.1,
+      radius: Math.max(accuracy, 10),
+      weight: 2
+    }).addTo(map);
+    userLocationMarker.accuracyCircle = accuracyCircle;
+  }
+
+  userLocationMarker.bindPopup(`
+    <strong>You are here!</strong><br>
+    <small>WGS84 Coordinates:</small><br>
+    Latitude: ${lat.toFixed(6)}°<br>
+    Longitude: ${lng.toFixed(6)}°<br>
+  `);
+
+  if (isFollowingUser) {
+    const zoomLevel = accuracy > 100 ? 13 : accuracy > 50 ? 14 : 16;
+    map.panTo([lat, lng], { animate: true, duration: 0.5 });
+    map.setZoom(zoomLevel, { animate: true });
+  }
+}
+
+function startFollowingLocation() {
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by this browser. Please update your browser or use a different device.");
+    return;
+  }
+
+  const button = document.getElementById("locateMe");
+  if (button) {
+    button.textContent = '⏳ Following...';
+    button.disabled = true;
+  }
+
+  locationWatchId = navigator.geolocation.watchPosition(
+    position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const accuracy = position.coords.accuracy;
+
+      if (!isValidCoordinate(lat, -90, 90) || !isValidCoordinate(lng, -180, 180)) {
+        alert("Invalid coordinates received. Please try again.");
+        return;
+      }
+
+      console.log(`GPS Location (WGS84): Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}, Accuracy: ±${accuracy.toFixed(0)}m`);
+      isFollowingUser = true;
+      updateUserLocationMarker(lat, lng, accuracy);
+
+      if (button) {
+        button.textContent = '📍 Stop following';
+        button.disabled = false;
+      }
+    },
+    error => {
+      if (button) {
+        button.textContent = '📍 Locate Me';
+        button.disabled = false;
+      }
+
+      let errorMessage = "Unable to retrieve your location.";
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          errorMessage = "Location access denied. Please enable location permissions.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorMessage = "Location information is unavailable. Please try again in an open area.";
+          break;
+        case error.TIMEOUT:
+          errorMessage = "Location request timed out. Please try again.";
+          break;
+      }
+      alert(errorMessage);
+      console.error("Geolocation error:", error);
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    }
+  );
+}
+
+function toggleFollowLocation() {
+  if (locationWatchId !== null) {
+    stopFollowingLocation();
+    return;
+  }
+  startFollowingLocation();
+}
+
+document.getElementById("loginButton").onclick = async () => {
+  const { email, password } = getAuthFormValues();
+  if (!email || !password) {
+    setAuthStatus("Email and password are required.", "error");
+    return;
+  }
+
+  setAuthBusy(true);
+  setAuthStatus("Signing in...");
+
+  const { error } = await db.auth.signInWithPassword({ email, password });
+
+  setAuthBusy(false);
+  if (error) {
+    console.error("Login error:", error);
+    setAuthStatus(error.message, "error");
+    return;
+  }
+
+  clearAuthForm();
+  setAuthStatus("Signed in.", "success");
+};
+
+document.getElementById("signupButton").onclick = async () => {
+  const { email, password } = getAuthFormValues();
+  if (!email || !password) {
+    setAuthStatus("Email and password are required.", "error");
+    return;
+  }
+
+  if (password.length < 6) {
+    setAuthStatus("Password must be at least 6 characters.", "error");
+    return;
+  }
+
+  setAuthBusy(true);
+  setAuthStatus("Creating account...");
+
+  const redirectTo = getAuthRedirectUrl();
+  const { data, error } = await db.auth.signUp({
+    email,
+    password,
+    options: redirectTo ? { emailRedirectTo: redirectTo } : undefined
+  });
+
+  setAuthBusy(false);
+  if (error) {
+    console.error("Signup error:", error);
+    setAuthStatus(error.message, "error");
+    return;
+  }
+
+  clearAuthForm();
+  if (data.session) {
+    setAuthStatus("Account created and signed in.", "success");
+    openProfilePage();
+  } else {
+    setAuthStatus("Account created. Check your email to confirm sign-in.", "success");
+  }
+};
+
+document.getElementById("userAvatar").onclick = () => {
+  const dropdown = document.getElementById("avatarDropdown");
+  dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+};
+
+// Close dropdown when clicking elsewhere
+document.addEventListener('click', (e) => {
+  const avatar = document.getElementById("userAvatar");
+  const dropdown = document.getElementById("avatarDropdown");
+  if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+    dropdown.style.display = 'none';
+  }
 });
+
+// Menu item handlers
+document.getElementById("profileBtn").onclick = () => {
+  document.getElementById("avatarDropdown").style.display = 'none';
+  openProfilePage();
+};
+
+document.getElementById("savedPlansBtn").onclick = () => {
+  document.getElementById("avatarDropdown").style.display = 'none';
+  renderSavedPlansPage();
+  showPageOverlay("savedPlansPage");
+};
+
+document.getElementById("submittedRoomsBtn").onclick = () => {
+  document.getElementById("avatarDropdown").style.display = 'none';
+  loadSubmittedRooms();
+  showPageOverlay("submittedRoomsPage");
+};
+
+document.getElementById("savedPlansClear").onclick = () => {
+  if (confirm("Clear all saved plans?")) {
+    saveSavedPlans([]);
+    renderSavedPlansPage();
+  }
+};
+
+document.getElementById("submittedRoomsRefresh").onclick = () => {
+  loadSubmittedRooms();
+};
+
+// Fast direct room list input  
+
+document.getElementById("logoutBtn").onclick = async () => {
+  document.getElementById("avatarDropdown").style.display = 'none';
+  const { error } = await db.auth.signOut();
+  if (error) {
+    console.error("Logout error:", error);
+    setAuthStatus(error.message, "error");
+  } else {
+    setAuthStatus("Logged out.", "success");
+  }
+};
+
+document.getElementById("savedPlansBack").onclick = hideAllPageOverlays;
+document.getElementById("submittedRoomsBack").onclick = hideAllPageOverlays;
+document.getElementById("profileCancel").onclick = () => {
+  closeProfilePage();
+};
+document.getElementById("profileSave").onclick = saveProfileChanges;
+document.getElementById("profilePhotoFile").addEventListener("change", handleProfileFileChange);
+
+document.getElementById("logoutBtn").onclick = async () => {
+  document.getElementById("avatarDropdown").style.display = 'none';
+  const { error } = await db.auth.signOut();
+  if (error) {
+    console.error("Logout error:", error);
+    setAuthStatus(error.message, "error");
+  } else {
+    setAuthStatus("Logged out.", "success");
+  }
+};
 
 document.getElementById("submitBtn").onclick = async () => {
   console.log("Submit button clicked");
-  if (!selectedLatLng) {
-    alert("Select a location on the map");
-    return;
-  }
 
   const name = document.getElementById("nameInput").value.trim();
   if (!name) {
@@ -2515,19 +4166,47 @@ document.getElementById("submitBtn").onclick = async () => {
       website: websiteValue || null,
       Address: document.getElementById("addressInput").value,
       Category: category,
-      Lat: selectedLatLng.lat,
-      Lon: selectedLatLng.lng,
+      Lat: null,
+      Lon: null,
       City: "Athens",
       Country: "Greece",
       Status: "pending",
-    });
+    }).select("id,Status");
 
     if (error) {
       console.error("Insert error:", error);
       alert("Error submitting: " + error.message);
     } else {
-      alert("Submitted for review!");
-      // Optionally reload the map or clear form
+      const insertedRow = Array.isArray(data) ? data[0] : data;
+      const newSubmission = {
+        id: insertedRow?.id ? String(insertedRow.id) : `local-${Date.now()}`,
+        dbId: insertedRow?.id || null,
+        name: document.getElementById("nameInput").value.trim(),
+        company: document.getElementById("companyInput").value.trim(),
+        address,
+        category,
+        duration: durationValue ? parseInt(durationValue) : null,
+        year: yearValue ? parseInt(yearValue) : null,
+        website: websiteValue || null,
+        status: insertedRow?.Status || "pending",
+        submittedAt: new Date().toISOString()
+      };
+
+      const submissions = loadStoredSubmittedRooms();
+      submissions.unshift(newSubmission);
+      saveSubmittedRooms(submissions);
+
+      // Show confirmation modal with room details
+      showSubmitConfirmation(newSubmission);
+      
+      // Clear form
+      document.getElementById("nameInput").value = "";
+      document.getElementById("companyInput").value = "";
+      document.getElementById("durationInput").value = "";
+      document.getElementById("yearInput").value = "";
+      document.getElementById("websiteInput").value = "";
+      document.getElementById("addressInput").value = "";
+      document.getElementById("categoryInput").selectedIndex = -1;
     }
   } catch (err) {
     console.error("Submit error:", err);
@@ -2535,16 +4214,57 @@ document.getElementById("submitBtn").onclick = async () => {
   }
 };
 
+function showSubmitConfirmation(submission) {
+  const detailsDiv = document.getElementById("submittedRoomDetails");
+  detailsDiv.innerHTML = `
+    <h4 style="margin: 0 0 10px 0; color: #333;">${submission.name}</h4>
+    <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px 15px; font-size: 14px;">
+      <strong>Company:</strong> <span>${submission.company}</span>
+      <strong>Address:</strong> <span>${submission.address}</span>
+      <strong>Category:</strong> <span>${submission.category}</span>
+      <strong>Duration:</strong> <span>${submission.duration ? submission.duration + ' min' : 'N/A'}</span>
+      <strong>Year:</strong> <span>${submission.year || 'N/A'}</span>
+      <strong>Website:</strong> <span>${submission.website ? `<a href="${submission.website}" target="_blank">${submission.website}</a>` : 'N/A'}</span>
+      <strong>Status:</strong> <span style="color: #ff9800;">${submission.status}</span>
+    </div>
+  `;
+  
+  document.getElementById("submitConfirmationModal").style.display = "flex";
+}
+
+document.getElementById("closeConfirmationModal").onclick = () => {
+  document.getElementById("submitConfirmationModal").style.display = "none";
+};
+
+document.getElementById("viewSubmittedRooms").onclick = () => {
+  document.getElementById("submitConfirmationModal").style.display = "none";
+  // Open submitted rooms overlay
+  document.getElementById("submittedRoomsOverlay").style.display = "flex";
+  loadSubmittedRooms();
+};
+
+// Close modal when clicking outside
+document.getElementById("submitConfirmationModal").onclick = (e) => {
+  if (e.target === document.getElementById("submitConfirmationModal")) {
+    document.getElementById("submitConfirmationModal").style.display = "none";
+  }
+};
+
+// Close modal with ESC key
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && document.getElementById("submitConfirmationModal").style.display === "flex") {
+    document.getElementById("submitConfirmationModal").style.display = "none";
+  }
+});
+
 document.getElementById("openSubmit").onclick = () => {
   console.log("Open submit clicked");
   closeMobileSidebar();
   document.getElementById("submitPanel").hidden = false;
-  document.getElementById("map").classList.add("selecting-location");
 };
 
 document.getElementById("closeSubmit").onclick = () => {
   document.getElementById("submitPanel").hidden = true;
-  document.getElementById("map").classList.remove("selecting-location");
 };
 
 // GPS functionality - Uses WGS84 coordinate system (EPSG:4326)
@@ -2554,140 +4274,7 @@ let userLocation = null; // Store user's current location for radius filtering
 let isLocating = false;
 
 document.getElementById("locateMe").onclick = () => {
-  if (isLocating) return; // Prevent multiple simultaneous requests
-  
-  if (!navigator.geolocation) {
-    alert("Geolocation is not supported by this browser. Please update your browser or use a different device.");
-    return;
-  }
-  
-  isLocating = true;
-  const button = document.getElementById("locateMe");
-  const originalText = button.textContent;
-  button.textContent = "🔄 Locating...";
-  button.disabled = true;
-  
-  // Request precise location with high accuracy
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      // Reset button state
-      isLocating = false;
-      button.textContent = originalText;
-      button.disabled = false;
-      
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      const accuracy = position.coords.accuracy;
-      
-      // Validate WGS84 coordinate ranges
-      if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-        alert("Invalid coordinates received. Please try again.");
-        return;
-      }
-      
-      console.log(`GPS Location (WGS84): Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}, Accuracy: ±${accuracy.toFixed(0)}m`);
-      
-      // Store user location for radius filtering
-      userLocation = { lat, lng };
-      localStorage.setItem("escapeRoomUserLocation", JSON.stringify(userLocation));
-      
-      // Update location status indicator
-      document.getElementById("locationStatus").textContent = "✓ Location set - radius filter available";
-      document.getElementById("locationStatus").style.color = "#ccffcc";
-      
-      // Remove existing user location marker if it exists
-      if (userLocationMarker) {
-        map.removeLayer(userLocationMarker);
-      }
-      
-      // Create a marker for user location with accuracy circle
-      const accuracyRadius = Math.max(accuracy, 10); // Minimum 10m radius for visibility
-      
-      userLocationMarker = L.marker([lat, lng], {
-        icon: L.divIcon({
-          className: 'user-location-marker',
-          html: '📍',
-          iconSize: [25, 25],
-          iconAnchor: [12, 25]
-        })
-      }).addTo(map);
-      
-      // Add accuracy circle
-      const accuracyCircle = L.circle([lat, lng], {
-        color: '#3388ff',
-        fillColor: '#3388ff',
-        fillOpacity: 0.1,
-        radius: accuracyRadius,
-        weight: 2
-      }).addTo(map);
-      
-      // Store circle reference for cleanup
-      userLocationMarker.accuracyCircle = accuracyCircle;
-      
-      // Enhanced popup with WGS84 coordinates and accuracy
-      userLocationMarker.bindPopup(`
-        <strong>You are here!</strong><br>
-        <small>WGS84 Coordinates:</small><br>
-        Latitude: ${lat.toFixed(6)}°<br>
-        Longitude: ${lng.toFixed(6)}°<br>
-      `);
-      
-      // Center the map on the user's location with appropriate zoom
-      const zoomLevel = accuracy > 100 ? 13 : accuracy > 50 ? 14 : 16;
-      map.setView([lat, lng], zoomLevel);
-      
-      // Auto-remove marker after 10 minutes
-      setTimeout(() => {
-        if (userLocationMarker) {
-          map.removeLayer(userLocationMarker);
-          if (userLocationMarker.accuracyCircle) {
-            map.removeLayer(userLocationMarker.accuracyCircle);
-          }
-          userLocationMarker = null;
-          userLocation = null; // Clear stored location
-          localStorage.removeItem("escapeRoomUserLocation");
-          // Reset location status indicator
-          document.getElementById("locationStatus").textContent = "Location not set - use \"📍 Locate Me\" first";
-          document.getElementById("locationStatus").style.color = "#ffcccc";
-        }
-      }, 600000); // 10 minutes
-    },
-    (error) => {
-      // Reset button state
-      isLocating = false;
-      button.textContent = originalText;
-      button.disabled = false;
-      
-      let errorMessage = "Unable to retrieve your location.";
-      
-      switch(error.code) {
-        case error.PERMISSION_DENIED:
-          errorMessage = "Location access denied. Please enable location permissions:\n\n" +
-            "• iOS: Settings > Privacy > Location Services > This App > Always\n" +
-            "• Android: Settings > Apps > Permissions > Location\n" +
-            "• Desktop: Check browser location prompt or settings\n\n" +
-            "Then try again.";
-          break;
-        case error.POSITION_UNAVAILABLE:
-          errorMessage = "Location information is unavailable. Please check your GPS settings or try again in an open area.";
-          break;
-        case error.TIMEOUT:
-          errorMessage = "Location request timed out. Please check your internet connection and try again.";
-          break;
-        default:
-          errorMessage = "An unknown location error occurred. Please try again.";
-          break;
-      }
-      
-      alert(errorMessage);
-      console.error("Geolocation error:", error);
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 15000, // Increased timeout for better accuracy
-      maximumAge: 0 // Always get fresh location
-    }
-  );
+  toggleFollowLocation();
 };
 
 // Mobile menu toggle
@@ -2725,6 +4312,7 @@ if (window.innerWidth <= 768) {
 
 </body>
 </html>
+
 
 
 
