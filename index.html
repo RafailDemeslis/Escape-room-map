@@ -4638,8 +4638,20 @@ document.getElementById("savedPlansClear").onclick = () => {
   }
 };
 
+document.getElementById("savedPlansBack").onclick = () => {
+  hideAllPageOverlays();
+};
+
 document.getElementById("submittedRoomsRefresh").onclick = () => {
   loadSubmittedRooms();
+};
+
+document.getElementById("submittedRoomsBack").onclick = () => {
+  hideAllPageOverlays();
+};
+
+document.getElementById("profileCancel").onclick = () => {
+  closeProfilePage();
 };
 
 // Fast direct room list input  
