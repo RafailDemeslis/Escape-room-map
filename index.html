@@ -239,6 +239,35 @@ body {
   background: var(--button-hover);
 }
 
+/* Cookie Banner */
+#cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--secondary-bg);
+  color: var(--text-color);
+  padding: 12px 20px;
+  text-align: center;
+  border-top: 3px solid var(--border-color);
+  z-index: 2500;
+  font-size: 14px;
+}
+
+#cookie-banner button {
+  margin-left: 12px;
+  padding: 6px 12px;
+  background: var(--accent-color);
+  color: var(--text-color);
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#cookie-banner button:hover {
+  background: var(--button-hover);
+}
+
 .page-overlay {
   position: fixed;
   top: 0;
@@ -251,6 +280,29 @@ body {
   align-items: center;
   justify-content: center;
   padding: 16px;
+}
+
+#termsPage,
+#privacyPage {
+  top: 20px;
+  right: 20px;
+  left: auto;
+  bottom: auto;
+  width: auto;
+  height: auto;
+  background: transparent;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 0;
+  z-index: 2300;
+}
+
+#termsPage .page-card,
+#privacyPage .page-card {
+  width: min(480px, calc(100vw - 40px));
+  max-width: 480px;
+  max-height: calc(100vh - 40px);
+  margin: 0;
 }
 
 .page-card {
@@ -1507,19 +1559,23 @@ body.sidebar-open {
       <h2>Account</h2>
       <div id="authSummary" class="auth-summary">Sign in to save your preferences and access future features.</div>
 
-      <div id="authGuestFields">
+      <div id="authInitialButtons">
+        <div class="auth-buttons">
+          <button id="signupButton" type="button">Sign up</button>
+          <button id="loginButton" type="button">Log in</button>
+        </div>
+        <button id="continueAsGuest" type="button" style="width: 100%; margin-top: 8px;">Continue as Guest</button>
+      </div>
+
+      <div id="authGuestFields" hidden>
         <label for="authEmail">Email</label>
         <input id="authEmail" type="email" placeholder="you@example.com" autocomplete="email">
 
         <label for="authPassword">Password</label>
         <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password">
 
-        <div class="auth-buttons">
-          <button id="loginButton" type="button">Log in</button>
-          <button id="signupButton" type="button">Create account</button>
-        </div>
-
-        <button id="continueAsGuest" type="button" style="width: 100%; margin-top: 8px;">Continue as Guest</button>
+        <label><input type="checkbox" id="agreeTerms" required> I agree to the <a href="#terms" onclick="showTerms(); return false;">Terms of Service</a></label>
+        <label><input type="checkbox" id="agreePrivacy" required> I agree to the <a href="#privacy" onclick="showPrivacy(); return false;">Privacy Policy</a></label>
       </div>
 
       <div id="authUserActions" hidden>
@@ -1759,6 +1815,230 @@ body.sidebar-open {
   </div>
 </div>
 
+  <!-- Terms of Service -->
+  <div id="termsPage" class="page-overlay" hidden>
+    <div class="page-card">
+      <h1>Terms of Service / Όροι Χρήσης</h1>
+
+      <h2>English</h2>
+
+      <p>Welcome to Escaper Map. By accessing or using our platform, you agree to these Terms of Service.</p>
+
+      <h3>1. Use of the Platform</h3>
+      <p>You agree to use the platform only for lawful purposes and not to misuse or disrupt the service.</p>
+
+      <h3>2. Accounts</h3>
+      <p>You are responsible for maintaining the confidentiality of your account and all activities under it.</p>
+
+      <h3>3. User Submissions</h3>
+      <p>By submitting content (e.g. escape rooms), you grant Escaper Map the right to use, display, and modify this content. We reserve the right to remove or edit any content.</p>
+
+      <h3>4. Accuracy of Information</h3>
+      <p>We do not guarantee that all information is accurate or up to date.</p>
+
+      <h3>5. External Links</h3>
+      <p>We are not responsible for the content of third-party websites.</p>
+
+      <h3>6. Limitation of Liability</h3>
+      <p>Escaper Map is not liable for any damages resulting from the use of the platform.</p>
+
+      <h3>7. Termination</h3>
+      <p>We reserve the right to suspend or terminate accounts that violate these terms.</p>
+
+      <h3>8. Changes</h3>
+      <p>We may update these terms at any time.</p>
+
+      ---
+
+      <h2>Ελληνικά</h2>
+
+      <p>Καλώς ήρθατε στο Escaper Map. Με τη χρήση της πλατφόρμας αποδέχεστε τους παρόντες όρους.</p>
+
+      <h3>1. Χρήση Πλατφόρμας</h3>
+      <p>Συμφωνείτε να χρησιμοποιείτε την πλατφόρμα νόμιμα και χωρίς κατάχρηση.</p>
+
+      <h3>2. Λογαριασμοί</h3>
+      <p>Είστε υπεύθυνοι για την ασφάλεια του λογαριασμού σας.</p>
+
+      <h3>3. Περιεχόμενο Χρηστών</h3>
+      <p>Με την υποβολή περιεχομένου, δίνετε το δικαίωμα στο Escaper Map να το χρησιμοποιεί και να το τροποποιεί.</p>
+
+      <h3>4. Ακρίβεια Πληροφοριών</h3>
+      <p>Δεν εγγυόμαστε ότι οι πληροφορίες είναι πάντα ακριβείς ή ενημερωμένες.</p>
+
+      <h3>5. Εξωτερικοί Σύνδεσμοι</h3>
+      <p>Δεν φέρουμε ευθύνη για τρίτες ιστοσελίδες.</p>
+
+      <h3>6. Περιορισμός Ευθύνης</h3>
+      <p>Το Escaper Map δεν ευθύνεται για ζημιές από τη χρήση της πλατφόρμας.</p>
+
+      <h3>7. Τερματισμός</h3>
+      <p>Μπορούμε να διαγράψουμε λογαριασμούς που παραβιάζουν τους όρους.</p>
+
+      <h3>8. Αλλαγές</h3>
+      <p>Οι όροι μπορεί να τροποποιηθούν.</p>
+
+      <div class="page-actions">
+        <button onclick="hideTerms()" class="btn-cancel" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy Policy -->
+  <div id="privacyPage" class="page-overlay" hidden>
+    <div class="page-card">
+      <h1>Privacy Policy / Πολιτική Απορρήτου</h1>
+
+      <h2>English</h2>
+
+      <p>This Privacy Policy explains how we collect and use your data.</p>
+
+      <h3>1. Data We Collect</h3>
+      <ul>
+      <li>Email address (for account creation)</li>
+      <li>User-submitted content</li>
+      <li>Technical data (IP address, browser)</li>
+      </ul>
+
+      <h3>2. Purpose</h3>
+      <p>We collect data to provide and improve the platform.</p>
+
+      <h3>3. Legal Basis</h3>
+      <p>We process data based on consent and legitimate interest.</p>
+
+      <h3>4. Data Storage</h3>
+      <p>Your data is securely stored using Supabase infrastructure.</p>
+
+      <h3>5. Data Sharing</h3>
+      <p>We do not sell your data.</p>
+
+      <h3>6. Your Rights (GDPR)</h3>
+      <ul>
+      <li>Access your data</li>
+      <li>Request deletion</li>
+      <li>Request correction</li>
+      </ul>
+
+      <h3>7. Contact</h3>
+      <p>Email: contact@escapermap.com</p>
+
+      ---
+
+      <h2>Ελληνικά</h2>
+
+      <p>Η παρούσα πολιτική εξηγεί πώς συλλέγουμε και χρησιμοποιούμε τα δεδομένα σας.</p>
+
+      <h3>1. Δεδομένα που συλλέγουμε</h3>
+      <ul>
+      <li>Email (για λογαριασμό)</li>
+      <li>Περιεχόμενο χρηστών</li>
+      <li>Τεχνικά δεδομένα (IP)</li>
+      </ul>
+
+      <h3>2. Σκοπός</h3>
+      <p>Για τη λειτουργία και βελτίωση της πλατφόρμας.</p>
+
+      <h3>3. Νομική Βάση</h3>
+      <p>Συγκατάθεση και έννομο συμφέρον.</p>
+
+      <h3>4. Αποθήκευση</h3>
+      <p>Τα δεδομένα αποθηκεύονται με ασφάλεια μέσω Supabase.</p>
+
+      <h3>5. Διαμοιρασμός</h3>
+      <p>Δεν πουλάμε δεδομένα.</p>
+
+      <h3>6. Δικαιώματα</h3>
+      <ul>
+      <li>Πρόσβαση</li>
+      <li>Διαγραφή</li>
+      <li>Διόρθωση</li>
+      </ul>
+
+      <h3>7. Επικοινωνία</h3>
+      <p>Email: escapermap@gmail.com</p>
+
+      <div class="page-actions">
+        <button onclick="hidePrivacy()" class="btn-cancel" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Overlay -->
+  <div id="loginPage" class="page-overlay">
+    <div class="page-card">
+      <h3>Log in</h3>
+      <div class="profile-field">
+        <label for="loginEmail">Email</label>
+        <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="profile-field">
+        <label for="loginPassword">Password</label>
+        <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
+      </div>
+      <div class="auth-buttons">
+        <button id="loginSubmitButton" type="button">Log in</button>
+        <button onclick="hideLogin()" class="btn-cancel" type="button">Cancel</button>
+      </div>
+      <div style="text-align: center; margin-top: 12px;">
+        <a href="#" onclick="showForgotPassword(); return false;">Forgot your password?</a>
+      </div>
+      <small id="loginStatus" class="auth-status" style="display: block; margin-top: 8px; min-height: 18px;"></small>
+    </div>
+  </div>
+
+  <!-- Signup Overlay -->
+  <div id="signupPage" class="page-overlay">
+    <div class="page-card">
+      <h3>Sign up</h3>
+      <div class="profile-field">
+        <label for="signupEmail">Email</label>
+        <input id="signupEmail" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="profile-field">
+        <label for="signupPassword">Password</label>
+        <input id="signupPassword" type="password" placeholder="Password" autocomplete="current-password">
+      </div>
+      <div class="profile-field">
+        <label><input type="checkbox" id="signupAgreeTerms" required> I agree to the <a href="#terms" onclick="showTerms(); return false;">Terms of Service</a></label>
+        <label><input type="checkbox" id="signupAgreePrivacy" required> I agree to the <a href="#privacy" onclick="showPrivacy(); return false;">Privacy Policy</a></label>
+      </div>
+      <div class="auth-buttons">
+        <button id="signupSubmitButton" type="button">Create account</button>
+        <button onclick="hideSignup()" class="btn-cancel" type="button">Cancel</button>
+      </div>
+      <small id="signupStatus" class="auth-status" style="display: block; margin-top: 8px; min-height: 18px;"></small>
+    </div>
+  </div>
+
+  <!-- Forgot Password Overlay -->
+  <div id="forgotPasswordPage" class="page-overlay">
+    <div class="page-card">
+      <h3>Reset Password</h3>
+      <p>Enter your email address and we'll send you a link to reset your password.</p>
+      <div class="profile-field">
+        <label for="forgotEmail">Email</label>
+        <input id="forgotEmail" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="auth-buttons">
+        <button id="forgotSubmitButton" type="button">Send Reset Link</button>
+        <button onclick="hideForgotPassword()" class="btn-cancel" type="button">Cancel</button>
+      </div>
+      <small id="forgotStatus" class="auth-status" style="display: block; margin-top: 8px; min-height: 18px;"></small>
+    </div>
+  </div>
+
+  <!-- Email Confirmation Overlay -->
+  <div id="emailConfirmationPage" class="page-overlay">
+    <div class="page-card">
+      <h3>Check Your Email</h3>
+      <p>We've sent a confirmation link to your email address. Please check your email and click the link to confirm your account.</p>
+      <p>Once confirmed, you can sign in to your account.</p>
+      <div class="auth-buttons">
+        <button onclick="hideEmailConfirmation()" class="btn-cancel" type="button">Continue</button>
+      </div>
+    </div>
+  </div>
+
 <!-- Scripts -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
@@ -1970,6 +2250,232 @@ function showPageOverlay(pageId) {
 
 function hideAllPageOverlays() {
   showPageOverlay(null);
+}
+
+function showTerms() {
+  const termsPage = document.getElementById("termsPage");
+  termsPage.hidden = false;
+  termsPage.style.display = 'flex';
+}
+
+function hideTerms() {
+  const termsPage = document.getElementById("termsPage");
+  termsPage.hidden = true;
+  termsPage.style.display = 'none';
+}
+
+function showPrivacy() {
+  const privacyPage = document.getElementById("privacyPage");
+  privacyPage.hidden = false;
+  privacyPage.style.display = 'flex';
+}
+
+function hidePrivacy() {
+  const privacyPage = document.getElementById("privacyPage");
+  privacyPage.hidden = true;
+  privacyPage.style.display = 'none';
+}
+
+function showLogin() {
+  document.getElementById("loginPage").style.display = 'flex';
+}
+
+function hideLogin() {
+  document.getElementById("loginPage").style.display = 'none';
+  clearLoginForm();
+}
+
+function showSignup() {
+  document.getElementById("signupPage").style.display = 'flex';
+}
+
+function hideSignup() {
+  document.getElementById("signupPage").style.display = 'none';
+  clearSignupForm();
+}
+
+function showForgotPassword() {
+  hideLogin();
+  clearForgotForm();
+  document.getElementById("forgotPasswordPage").style.display = 'flex';
+}
+
+function hideForgotPassword() {
+  document.getElementById("forgotPasswordPage").style.display = 'none';
+  clearForgotForm();
+}
+
+function showEmailConfirmation() {
+  document.getElementById("emailConfirmationPage").style.display = 'flex';
+}
+
+function hideEmailConfirmation() {
+  document.getElementById("emailConfirmationPage").style.display = 'none';
+}
+
+function getSiteUrl() {
+  return window.location.origin;
+}
+
+function getWelcomeEmailHtml() {
+  return `
+    <div style="font-family: Arial, sans-serif; background:#fff7ed; padding:40px;">
+      <div style="max-width:560px; margin:auto; background:white; border-radius:16px; padding:36px; text-align:center; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
+        <div style="margin-bottom:20px;">
+          <div style="font-size:36px; font-weight:bold;">
+            <span style="color:#111;">ESCAPER</span><br>
+            <span style="color:#f97316;">MAP</span>
+          </div>
+        </div>
+        <h2 style="color:#222;">Welcome to Escaper Map 🗺️</h2>
+        <p style="color:#666; font-size:15px;">
+          Escaper Map is built for people who don’t just play escape rooms —
+          they plan them, track them, and explore them.
+        </p>
+        <div style="margin-top:20px; text-align:left; font-size:14px; color:#444;">
+          <p>🧭 <b>Plan your trips</b> — organize escape room adventures anywhere</p>
+          <p>🧩 <b>Discover rooms</b> — find new challenges on the map</p>
+          <p>📍 <b>Contribute</b> — add rooms and help grow the community</p>
+        </div>
+        <div style="margin-top:20px; padding:16px; background:#fff3cd; border-radius:10px; font-size:14px; color:#856404;">
+          Our goal is simple: <b>Build the ultimate map of escape rooms worldwide.</b>
+        </div>
+        <a href="${getSiteUrl()}"
+           style="display:inline-block; margin-top:26px; padding:14px 28px; background:#f97316; color:white; text-decoration:none; border-radius:10px; font-weight:bold; font-size:16px;">
+           Start Exploring
+        </a>
+        <p style="margin-top:24px; font-size:13px; color:#888;">
+          Your next escape is waiting.
+        </p>
+        <div style="margin-top:30px; font-size:12px; color:#aaa;">
+          © 2026 Escaper Map
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function getFirstSubmissionEmailHtml() {
+  return `
+    <div style="font-family: Arial, sans-serif; background:#fff7ed; padding:40px;">
+      <div style="max-width:520px; margin:auto; background:white; border-radius:16px; padding:32px; text-align:center; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
+        <div style="margin-bottom:20px;">
+          <div style="font-size:34px; font-weight:bold;">
+            <span style="color:#111;">ESCAPER</span><br>
+            <span style="color:#f97316;">MAP</span>
+          </div>
+        </div>
+        <h2 style="color:#222;">You added your first escape room 🎉</h2>
+        <p style="color:#666; font-size:15px;">
+          Nice work! You’ve just contributed to the Escaper Map community.
+          Every room you add helps others discover new challenges and plan better adventures.
+        </p>
+        <div style="margin-top:20px; padding:16px; background:#fff3cd; border-radius:10px; font-size:14px; color:#856404;">
+          🌍 You’re not just playing — you’re building the map.
+        </div>
+        <a href="${getSiteUrl()}"
+           style="display:inline-block; margin-top:24px; padding:14px 28px; background:#f97316; color:white; text-decoration:none; border-radius:10px; font-weight:bold;">
+           Explore the Map
+        </a>
+        <p style="margin-top:20px; font-size:13px; color:#888;">
+          Keep going — add more rooms, plan trips, and track your escapes.
+        </p>
+        <div style="margin-top:30px; font-size:12px; color:#aaa;">
+          © 2026 Escaper Map
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function getFirstSubmissionStorageKey(email) {
+  return `escaper:firstSubmissionEmailSent:${email}`;
+}
+
+function hasSentFirstSubmissionEmail(email) {
+  if (!email) return false;
+  return localStorage.getItem(getFirstSubmissionStorageKey(email)) === 'true';
+}
+
+function markFirstSubmissionEmailSent(email) {
+  if (!email) return;
+  localStorage.setItem(getFirstSubmissionStorageKey(email), 'true');
+}
+
+async function sendEmail(to, subject, html) {
+  try {
+    if (db.functions && typeof db.functions.invoke === 'function') {
+      const { error } = await db.functions.invoke('send-email', {
+        body: JSON.stringify({ to, subject, html }),
+      });
+      if (error) throw error;
+      return true;
+    }
+
+    const response = await fetch('/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to, subject, html }),
+    });
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text || 'Email send failed');
+    }
+    return true;
+  } catch (err) {
+    console.error('Email send failed:', err);
+    return false;
+  }
+}
+
+async function sendWelcomeEmail(email) {
+  if (!email) return;
+  await sendEmail(email, 'Welcome to Escaper Map', getWelcomeEmailHtml());
+}
+
+async function sendFirstSubmissionEmail(email) {
+  if (!email || hasSentFirstSubmissionEmail(email)) return;
+  const sent = await sendEmail(email, 'You added your first Escape Room', getFirstSubmissionEmailHtml());
+  if (sent) {
+    markFirstSubmissionEmailSent(email);
+  }
+}
+
+function clearLoginForm() {
+  document.getElementById("loginEmail").value = "";
+  document.getElementById("loginPassword").value = "";
+  setLoginStatus("");
+}
+
+function clearSignupForm() {
+  document.getElementById("signupEmail").value = "";
+  document.getElementById("signupPassword").value = "";
+  document.getElementById("signupAgreeTerms").checked = false;
+  document.getElementById("signupAgreePrivacy").checked = false;
+  setSignupStatus("");
+}
+
+function clearForgotForm() {
+  document.getElementById("forgotEmail").value = "";
+  setForgotStatus("");
+}
+
+function setLoginStatus(message, type = "") {
+  const statusEl = document.getElementById("loginStatus");
+  statusEl.textContent = message;
+  statusEl.className = `auth-status ${type}`;
+}
+
+function setSignupStatus(message, type = "") {
+  const statusEl = document.getElementById("signupStatus");
+  statusEl.textContent = message;
+  statusEl.className = `auth-status ${type}`;
+}
+
+function setForgotStatus(message, type = "") {
+  const statusEl = document.getElementById("forgotStatus");
+  statusEl.textContent = message;
+  statusEl.className = `auth-status ${type}`;
 }
 
 // Storage keys for played rooms
@@ -2536,7 +3042,8 @@ function updateAuthUI() {
     avatar.style.display = 'none';
     authPanel.style.display = 'block';
     summary.textContent = "Sign in to save your preferences and access future features.";
-    guestFields.hidden = false;
+    document.getElementById("authInitialButtons").hidden = false;
+    document.getElementById("authGuestFields").hidden = true;
     userActions.hidden = true;
   }
 }
@@ -2765,7 +3272,7 @@ const markers = L.markerClusterGroup({
   chunkedLoading: true,
   chunkInterval: 50,
   removeOutsideVisibleBounds: true,
-  spiderfyOnMaxZoom: false,
+  spiderfyOnMaxZoom: true,
   showCoverageOnHover: false
 });
 map.addLayer(markers);
@@ -2889,17 +3396,6 @@ async function loadEscapeRooms() {
           <div class="popup-text"><strong>Directions:</strong> <a href="${getGoogleMapsDirectionsLink(r.Lat, r.Lon, 'driving')}" target="_blank">Car</a> | <a href="${getGoogleMapsDirectionsLink(r.Lat, r.Lon, 'walking')}" target="_blank">Walk</a></div>
         </div>
     `;
-    
-    // Add distance if user location is available
-    if (userLocation) {
-      const distance = calculateDistance(userLocation.lat, userLocation.lng, r.Lat, r.Lon);
-      popupContent += `
-        <div class="popup-section">
-          <div class="popup-icon">📏</div>
-          <div class="popup-text"><strong>Distance:</strong> ${distance.toFixed(1)} km</div>
-        </div>
-      `;
-    }
     
     popupContent += `</div>`;
 
@@ -3987,66 +4483,121 @@ function toggleFollowLocation() {
   startFollowingLocation();
 }
 
-document.getElementById("loginButton").onclick = async () => {
-  const { email, password } = getAuthFormValues();
-  if (!email || !password) {
-    setAuthStatus("Email and password are required.", "error");
-    return;
-  }
+// Initialize auth button listeners when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById("loginButton").onclick = () => {
+    showLogin();
+  };
 
-  setAuthBusy(true);
-  setAuthStatus("Signing in...");
+  document.getElementById("signupButton").onclick = () => {
+    showSignup();
+  };
 
-  const { error } = await db.auth.signInWithPassword({ email, password });
+  document.getElementById("continueAsGuest").onclick = () => {
+    document.getElementById("authPanel").style.display = 'none';
+  };
 
-  setAuthBusy(false);
-  if (error) {
-    console.error("Login error:", error);
-    setAuthStatus(error.message, "error");
-    return;
-  }
+  document.getElementById("loginSubmitButton").onclick = async () => {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
 
-  clearAuthForm();
-  setAuthStatus("Signed in.", "success");
-};
+    if (!email || !password) {
+      setLoginStatus("Email and password are required.", "error");
+      return;
+    }
 
-document.getElementById("signupButton").onclick = async () => {
-  const { email, password } = getAuthFormValues();
-  if (!email || !password) {
-    setAuthStatus("Email and password are required.", "error");
-    return;
-  }
+    setLoginStatus("Signing in...");
 
-  if (password.length < 6) {
-    setAuthStatus("Password must be at least 6 characters.", "error");
-    return;
-  }
+    const { error } = await db.auth.signInWithPassword({ email, password });
 
-  setAuthBusy(true);
-  setAuthStatus("Creating account...");
+    if (error) {
+      console.error("Login error:", error);
+      setLoginStatus(error.message, "error");
+      return;
+    }
 
-  const redirectTo = getAuthRedirectUrl();
-  const { data, error } = await db.auth.signUp({
-    email,
-    password,
-    options: redirectTo ? { emailRedirectTo: redirectTo } : undefined
-  });
+    hideLogin();
+    setAuthStatus("Signed in.", "success");
+  };
 
-  setAuthBusy(false);
-  if (error) {
-    console.error("Signup error:", error);
-    setAuthStatus(error.message, "error");
-    return;
-  }
+  document.getElementById("signupSubmitButton").onclick = async () => {
+    const email = document.getElementById("signupEmail").value.trim();
+    const password = document.getElementById("signupPassword").value;
 
-  clearAuthForm();
-  if (data.session) {
-    setAuthStatus("Account created and signed in.", "success");
-    openProfilePage();
-  } else {
-    setAuthStatus("Account created. Check your email to confirm sign-in.", "success");
-  }
-};
+    if (!email || !password) {
+      setSignupStatus("Email and password are required.", "error");
+      return;
+    }
+
+    if (password.length < 6) {
+      setSignupStatus("Password must be at least 6 characters.", "error");
+      return;
+    }
+
+    const agreeTerms = document.getElementById("signupAgreeTerms").checked;
+    const agreePrivacy = document.getElementById("signupAgreePrivacy").checked;
+    if (!agreeTerms || !agreePrivacy) {
+      setSignupStatus("You must agree to the Terms of Service and Privacy Policy.", "error");
+      return;
+    }
+
+    setSignupStatus("Creating account...");
+
+    const redirectTo = getAuthRedirectUrl();
+    const { data, error } = await db.auth.signUp({
+      email,
+      password,
+      options: redirectTo ? { emailRedirectTo: redirectTo } : undefined
+    });
+
+    if (error) {
+      console.error("Signup error:", error);
+      setSignupStatus(error.message, "error");
+      return;
+    }
+
+    hideSignup();
+    sendWelcomeEmail(email);
+    if (data.session) {
+      setAuthStatus("Account created and signed in.", "success");
+      openProfilePage();
+    } else {
+      showEmailConfirmation();
+    }
+  };
+
+  document.getElementById("forgotSubmitButton").onclick = async () => {
+    const email = document.getElementById("forgotEmail").value.trim();
+
+    if (!email) {
+      setForgotStatus("Email is required.", "error");
+      return;
+    }
+
+    console.log("Forgot password requested for", email);
+    setForgotStatus("Sending reset link...");
+
+    let result = await db.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin
+    });
+    let error = result.error;
+
+    if (error && error.message?.toLowerCase().includes('redirect')) {
+      console.warn('Password reset redirect rejected; retrying without redirectTo.');
+      result = await db.auth.resetPasswordForEmail(email);
+      error = result.error;
+    }
+
+    if (error) {
+      console.error("Reset password error:", error);
+      setForgotStatus(error.message, "error");
+      return;
+    }
+
+    hideForgotPassword();
+    setAuthStatus(`Password reset link sent to ${email}.`, "success");
+  };
+});
 
 document.getElementById("userAvatar").onclick = () => {
   const dropdown = document.getElementById("avatarDropdown");
@@ -4104,11 +4655,52 @@ document.getElementById("logoutBtn").onclick = async () => {
   }
 };
 
-document.getElementById("savedPlansBack").onclick = hideAllPageOverlays;
-document.getElementById("submittedRoomsBack").onclick = hideAllPageOverlays;
-document.getElementById("profileCancel").onclick = () => {
-  closeProfilePage();
+document.getElementById("signupSubmitButton").onclick = async () => {
+  const email = document.getElementById("signupEmail").value.trim();
+  const password = document.getElementById("signupPassword").value;
+
+  if (!email || !password) {
+    setSignupStatus("Email and password are required.", "error");
+    return;
+  }
+
+  if (password.length < 6) {
+    setSignupStatus("Password must be at least 6 characters.", "error");
+    return;
+  }
+
+  const agreeTerms = document.getElementById("signupAgreeTerms").checked;
+  const agreePrivacy = document.getElementById("signupAgreePrivacy").checked;
+  if (!agreeTerms || !agreePrivacy) {
+    setSignupStatus("You must agree to the Terms of Service and Privacy Policy.", "error");
+    return;
+  }
+
+  setSignupStatus("Creating account...");
+
+  const redirectTo = getAuthRedirectUrl();
+  const { data, error } = await db.auth.signUp({
+    email,
+    password,
+    options: redirectTo ? { emailRedirectTo: redirectTo } : undefined
+  });
+
+  if (error) {
+    console.error("Signup error:", error);
+    setSignupStatus(error.message, "error");
+    return;
+  }
+
+  hideSignup();
+  if (data.session) {
+    setAuthStatus("Account created and signed in.", "success");
+    openProfilePage();
+  } else {
+    showEmailConfirmation();
+  }
 };
+
+
 document.getElementById("profileSave").onclick = saveProfileChanges;
 document.getElementById("profilePhotoFile").addEventListener("change", handleProfileFileChange);
 
@@ -4198,6 +4790,9 @@ document.getElementById("submitBtn").onclick = async () => {
 
       // Show confirmation modal with room details
       showSubmitConfirmation(newSubmission);
+      if (currentUser?.email) {
+        sendFirstSubmissionEmail(currentUser.email);
+      }
       
       // Clear form
       document.getElementById("nameInput").value = "";
@@ -4308,6 +4903,17 @@ if (window.innerWidth <= 768) {
 }
 
 
+</script>
+
+<div id="cookie-banner">
+  We use cookies to improve your experience.
+  <button onclick="acceptCookies()">Accept</button>
+</div>
+
+<script>
+function acceptCookies() {
+  document.getElementById("cookie-banner").style.display = "none";
+}
 </script>
 
 </body>
