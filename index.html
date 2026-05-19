@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-  <title>Escape Rooms Map</title>
-  <meta name="description" content="Find and plan escape room adventures">
+  <title>Escaper Map</title>
+  <meta name="description" content="Find and plan your next escape room adventure with Escaper Map. Explore escape rooms worldwide, submit your favorite escape rooms and create your perfect escape room itinerary. Join our community of escape room enthusiasts today!" />
 
   <!-- Favicon and Logo -->
   <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
@@ -15,15 +15,15 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://escapermap.com">
-  <meta property="og:title" content="Escape Rooms Map">
-  <meta property="og:description" content="Find and plan escape room adventures">
+  <meta property="og:title" content="Escaper Map">
+  <meta property="og:description" content="Find and plan your next escape room adventure with Escaper Map. Explore escape rooms worldwide, submit your favorite escape rooms and create your perfect escape room itinerary. Join our community of escape room enthusiasts today!" />
   <meta property="og:image" content="https://escapermap.com/logo.png">
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary">
   <meta property="twitter:url" content="https://escapermap.com">
-  <meta property="twitter:title" content="Escape Rooms Map">
-  <meta property="twitter:description" content="Find and plan escape room adventures">
+  <meta property="twitter:title" content="Escaper Map">
+  <meta property="twitter:description" content="Find and plan your next escape room adventure with Escaper Map. Explore escape rooms worldwide, submit your favorite escape rooms and create your perfect escape room itinerary. Join our community of escape room enthusiasts today!" />
   <meta property="twitter:image" content="https://escapermap.com/logo.png">
 
   <!-- Leaflet -->
@@ -103,6 +103,16 @@ body[data-theme="neon"] {
   --border-color: #e94560;
   --text-color: #00fff5;
   --button-hover: #0e1929;
+}
+
+/* Bright Theme */
+body[data-theme="bright"] {
+  --primary-bg: #ffffff;
+  --secondary-bg: #f7f7f7;
+  --accent-color: #333333;
+  --border-color: #cccccc;
+  --text-color: #000000;
+  --button-hover: #e6e6e6;
 }
 
 body {
@@ -616,6 +626,12 @@ body.sidebar-open {
     margin-top: 0;
     font-size: 14px !important;
     margin-bottom: 6px;
+    color: var(--text-color);
+  }
+
+  #sidebar h1 {
+    font-size: 16px !important;
+    color: var(--text-color);
   }
 
   #sidebar label {
@@ -863,8 +879,17 @@ body.sidebar-open {
   border-radius: 4px;
   box-sizing: border-box;
   font-size: 16px;
+  color: #000;
+  background: #ffffff;
   -webkit-appearance: none;
   appearance: none;
+}
+
+#sidebar input[type="text"]::placeholder,
+#sidebar input[type="number"]::placeholder,
+#sidebar select::placeholder {
+  color: #888;
+  opacity: 0.7;
 }
 
 #sidebar input[type="text"]:focus, #sidebar input[type="number"]:focus, #sidebar select:focus {
@@ -1556,7 +1581,7 @@ body.sidebar-open {
     <button id="closeSidebar" class="sidebar-close-btn" aria-label="Close filters">×</button>
     <div class="sidebar-content">
     <div id="authPanel" class="auth-panel">
-      <h2>Account</h2>
+      <h2 style="color: white">Account</h2>
       <div id="authSummary" class="auth-summary">Sign in to save your preferences and access future features.</div>
 
       <div id="authInitialButtons">
@@ -1585,7 +1610,7 @@ body.sidebar-open {
       <small id="authStatus" class="auth-status"> </small>
     </div>
 
-    <h2>Filters</h2>
+    <h2 style="color: white;">Filters</h2>
 
     <label>Theme</label>
     <select id="themeSelector">
@@ -1614,26 +1639,29 @@ body.sidebar-open {
       <option value="Spooky">Spooky</option>
       <option value="Sci-fi">Sci-fi</option>
       <option value="VR">VR</option>
-
     </select>
 
-    <label>Duration (minutes)</label>
-    <input type="number" id="minDuration" placeholder="Min">
-    <input type="number" id="maxDuration" placeholder="Max">
-
-    <label>Year</label>
-    <input type="number" id="minYear" placeholder="From">
-    <input type="number" id="maxYear" placeholder="To">
-
-    <label>Company</label>
+    <label>Company Name</label>
     <input type="text" id="company">
 
     <label>Escape Room Name</label>
     <input type="text" id="escapeRoomName" placeholder="Search by name">
 
-    <label>Radius from my location (km)</label>
-    <input type="number" id="radius" placeholder="e.g., 5" min="0.1" step="0.1">
-    <small id="locationStatus" style="color: #ffcccc; font-size: 12px;">Location not set - use "📍 Locate Me" first</small>
+    <div id="toggleAdvancedFilters" onclick="toggleAdvancedFilters()" style="cursor: pointer; text-decoration: underline; color: var(--text-color); margin-bottom: 10px;">Advanced Filters <span id="advancedArrow">▼</span></div>
+
+    <div id="advancedFilters" style="display: none;">
+      <label>Duration (minutes)</label>
+      <input type="number" id="minDuration" placeholder="Min">
+      <input type="number" id="maxDuration" placeholder="Max">
+
+      <label>Year</label>
+      <input type="number" id="minYear" placeholder="From">
+      <input type="number" id="maxYear" placeholder="To">
+
+      <label>Radius from my location (km)</label>
+      <input type="number" id="radius" placeholder="e.g., 5" min="0.1" step="0.1">
+      <small id="locationStatus" style="color: #ffcccc; font-size: 12px;">Location not set - use "📍 Locate Me" first</small>
+    </div>
 
     <button id="applyFilters">Apply filters</button>
 
@@ -1804,13 +1832,13 @@ body.sidebar-open {
     <h3 style="color: #27b622; margin-bottom: 20px;">✅ Submission Successful!</h3>
     <p style="margin-bottom: 15px;">Your escape room has been submitted for review. You can track its status in the <strong>Submitted Rooms</strong> section.</p>
     
-    <div id="submittedRoomDetails" style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+    <div id="submittedRoomDetails" style="background: #fd0800; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
       <!-- Room details will be populated here -->
     </div>
     
     <div style="display: flex; gap: 10px; justify-content: flex-end;">
-      <button id="closeConfirmationModal" style="background: #666; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Close</button>
-      <button id="viewSubmittedRooms" style="background: #27b622; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">View Submitted Rooms</button>
+      <button id="closeConfirmationModal" style="background: #f5f2f2; color: rgb(250, 244, 244); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Close</button>
+      <button id="viewSubmittedRooms" style="background: #27b622; color: rgb(240, 235, 235); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">View Submitted Rooms</button>
     </div>
   </div>
 </div>
@@ -1966,6 +1994,7 @@ body.sidebar-open {
   <!-- Login Overlay -->
   <div id="loginPage" class="page-overlay">
     <div class="page-card">
+      <button class="panel-close-btn" type="button" aria-label="Close log in" onclick="hideLogin()">×</button>
       <h3>Log in</h3>
       <div class="profile-field">
         <label for="loginEmail">Email</label>
@@ -1989,6 +2018,7 @@ body.sidebar-open {
   <!-- Signup Overlay -->
   <div id="signupPage" class="page-overlay">
     <div class="page-card">
+      <button class="panel-close-btn" type="button" aria-label="Close sign up" onclick="hideSignup()">×</button>
       <h3>Sign up</h3>
       <div class="profile-field">
         <label for="signupEmail">Email</label>
@@ -2292,6 +2322,15 @@ function showSignup() {
 function hideSignup() {
   document.getElementById("signupPage").style.display = 'none';
   clearSignupForm();
+}
+
+function toggleAdvancedFilters() {
+  const advanced = document.getElementById("advancedFilters");
+  if (advanced.style.display === "none") {
+    advanced.style.display = "block";
+  } else {
+    advanced.style.display = "none";
+  }
 }
 
 function showForgotPassword() {
