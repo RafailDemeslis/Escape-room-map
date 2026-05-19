@@ -2135,7 +2135,8 @@ function removeStoredValue(key) {
 }
 
 function loadProfile() {
-  const saved = getStoredValue(STORAGE_KEYS.profile);
+  const profileKey = getProfileStorageKey();
+  const saved = localStorage.getItem(profileKey) || (!currentUser ? getStoredValue(STORAGE_KEYS.profile) : null);
   if (!saved) {
     currentProfile = null;
     return;
@@ -2151,7 +2152,8 @@ function loadProfile() {
 
 function saveProfile() {
   if (!currentProfile) return;
-  setStoredValue(STORAGE_KEYS.profile, JSON.stringify(currentProfile));
+  const profileKey = getProfileStorageKey();
+  localStorage.setItem(profileKey, JSON.stringify(currentProfile));
 }
 
 function getProfileInitials(name) {
@@ -2250,7 +2252,7 @@ function handleProfileFileChange() {
   reader.readAsDataURL(file);
 }
 
-function saveProfileChanges() {
+async function saveProfileChanges() {
   currentProfile.fullName = document.getElementById("profileName").value.trim();
   currentProfile.age = document.getElementById("profileAge").value;
   currentProfile.gender = document.getElementById("profileGender").value;
@@ -2261,6 +2263,10 @@ function saveProfileChanges() {
   }
 
   saveProfile();
+  if (currentUser) {
+    await saveProfileToDb();
+  }
+
   renderProfilePreview();
   updateAuthUI();
   closeProfilePage();
@@ -2413,7 +2419,7 @@ function getFirstSubmissionEmailHtml() {
           🌍 You’re not just playing — you’re building the map.
         </div>
         <a href="${getSiteUrl()}"
-           style="display:inline-block; margin-top:24px; padding:14px 28px; background:#f97316; color:white; text-decoration:none; border-radius:10px; font-weight:bold;">
+           style="display:inline-block; margin-top:24px; padding:14px 28px; background:#f97316; color:white; text-decoration:none; border-radius:10px; font-weight:bold; font-size:16px;">
            Explore the Map
         </a>
         <p style="margin-top:20px; font-size:13px; color:#888;">
@@ -2839,6 +2845,237 @@ function initializeProfileData() {
   }
 }
 
+function getUserStorageSuffix() {
+  if (currentUser?.id) return currentUser.id;
+  if (currentUser?.email) return currentUser.email.replace(/[@.\s]/g, "_");
+  return "guest";
+}
+
+function getProfileStorageKey() {
+  return currentUser ? `${getStoragePrefix()}profile:${getUserStorageSuffix()}` : getStorageKey(STORAGE_KEYS.profile);
+}
+
+function tableMissing(error) {
+  const msg = (error?.message || error?.details || "").toString().toLowerCase();
+  return msg.includes("does not exist") || msg.includes("relation") && msg.includes("not found");
+}
+
+async function loadRemoteProfile() {
+  if (!currentUser) return null;
+
+  try {
+    const { data, error } = await db.from("profiles")
+      .select("full_name,age,gender,photo_type,photo_value")
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+
+    if (error) {
+      if (!tableMissing(error)) {
+        console.error("Failed to load remote profile:", error);
+      }
+      return null;
+    }
+
+    if (!data) return null;
+
+    currentProfile = {
+      fullName: data.full_name || currentProfile?.fullName || "",
+      age: data.age || currentProfile?.age || "",
+      gender: data.gender || currentProfile?.gender || "",
+      photoType: data.photo_type || currentProfile?.photoType || "initials",
+      photoValue: data.photo_value || currentProfile?.photoValue || ""
+    };
+
+    saveProfile();
+    return currentProfile;
+  } catch (err) {
+    console.error("Error loading remote profile:", err);
+    return null;
+  }
+}
+
+async function saveProfileToDb() {
+  if (!currentUser || !currentProfile) return;
+
+  try {
+    const { error } = await db.from("profiles").upsert({
+      user_id: currentUser.id,
+      full_name: currentProfile.fullName,
+      age: currentProfile.age,
+      gender: currentProfile.gender,
+      photo_type: currentProfile.photoType,
+      photo_value: currentProfile.photoValue,
+      updated_at: new Date().toISOString()
+    }, { onConflict: "user_id" });
+
+    if (error && !tableMissing(error)) {
+      console.error("Failed to save profile to DB:", error);
+    }
+  } catch (err) {
+    console.error("Error saving profile to DB:", err);
+  }
+}
+
+async function loadSavedPlansFromDb() {
+  if (!currentUser) return null;
+
+  try {
+    const { data, error } = await db.from("saved_plans")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .order("saved_at", { ascending: false });
+
+    if (error) {
+      if (!tableMissing(error)) {
+        console.error("Failed to load remote saved plans:", error);
+      }
+      return null;
+    }
+
+    return Array.isArray(data) ? data.map(plan => ({
+      id: String(plan.id),
+      name: plan.name,
+      date: plan.date,
+      savedAt: plan.saved_at,
+      rooms: plan.rooms || []
+    })) : [];
+  } catch (err) {
+    console.error("Error loading remote saved plans:", err);
+    return null;
+  }
+}
+
+async function savePlanToDb(plan) {
+  if (!currentUser || !plan) return;
+
+  try {
+    const { error } = await db.from("saved_plans").upsert({
+      ...plan,
+      user_id: currentUser.id,
+      saved_at: plan.savedAt
+    }, { onConflict: "id" });
+
+    if (error && !tableMissing(error)) {
+      console.error("Failed to save plan to DB:", error);
+    }
+  } catch (err) {
+    console.error("Error saving plan to DB:", err);
+  }
+}
+
+async function deletePlanFromDb(planId) {
+  if (!currentUser || !planId) return;
+
+  try {
+    const { error } = await db.from("saved_plans")
+      .delete()
+      .eq("user_id", currentUser.id)
+      .eq("id", planId);
+    if (error && !tableMissing(error)) {
+      console.error("Failed to delete plan from DB:", error);
+    }
+  } catch (err) {
+    console.error("Error deleting plan from DB:", err);
+  }
+}
+
+async function clearSavedPlansFromDb() {
+  if (!currentUser) return;
+
+  try {
+    const { error } = await db.from("saved_plans")
+      .delete()
+      .eq("user_id", currentUser.id);
+    if (error && !tableMissing(error)) {
+      console.error("Failed to clear saved plans from DB:", error);
+    }
+  } catch (err) {
+    console.error("Error clearing saved plans from DB:", err);
+  }
+}
+
+async function loadSubmittedRoomsFromDb() {
+  if (!currentUser) return null;
+
+  try {
+    const { data, error } = await db.from("submitted_rooms")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .order("submitted_at", { ascending: false });
+
+    if (error) {
+      if (!tableMissing(error)) {
+        console.error("Failed to load remote submitted rooms:", error);
+      }
+      return null;
+    }
+
+    return Array.isArray(data) ? data.map(item => ({
+      id: String(item.id),
+      dbId: item.db_id || null,
+      name: item.name,
+      company: item.company,
+      address: item.address,
+      category: item.category,
+      duration: item.duration,
+      year: item.year,
+      website: item.website,
+      status: item.status,
+      submittedAt: item.submitted_at
+    })) : [];
+  } catch (err) {
+    console.error("Error loading remote submitted rooms:", err);
+    return null;
+  }
+}
+
+async function saveSubmittedRoomToDb(submission) {
+  if (!currentUser || !submission) return;
+
+  try {
+    const { error } = await db.from("submitted_rooms").upsert({
+      id: submission.id,
+      user_id: currentUser.id,
+      db_id: submission.dbId,
+      name: submission.name,
+      company: submission.company,
+      address: submission.address,
+      category: submission.category,
+      duration: submission.duration,
+      year: submission.year,
+      website: submission.website,
+      status: submission.status,
+      submitted_at: submission.submittedAt
+    }, { onConflict: "id" });
+
+    if (error && !tableMissing(error)) {
+      console.error("Failed to save submitted room to DB:", error);
+    }
+  } catch (err) {
+    console.error("Error saving submitted room to DB:", err);
+  }
+}
+
+async function loadUserData() {
+  if (!currentUser) return;
+
+  loadProfile();
+  const remoteProfile = await loadRemoteProfile();
+  if (!remoteProfile && currentProfile?.fullName) {
+    await saveProfileToDb();
+  }
+
+  const remotePlans = await loadSavedPlansFromDb();
+  if (remotePlans) {
+    saveSavedPlans(remotePlans);
+  }
+
+  const remoteSubmissions = await loadSubmittedRoomsFromDb();
+  if (remoteSubmissions) {
+    saveSubmittedRooms(remoteSubmissions);
+  }
+}
+
 function getProfileAvatarPreview() {
   if (!currentProfile) return "?";
   if (currentProfile.photoType === "upload" && currentProfile.photoValue) return currentProfile.photoValue;
@@ -2853,11 +3090,6 @@ function setAuthStatus(message, type) {
   if (type) {
     status.classList.add(type);
   }
-}
-
-function getUserStorageSuffix() {
-  const userKey = currentUser?.id || currentUser?.email || 'guest';
-  return String(userKey).replace(/[@.\s]/g, '_');
 }
 
 function getSavedPlansStorageKey() {
@@ -2886,10 +3118,18 @@ function loadStoredSubmittedRooms() {
   return saved ? JSON.parse(saved) : [];
 }
 
-function renderSavedPlansPage() {
-  const plans = loadSavedPlans();
+async function renderSavedPlansPage() {
+  let plans = loadSavedPlans();
   const list = document.getElementById("savedPlansList");
   if (!list) return;
+
+  if (currentUser) {
+    const remotePlans = await loadSavedPlansFromDb();
+    if (remotePlans) {
+      plans = remotePlans;
+      saveSavedPlans(plans);
+    }
+  }
 
   if (plans.length === 0) {
     list.innerHTML = '<p style="color: #aaa; margin: 0 0 10px 0;">No saved plans yet. Save your current itinerary from the Plan panel.</p>';
@@ -2914,7 +3154,7 @@ function renderSavedPlansPage() {
   }).join('');
 }
 
-window.saveCurrentPlan = function() {
+window.saveCurrentPlan = async function() {
   if (!itinerary.length) {
     alert("Please add rooms to your itinerary before saving.");
     return;
@@ -2930,15 +3170,20 @@ window.saveCurrentPlan = function() {
   }
 
   const savedPlans = loadSavedPlans();
-  savedPlans.unshift({
+  const newPlan = {
     id: Date.now().toString(),
     name: planName.trim(),
     date: selectedTripDate.toISOString().split("T")[0],
     savedAt: new Date().toISOString(),
     rooms: itinerary.map(item => ({ ...item }))
-  });
+  };
 
+  savedPlans.unshift(newPlan);
   saveSavedPlans(savedPlans);
+  if (currentUser) {
+    await savePlanToDb(newPlan);
+  }
+
   renderSavedPlansPage();
   alert("Plan saved to Saved Plans.");
 };
@@ -2960,11 +3205,14 @@ window.loadSavedPlan = function(index) {
   document.getElementById("planPanel").hidden = false;
 };
 
-window.deleteSavedPlan = function(index) {
+window.deleteSavedPlan = async function(index) {
   if (!confirm("Delete this saved plan?")) return;
   const savedPlans = loadSavedPlans();
-  savedPlans.splice(index, 1);
+  const [removedPlan] = savedPlans.splice(index, 1);
   saveSavedPlans(savedPlans);
+  if (currentUser && removedPlan?.id) {
+    await deletePlanFromDb(removedPlan.id);
+  }
   renderSavedPlansPage();
 };
 
@@ -2972,7 +3220,14 @@ async function loadSubmittedRooms() {
   const list = document.getElementById("submittedRoomsList");
   if (!list) return;
 
-  const submissions = loadStoredSubmittedRooms();
+  let submissions = loadStoredSubmittedRooms();
+  if (currentUser) {
+    const remoteSubmissions = await loadSubmittedRoomsFromDb();
+    if (remoteSubmissions) {
+      submissions = remoteSubmissions;
+      saveSubmittedRooms(submissions);
+    }
+  }
 
   if (submissions.length === 0) {
     list.innerHTML = '<p style="color: #aaa; margin: 0;">No submitted rooms yet. Submit a room from the submission panel.</p>';
@@ -3055,7 +3310,9 @@ function getDefaultAvatar(userId) {
 }
 
 function updateAuthUI() {
-  loadProfile();  // Ensure profile is loaded from localStorage
+  if (!currentProfile) {
+    loadProfile();
+  }
   
   const summary = document.getElementById("authSummary");
   const guestFields = document.getElementById("authGuestFields");
@@ -3131,8 +3388,11 @@ async function applyScopedState() {
 }
 
 async function initializeAuth() {
-  db.auth.onAuthStateChange((_event, session) => {
+  db.auth.onAuthStateChange(async (_event, session) => {
     currentUser = session?.user || null;
+    if (currentUser) {
+      await loadUserData();
+    }
     updateAuthUI();
 
     if (authInitialized) {
@@ -3148,6 +3408,9 @@ async function initializeAuth() {
   }
 
   currentUser = data.session?.user || null;
+  if (currentUser) {
+    await loadUserData();
+  }
   updateAuthUI();
   authInitialized = true;
 }
@@ -4054,17 +4317,17 @@ function renderTripOnMap() {
     
     const marker = L.marker([group.Lat, group.Lon], {
       icon: L.divIcon({
-        html: `<div class=\"trip-marker\">${roomCount}</div>`,
+        html: `<div class="trip-marker">${roomCount}</div>`,
         className: 'leaflet-div-icon',
         iconSize: [26, 26],
         iconAnchor: [13, 13]
       })
     }).bindPopup(`
-      <div class=\"escape-room-popup\">
+      <div class="escape-room-popup\">
         <h4>${group.Company}</h4>
-        <div class=\"popup-section\"><div class=\"popup-icon\">🎮</div><div class=\"popup-text\"><strong>${roomCount} game${roomCount > 1 ? 's' : ''}</strong></div></div>
+        <div class="popup-section"><div class="popup-icon">🎮</div><div class="popup-text"><strong>${roomCount} game${roomCount > 1 ? 's' : ''}</strong></div></div>
         ${roomList}
-        <div class=\"popup-section\"><div class=\"popup-icon\">📍</div><div class=\"popup-text\">${group.Address}</div></div>
+        <div class="popup-section"><div class="popup-icon">📍</div><div class="popup-text">${group.Address}</div></div>
       </div>
     `);
     tripLayer.addLayer(marker);
@@ -4596,7 +4859,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     hideSignup();
-    sendWelcomeEmail(email);
     if (data.session) {
       setAuthStatus("Account created and signed in.", "success");
       openProfilePage();
@@ -4658,9 +4920,9 @@ document.getElementById("profileBtn").onclick = () => {
   openProfilePage();
 };
 
-document.getElementById("savedPlansBtn").onclick = () => {
+document.getElementById("savedPlansBtn").onclick = async () => {
   document.getElementById("avatarDropdown").style.display = 'none';
-  renderSavedPlansPage();
+  await renderSavedPlansPage();
   showPageOverlay("savedPlansPage");
 };
 
@@ -4670,9 +4932,12 @@ document.getElementById("submittedRoomsBtn").onclick = () => {
   showPageOverlay("submittedRoomsPage");
 };
 
-document.getElementById("savedPlansClear").onclick = () => {
+document.getElementById("savedPlansClear").onclick = async () => {
   if (confirm("Clear all saved plans?")) {
     saveSavedPlans([]);
+    if (currentUser) {
+      await clearSavedPlansFromDb();
+    }
     renderSavedPlansPage();
   }
 };
@@ -4693,67 +4958,11 @@ document.getElementById("profileCancel").onclick = () => {
   closeProfilePage();
 };
 
+document.getElementById("profileSave").onclick = () => {
+  saveProfileChanges();
+};
+
 // Fast direct room list input  
-
-document.getElementById("logoutBtn").onclick = async () => {
-  document.getElementById("avatarDropdown").style.display = 'none';
-  const { error } = await db.auth.signOut();
-  if (error) {
-    console.error("Logout error:", error);
-    setAuthStatus(error.message, "error");
-  } else {
-    setAuthStatus("Logged out.", "success");
-  }
-};
-
-document.getElementById("signupSubmitButton").onclick = async () => {
-  const email = document.getElementById("signupEmail").value.trim();
-  const password = document.getElementById("signupPassword").value;
-
-  if (!email || !password) {
-    setSignupStatus("Email and password are required.", "error");
-    return;
-  }
-
-  if (password.length < 6) {
-    setSignupStatus("Password must be at least 6 characters.", "error");
-    return;
-  }
-
-  const agreeTerms = document.getElementById("signupAgreeTerms").checked;
-  const agreePrivacy = document.getElementById("signupAgreePrivacy").checked;
-  if (!agreeTerms || !agreePrivacy) {
-    setSignupStatus("You must agree to the Terms of Service and Privacy Policy.", "error");
-    return;
-  }
-
-  setSignupStatus("Creating account...");
-
-  const redirectTo = getAuthRedirectUrl();
-  const { data, error } = await db.auth.signUp({
-    email,
-    password,
-    options: redirectTo ? { emailRedirectTo: redirectTo } : undefined
-  });
-
-  if (error) {
-    console.error("Signup error:", error);
-    setSignupStatus(error.message, "error");
-    return;
-  }
-
-  hideSignup();
-  if (data.session) {
-    setAuthStatus("Account created and signed in.", "success");
-    openProfilePage();
-  } else {
-    showEmailConfirmation();
-  }
-};
-
-
-document.getElementById("profileSave").onclick = saveProfileChanges;
-document.getElementById("profilePhotoFile").addEventListener("change", handleProfileFileChange);
 
 document.getElementById("logoutBtn").onclick = async () => {
   document.getElementById("avatarDropdown").style.display = 'none';
@@ -4838,6 +5047,9 @@ document.getElementById("submitBtn").onclick = async () => {
       const submissions = loadStoredSubmittedRooms();
       submissions.unshift(newSubmission);
       saveSubmittedRooms(submissions);
+      if (currentUser) {
+        await saveSubmittedRoomToDb(newSubmission);
+      }
 
       // Show confirmation modal with room details
       showSubmitConfirmation(newSubmission);
@@ -4969,6 +5181,8 @@ function acceptCookies() {
 
 </body>
 </html>
+
+
 
 
 
