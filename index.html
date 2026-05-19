@@ -1837,7 +1837,7 @@ body.sidebar-open {
     </div>
     
     <div style="display: flex; gap: 10px; justify-content: flex-end;">
-      <button id="closeConfirmationModal" style="background: #f5f2f2; color: rgb(250, 244, 244); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Close</button>
+      <button id="closeConfirmationModal" style="background: #0d0d0d; color: rgb(250, 244, 244); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Close</button>
       <button id="viewSubmittedRooms" style="background: #27b622; color: rgb(240, 235, 235); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">View Submitted Rooms</button>
     </div>
   </div>
@@ -2851,6 +2851,10 @@ function getUserStorageSuffix() {
   return "guest";
 }
 
+function isValidUuid(value) {
+  return typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
+
 function getProfileStorageKey() {
   return currentUser ? `${getStoragePrefix()}profile:${getUserStorageSuffix()}` : getStorageKey(STORAGE_KEYS.profile);
 }
@@ -2949,14 +2953,35 @@ async function savePlanToDb(plan) {
   if (!currentUser || !plan) return;
 
   try {
-    const { error } = await db.from("saved_plans").upsert({
-      ...plan,
+    const payload = {
       user_id: currentUser.id,
-      saved_at: plan.savedAt
-    }, { onConflict: "id" });
+      name: plan.name,
+      date: plan.date,
+      saved_at: plan.savedAt,
+      rooms: plan.rooms || []
+    };
 
+    if (isValidUuid(plan.remoteId)) {
+      payload.id = plan.remoteId;
+    } else if (isValidUuid(plan.id)) {
+      payload.id = plan.id;
+    }
+
+    let result;
+    if (payload.id) {
+      result = await db.from("saved_plans").upsert(payload, { onConflict: "id" }).select("id").single();
+    } else {
+      result = await db.from("saved_plans").insert(payload).select("id").single();
+    }
+
+    const { data, error } = result;
     if (error && !tableMissing(error)) {
       console.error("Failed to save plan to DB:", error);
+      return;
+    }
+
+    if (data?.id) {
+      plan.remoteId = String(data.id);
     }
   } catch (err) {
     console.error("Error saving plan to DB:", err);
@@ -3033,8 +3058,7 @@ async function saveSubmittedRoomToDb(submission) {
   if (!currentUser || !submission) return;
 
   try {
-    const { error } = await db.from("submitted_rooms").upsert({
-      id: submission.id,
+    const payload = {
       user_id: currentUser.id,
       db_id: submission.dbId,
       name: submission.name,
@@ -3046,10 +3070,29 @@ async function saveSubmittedRoomToDb(submission) {
       website: submission.website,
       status: submission.status,
       submitted_at: submission.submittedAt
-    }, { onConflict: "id" });
+    };
 
+    if (isValidUuid(submission.remoteId)) {
+      payload.id = submission.remoteId;
+    } else if (isValidUuid(submission.id)) {
+      payload.id = submission.id;
+    }
+
+    let result;
+    if (payload.id) {
+      result = await db.from("submitted_rooms").upsert(payload, { onConflict: "id" }).select("id").single();
+    } else {
+      result = await db.from("submitted_rooms").insert(payload).select("id").single();
+    }
+
+    const { data, error } = result;
     if (error && !tableMissing(error)) {
       console.error("Failed to save submitted room to DB:", error);
+      return;
+    }
+
+    if (data?.id) {
+      submission.remoteId = String(data.id);
     }
   } catch (err) {
     console.error("Error saving submitted room to DB:", err);
@@ -3065,14 +3108,24 @@ async function loadUserData() {
     await saveProfileToDb();
   }
 
+  const localPlans = loadSavedPlans();
   const remotePlans = await loadSavedPlansFromDb();
-  if (remotePlans) {
-    saveSavedPlans(remotePlans);
+  if (remotePlans !== null) {
+    if (remotePlans.length > 0) {
+      saveSavedPlans(remotePlans);
+    } else if (localPlans.length > 0) {
+      await Promise.all(localPlans.map(savePlanToDb));
+    }
   }
 
+  const localSubmissions = loadStoredSubmittedRooms();
   const remoteSubmissions = await loadSubmittedRoomsFromDb();
-  if (remoteSubmissions) {
-    saveSubmittedRooms(remoteSubmissions);
+  if (remoteSubmissions !== null) {
+    if (remoteSubmissions.length > 0) {
+      saveSubmittedRooms(remoteSubmissions);
+    } else if (localSubmissions.length > 0) {
+      await Promise.all(localSubmissions.map(saveSubmittedRoomToDb));
+    }
   }
 }
 
@@ -3125,9 +3178,13 @@ async function renderSavedPlansPage() {
 
   if (currentUser) {
     const remotePlans = await loadSavedPlansFromDb();
-    if (remotePlans) {
-      plans = remotePlans;
-      saveSavedPlans(plans);
+    if (remotePlans !== null) {
+      if (remotePlans.length > 0) {
+        plans = remotePlans;
+        saveSavedPlans(plans);
+      } else if (plans.length === 0) {
+        saveSavedPlans([]);
+      }
     }
   }
 
@@ -3210,8 +3267,11 @@ window.deleteSavedPlan = async function(index) {
   const savedPlans = loadSavedPlans();
   const [removedPlan] = savedPlans.splice(index, 1);
   saveSavedPlans(savedPlans);
-  if (currentUser && removedPlan?.id) {
-    await deletePlanFromDb(removedPlan.id);
+  if (currentUser) {
+    const planId = removedPlan?.remoteId || removedPlan?.id;
+    if (planId) {
+      await deletePlanFromDb(planId);
+    }
   }
   renderSavedPlansPage();
 };
@@ -3223,9 +3283,13 @@ async function loadSubmittedRooms() {
   let submissions = loadStoredSubmittedRooms();
   if (currentUser) {
     const remoteSubmissions = await loadSubmittedRoomsFromDb();
-    if (remoteSubmissions) {
-      submissions = remoteSubmissions;
-      saveSubmittedRooms(submissions);
+    if (remoteSubmissions !== null) {
+      if (remoteSubmissions.length > 0) {
+        submissions = remoteSubmissions;
+        saveSubmittedRooms(submissions);
+      } else if (submissions.length === 0) {
+        saveSubmittedRooms([]);
+      }
     }
   }
 
@@ -5096,8 +5160,7 @@ document.getElementById("closeConfirmationModal").onclick = () => {
 
 document.getElementById("viewSubmittedRooms").onclick = () => {
   document.getElementById("submitConfirmationModal").style.display = "none";
-  // Open submitted rooms overlay
-  document.getElementById("submittedRoomsOverlay").style.display = "flex";
+  showPageOverlay("submittedRoomsPage");
   loadSubmittedRooms();
 };
 
