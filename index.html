@@ -1683,9 +1683,12 @@ body.sidebar-open {
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
   margin-bottom: 5px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .calendar-weekday {
+  box-sizing: border-box;
   text-align: center;
   color: var(--accent-color);
   font-weight: bold;
@@ -1697,9 +1700,14 @@ body.sidebar-open {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .calendar-day {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
   aspect-ratio: 1;
   display: flex;
   align-items: center;
