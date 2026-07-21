@@ -117,11 +117,41 @@ body[data-theme="bright"] {
 
 body {
   margin: 0;
+  padding-top: 64px;
   font-family: Arial, sans-serif;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+#topBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 18px;
+  background: var(--primary-bg);
+  border-bottom: 3px solid var(--border-color);
+  z-index: 3000;
+}
+
+#topBar img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+#topBar .brand-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .auth-panel {
@@ -195,7 +225,7 @@ body {
 /* Avatar Styling */
 .user-avatar {
   position: absolute;
-  top: 50px;
+  top: 76px;
   right: 20px;
   z-index: 2000;
   width: 50px;
@@ -220,7 +250,7 @@ body {
 
 .avatar-dropdown {
   position: absolute;
-  top: 110px;
+  top: 136px;
   right: 20px;
   background: var(--secondary-bg);
   border: 2px solid var(--border-color);
@@ -430,13 +460,13 @@ body {
   .user-avatar {
     width: 40px;
     height: 40px;
-    top: 5px;
-    right: 5px;
+    top: 72px;
+    right: 10px;
   }
 
   .avatar-dropdown {
-    top: 55px;
-    right: 5px;
+    top: 122px;
+    right: 10px;
     min-width: 130px;
   }
 }
@@ -456,22 +486,119 @@ input[type="time"] {
 
 #layout {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 64px);
   flex-direction: row;
 }
 
 #sidebar {
-  width: 300px;
+  width: 320px;
   padding: 12px;
+  padding-top: 24px;
   overflow-y: auto;
   background: var(--primary-bg);
   border: 6px solid var(--border-color);
   -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+#sidebarTabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+#sidebarTabs button {
+  flex: 1 1 auto;
+  min-width: 90px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 2px solid var(--border-color);
+  background: var(--secondary-bg);
+  color: var(--text-color);
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+#sidebarTabs button.active {
+  background: var(--accent-color);
+  color: #000;
+  border-color: var(--accent-color);
+}
+
+#sidebarTabPanels {
+  margin-bottom: 16px;
+}
+
+#sidebarTabPanels > .tab-panel {
+  display: none;
+}
+
+#sidebarTabPanels > .tab-panel:not([hidden]) {
+  display: block;
+}
+
+#sidebar #planPanel,
+#sidebar #submitPanel,
+#sidebar #filtersPanel {
+  width: 100% !important;
+  background: var(--secondary-bg) !important;
+  border: 2px solid var(--border-color) !important;
+  border-radius: 14px !important;
+  padding: 12px !important;
+  box-sizing: border-box !important;
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  box-shadow: none !important;
+}
+
+#planPanel .plan-section,
+#submitPanel label,
+#submitPanel input,
+#submitPanel select {
+  margin-bottom: 10px;
+}
+
+#planPanel .panel-close-btn,
+#submitPanel .panel-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+#sidebar .tab-panel {
+  position: relative;
 }
 
 #map {
   flex: 1;
   touch-action: manipulation;
+}
+
+footer.app-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--secondary-bg);
+  color: var(--text-color);
+  border-top: 3px solid var(--border-color);
+  font-size: 0.92rem;
+}
+
+footer.app-footer a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+footer.app-footer a:hover {
+  text-decoration: underline;
 }
 
 /* Hamburger menu button */
@@ -480,7 +607,7 @@ input[type="time"] {
   position: fixed;
   top: 10px;
   left: 10px;
-  z-index: 2000;
+  z-index: 3100;
   background: var(--primary-bg);
   color: var(--text-color);
   border: 3px solid var(--border-color);
@@ -932,6 +1059,68 @@ body.sidebar-open {
 }
 
 /* Custom marker styling */
+.marker-pin-red {
+  position: relative;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 20px solid #ff4444;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  cursor: pointer;
+}
+
+.marker-pin-red::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.marker-pin-red::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  top: 8px;
+  left: -4px;
+}
+
+.marker-pin-red.marker-highlight-green {
+  border-top-color: #2ecc71;
+  filter: drop-shadow(0 0 8px rgba(46, 204, 113, 0.9));
+}
+
+.marker-pin-red.marker-highlight-green::before {
+  border-color: #2ecc71;
+  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.3);
+}
+
+.marker-pin-red.marker-highlight-green::after {
+  background: #2ecc71;
+}
+
+.marker-pin-red.marker-highlight-yellow {
+  border-top-color: #f1c40f;
+  filter: drop-shadow(0 0 8px rgba(241, 196, 15, 0.9));
+}
+
+.marker-pin-red.marker-highlight-yellow::before {
+  border-color: #f1c40f;
+  box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.25);
+}
+
+.marker-pin-red.marker-highlight-yellow::after {
+  background: #f1c40f;
+}
+
 .marker-blue {
   background: #3388ff;
   border-radius: 50%;
@@ -983,27 +1172,6 @@ body.sidebar-open {
 }
 
 .marker-pin-green::after {
-  content: '';
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background: white;
-  border-radius: 50%;
-  top: 8px;
-  left: -4px;
-}
-
-.marker-pin-red {
-  width: 0;
-  height: 0;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  border-top: 20px solid #ff4444;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-  cursor: pointer;
-}
-
-.marker-pin-red::after {
   content: '';
   position: absolute;
   width: 8px;
@@ -1542,22 +1710,87 @@ body.sidebar-open {
   transform: scale(1.08);
 }
 
-@media (max-width: 768px) {
-  .logo-link {
-    bottom: 30px;
-    right: 20px;
+  .social-popup {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    right: 0;
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(0,0,0,0.88);
+    border: 2px solid var(--border-color);
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 2500;
   }
-  
-  .map-corner-logo {
-    width: 120px;
-    height: 120px;
+
+  .social-popup.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
   }
+
+  .social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 18px;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .social-link:hover {
+    transform: translateY(-2px);
+    background: var(--accent-color);
+    color: #000;
+  }
+
+  .logo-button {
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .corner-brand {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    z-index: 1000;
+  }
+
+  .corner-brand .logo-menu {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  @media (max-width: 768px) {
+    .corner-brand {
+      bottom: 20px;
+      right: 20px;
+    }
+
 }
 
   </style>
 </head>
 
 <body>
+
+<header id="topBar">
+  <img src="logo.png" alt="Escaper Map logo">
+  <div class="brand-title">Escaper Map</div>
+</header>
 
 <!-- Structured Data for Search Engines -->
 <script type="application/ld+json">
@@ -1610,9 +1843,80 @@ body.sidebar-open {
       <small id="authStatus" class="auth-status"> </small>
     </div>
 
-    <h2 style="color: white;">Filters</h2>
+    <div id="sidebarTabs">
+      <button id="tabFilters" class="active" type="button">Filters</button>
+      <button id="tabPlan" type="button">Plan</button>
+      <button id="tabSubmit" type="button">Submit</button>
+    </div>
 
-    <label>Theme</label>
+    <div id="sidebarTabPanels">
+      <div id="planPanel" class="tab-panel" hidden>
+        <button id="closePlan" class="panel-close-btn" aria-label="Close">×</button>
+        <h3>📅 Plan your escape</h3>
+        <div class="plan-section">
+          <label>Select Trip Date:</label>
+          <div id="calendar"></div>
+          <div id="selectedDateDisplay" style="color: #fdd835; text-align: center; margin-top: 10px; font-weight: bold;"></div>
+        </div>
+        <div class="plan-section">
+          <label>Search escape rooms:</label>
+          <input type="text" id="planSearchInput" placeholder="Search by name or company...">
+          <div class="room-selector" id="roomSelector"></div>
+          <button id="addToItinerary" class="btn-add" style="width: 100%; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; min-height: 44px;">Add Selected</button>
+        </div>
+        <div class="plan-section">
+          <label>Your Itinerary:</label>
+          <div id="itineraryList"></div>
+        </div>
+        <div class="plan-buttons">
+          <button id="savePlan" class="btn-add">💾 Save Plan</button>
+          <button id="showTripOnMap" class="btn-map">Show Trip</button>
+          <button id="openRouteInGoogleMaps" class="btn-map">🗺️ Route in Maps</button>
+        </div>
+        <div class="plan-buttons" style="padding-top: 0;">
+          <button id="exportPDF" class="btn-export">📄 Export PDF</button>
+        </div>
+        <div class="plan-buttons" style="padding-top: 0;">
+          <button id="clearItinerary" class="btn-clear">Clear All</button>
+        </div>
+      </div>
+      <div id="submitPanel" class="tab-panel" hidden>
+        <button id="closeSubmit" class="panel-close-btn" aria-label="Close">×</button>
+        <h3>Submit an escape room</h3>
+        <label for="nameInput">Name *</label>
+        <input id="nameInput" placeholder="Name" required>
+        <label for="companyInput">Company *</label>
+        <input id="companyInput" placeholder="Company" required>
+        <label for="durationInput">Duration</label>
+        <input id="durationInput" type="number" placeholder="Duration (optional)">
+        <label for="yearInput">Year created</label>
+        <input id="yearInput" type="number" placeholder="Year created (optional)">
+        <label for="websiteInput">Website</label>
+        <input id="websiteInput" placeholder="Website (optional)">
+        <label for="addressInput">Address *</label>
+        <input id="addressInput" placeholder="Address" required>
+        <label for="categoryInput">Category *<span class="multi-select-hint"> (hold Ctrl to select multiple)</span></label>
+        <select id="categoryInput" multiple required>
+          <option value="Action">Action</option>
+          <option value="Comedy">Comedy</option>
+          <option value="Horror">Horror</option>
+          <option value="Kids">Kids</option>
+          <option value="Outer Space">Outer Space</option>
+          <option value="Portable">Portable</option>
+          <option value="Psychological horror">Psychological horror</option>
+          <option value="Role playing">Role playing</option>
+          <option value="Riddles">Riddles</option>
+          <option value="Spooky">Spooky</option>
+          <option value="Splatter">Splatter</option>
+          <option value="Sci-fi">Sci-fi</option>
+          <option value="VR">VR</option>
+        </select>
+        <button id="submitBtn">Submit</button>
+      </div>
+      <div id="filtersPanel" class="tab-panel">
+        <h2 style="color: white;">Filters</h2>
+
+        <label>Theme</label>
     <select id="themeSelector">
       <option value="classic">🔴 Classic Red</option>
       <option value="midnight">🌙 Midnight Blue</option>
@@ -1670,11 +1974,7 @@ body.sidebar-open {
     <button id="locateMe">📍 Locate Me</button>
 
     <hr>
-
-    <div id="actionButtons" style="display: flex; gap: 5px; flex-wrap: wrap;">
-      <button id="openPlan" style="flex: 1; min-width: 45%;">📅 Plan</button>
-      <button id="openSubmit" style="flex: 1; min-width: 45%;">➕ Submit</button>
-    </div>
+  </div>
     </div>
   </aside>
 
@@ -1745,85 +2045,17 @@ body.sidebar-open {
     </div>
   </div>
 
-  <a href="https://www.instagram.com/escapermap/" target="_blank" rel="noopener noreferrer" title="Follow us on Instagram" class="logo-link">
-    <img src="logo.png" alt="Escape Rooms Map" class="map-corner-logo">
-  </a>
-</div>
-
-<!-- Plan Panel -->
-<div id="planPanel" hidden>
-  <h3>📅 Plan your escape</h3>
-  
-  <div class="plan-section">
-    <label>Select Trip Date:</label>
-    <div id="calendar"></div>
-    <div id="selectedDateDisplay" style="color: #fdd835; text-align: center; margin-top: 10px; font-weight: bold;"></div>
+  <div class="corner-brand">
+    <div class="logo-menu">
+      <button id="cornerLogoButton" class="logo-button" aria-expanded="false" type="button">
+        <img src="logo.png" alt="Escaper Map" class="map-corner-logo">
+      </button>
+      <div id="socialPopup" class="social-popup">
+        <a href="https://www.instagram.com/escapermap/" target="_blank" rel="noopener noreferrer" class="social-link" title="Instagram">📷</a>
+        <a href="https://www.facebook.com/escapermap" target="_blank" rel="noopener noreferrer" class="social-link" title="Facebook">👍</a>
+      </div>
+    </div>
   </div>
-  
-  <div class="plan-section">
-    <label>Search escape rooms:</label>
-    <input type="text" id="planSearchInput" placeholder="Search by name or company...">
-    <div class="room-selector" id="roomSelector"></div>
-    <button id="addToItinerary" class="btn-add" style="width: 100%; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; min-height: 44px;">Add Selected</button>
-  </div>
-  
-  <div class="plan-section">
-    <label>Your Itinerary:</label>
-    <div id="itineraryList"></div>
-  </div>
-  
-  <div class="plan-buttons">
-    <button id="savePlan" class="btn-add">💾 Save Plan</button>
-    <button id="showTripOnMap" class="btn-map">Show Trip</button>
-    <button id="openRouteInGoogleMaps" class="btn-map">🗺️ Route in Maps</button>
-  </div>
-
-  <div class="plan-buttons" style="padding-top: 0;">
-    <button id="exportPDF" class="btn-export">📄 Export PDF</button>
-  </div>
-
-  <div class="plan-buttons" style="padding-top: 0;">
-    <button id="clearItinerary" class="btn-clear">Clear All</button>
-    <button id="closePlan" class="btn-close">Close</button>
-  </div>
-</div>
-
-<!-- Submission panel -->
-<div id="submitPanel" hidden>
-  <button id="closeSubmit" class="panel-close-btn" aria-label="Close">&times;</button>
-  <h3>Submit an escape room</h3>
-
-  <label for="nameInput">Name *</label>
-  <input id="nameInput" placeholder="Name" required>
-  <label for="companyInput">Company *</label>
-  <input id="companyInput" placeholder="Company" required>
-  <label for="durationInput">Duration</label>
-  <input id="durationInput" type="number" placeholder="Duration (optional)">
-  <label for="yearInput">Year created</label>
-  <input id="yearInput" type="number" placeholder="Year created (optional)">
-  <label for="websiteInput">Website</label>
-  <input id="websiteInput" placeholder="Website (optional)">
-  <label for="addressInput">Address *</label>
-  <input id="addressInput" placeholder="Address" required>
-
-  <label for="categoryInput">Category *<span class="multi-select-hint"> (hold Ctrl to select multiple)</span></label>
-  <select id="categoryInput" multiple required>
-    <option value="Action">Action</option>
-      <option value="Comedy">Comedy</option>
-      <option value="Horror">Horror</option>
-      <option value="Kids">Kids</option>
-      <option value="Outer Space">Outer Space</option>
-      <option value="Portable">Portable</option>
-      <option value="Psychological horror">Psychological horror</option>
-      <option value="Role playing">Role playing</option>
-      <option value="Riddles">Riddles</option>
-      <option value="Spooky">Spooky</option>
-      <option value="Splatter">Splatter</option>
-      <option value="Sci-fi">Sci-fi</option>
-      <option value="VR">VR</option>
-  </select>
-
-  <button id="submitBtn">Submit</button>
 </div>
 
 <!-- Submission confirmation modal -->
@@ -2337,6 +2569,61 @@ function toggleAdvancedFilters() {
   } else {
     advanced.style.display = "none";
   }
+}
+
+function showSidebarTab(tab) {
+  const tabButtons = {
+    filters: document.getElementById('tabFilters'),
+    plan: document.getElementById('tabPlan'),
+    submit: document.getElementById('tabSubmit')
+  };
+
+  const tabPanels = {
+    filters: document.getElementById('filtersPanel'),
+    plan: document.getElementById('planPanel'),
+    submit: document.getElementById('submitPanel')
+  };
+
+  Object.keys(tabButtons).forEach(key => {
+    const button = tabButtons[key];
+    if (!button) return;
+    button.classList.toggle('active', key === tab);
+  });
+
+  Object.keys(tabPanels).forEach(key => {
+    const panel = tabPanels[key];
+    if (!panel) return;
+    panel.hidden = key !== tab;
+  });
+
+  closeMobileSidebar();
+}
+
+async function openPlanPanel() {
+  showSidebarTab('plan');
+
+  if (!window.calendarInstance) {
+    window.calendarInstance = new Calendar();
+  } else {
+    window.calendarInstance.render();
+  }
+
+  if (allEscapeRooms.length === 0) {
+    const { data } = await db
+      .from("Escape_Rooms")
+      .select("*")
+      .eq("Status", "approved")
+      .eq("Operational", "Yes");
+    allEscapeRooms = data || [];
+  }
+
+  Storage.loadItinerary();
+  updateItinerary();
+  updateRoomSelector();
+}
+
+function closeSidebarTab() {
+  showSidebarTab('filters');
 }
 
 function showForgotPassword() {
@@ -3646,6 +3933,81 @@ map.addLayer(markers);
 // Trip visualization layer
 const tripLayer = L.layerGroup().addTo(map);
 let tripLine = null;
+let selectedMapMarkers = new Map();
+let selectedMarkerTimer = null;
+
+function createEscapeRoomPinIcon(highlightClass = '') {
+  const classes = ['marker-pin-red'];
+  if (highlightClass) {
+    classes.push(highlightClass);
+  }
+
+  return L.divIcon({
+    html: `<div class="${classes.join(' ')}"></div>`,
+    className: 'leaflet-div-icon',
+    iconSize: [30, 40],
+    iconAnchor: [15, 40]
+  });
+}
+
+function getMarkerHighlightClass(marker) {
+  if (!marker?.selectedAt) return '';
+
+  const elapsedMinutes = (Date.now() - marker.selectedAt) / 60000;
+  if (elapsedMinutes < 5) return 'marker-highlight-green';
+  if (elapsedMinutes < 15) return 'marker-highlight-yellow';
+
+  marker.selectedAt = null;
+  return '';
+}
+
+function applyMarkerHighlight(marker) {
+  if (!marker) return;
+
+  const highlightClass = getMarkerHighlightClass(marker);
+  marker.setIcon(createEscapeRoomPinIcon(highlightClass));
+}
+
+function clearMarkerHighlight(marker) {
+  if (!marker) return;
+  marker.selectedAt = null;
+  marker.setIcon(createEscapeRoomPinIcon());
+}
+
+function updateSelectedMarkerHighlights() {
+  let hasActiveSelections = false;
+
+  selectedMapMarkers.forEach((selectedAt, marker) => {
+    marker.selectedAt = selectedAt;
+    const highlightClass = getMarkerHighlightClass(marker);
+
+    if (!highlightClass) {
+      clearMarkerHighlight(marker);
+      selectedMapMarkers.delete(marker);
+      return;
+    }
+
+    hasActiveSelections = true;
+    applyMarkerHighlight(marker);
+  });
+
+  if (!hasActiveSelections) {
+    clearInterval(selectedMarkerTimer);
+    selectedMarkerTimer = null;
+  }
+}
+
+function selectMapMarker(marker) {
+  if (!marker) return;
+
+  marker.selectedAt = Date.now();
+  selectedMapMarkers.set(marker, marker.selectedAt);
+  applyMarkerHighlight(marker);
+
+  if (!selectedMarkerTimer) {
+    selectedMarkerTimer = setInterval(updateSelectedMarkerHighlights, 1000);
+  }
+}
 
 // Haversine formula to calculate distance between two WGS84 coordinates in kilometers
 function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -3767,13 +4129,12 @@ async function loadEscapeRooms() {
 
     // All escape rooms use red pin markers
     const marker = L.marker([r.Lat, r.Lon], {
-      icon: L.divIcon({
-        html: `<div class="marker-pin-red"></div>`,
-        className: 'leaflet-div-icon',
-        iconSize: [30, 40],
-        iconAnchor: [15, 40]
-      })
+      icon: createEscapeRoomPinIcon()
     }).bindPopup(popupContent);
+
+    marker.on('click', () => {
+      selectMapMarker(marker);
+    });
 
     markerBatch.push(marker);
   });
@@ -4129,32 +4490,8 @@ async function updateRoomSelector() {
 }
 
 // Open plan panel
-document.getElementById("openPlan").onclick = async () => {
-  closeMobileSidebar();
-  document.getElementById("planPanel").hidden = false;
-  
-  // Initialize calendar if not already done
-  if (!window.calendarInstance) {
-    window.calendarInstance = new Calendar();
-  } else {
-    window.calendarInstance.render();
-  }
-
-  // Load all rooms if not loaded
-  if (allEscapeRooms.length === 0) {
-    const { data } = await db
-      .from("Escape_Rooms")
-      .select("*")
-      .eq("Status", "approved")
-      .eq("Operational", "Yes");
-    allEscapeRooms = data || [];
-  }
-
-  Storage.loadItinerary();
-  updateItinerary();
-  
-  updateRoomSelector();
-};
+const openPlanButton = document.getElementById("openPlan");
+if (openPlanButton) openPlanButton.onclick = openPlanPanel;
 
 // Add selected rooms to itinerary
 document.getElementById("addToItinerary").onclick = () => {
@@ -4259,7 +4596,7 @@ document.getElementById("clearItinerary").onclick = () => {
 
 // Close plan panel
 document.getElementById("closePlan").onclick = () => {
-  document.getElementById("planPanel").hidden = true;
+  closeSidebarTab();
   if (!map.hasLayer(markers)) {
     map.addLayer(markers);
   }
@@ -4863,6 +5200,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("authPanel").style.display = 'none';
   };
 
+  document.getElementById("tabFilters").onclick = () => showSidebarTab('filters');
+  document.getElementById("tabPlan").onclick = openPlanPanel;
+  document.getElementById("tabSubmit").onclick = () => showSidebarTab('submit');
+  showSidebarTab('filters');
+
   document.getElementById("loginSubmitButton").onclick = async () => {
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value;
@@ -4976,7 +5318,26 @@ document.addEventListener('click', (e) => {
   if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
     dropdown.style.display = 'none';
   }
+
+  const popup = document.getElementById("socialPopup");
+  const logoButton = document.getElementById("cornerLogoButton");
+  if (popup && logoButton && !popup.contains(e.target) && !logoButton.contains(e.target)) {
+    popup.classList.remove('open');
+    logoButton.setAttribute('aria-expanded', 'false');
+  }
 });
+
+const cornerLogoButton = document.getElementById("cornerLogoButton");
+const socialPopup = document.getElementById("socialPopup");
+if (cornerLogoButton && socialPopup) {
+  cornerLogoButton.onclick = (event) => {
+    event.stopPropagation();
+    socialPopup.classList.toggle('open');
+    const expanded = socialPopup.classList.contains('open');
+    cornerLogoButton.setAttribute('aria-expanded', expanded.toString());
+  };
+  socialPopup.onclick = (event) => event.stopPropagation();
+}
 
 // Menu item handlers
 document.getElementById("profileBtn").onclick = () => {
@@ -5178,14 +5539,13 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-document.getElementById("openSubmit").onclick = () => {
-  console.log("Open submit clicked");
-  closeMobileSidebar();
-  document.getElementById("submitPanel").hidden = false;
+const openSubmitButton = document.getElementById("openSubmit");
+if (openSubmitButton) openSubmitButton.onclick = () => {
+  showSidebarTab('submit');
 };
 
 document.getElementById("closeSubmit").onclick = () => {
-  document.getElementById("submitPanel").hidden = true;
+  closeSidebarTab();
 };
 
 // GPS functionality - Uses WGS84 coordinate system (EPSG:4326)
@@ -5230,6 +5590,17 @@ if (window.innerWidth <= 768) {
 
 
 </script>
+
+
+<footer class="app-footer">
+  <div class="footer-left">
+    © Escape Rooms Map • Connect with your favorite escape room locations and save your plans.
+  </div>
+  <div class="footer-right">
+    <a href="https://www.instagram.com/escapermap/" target="_blank" rel="noopener noreferrer">Instagram</a>
+    <a href="https://www.facebook.com/escapermap" target="_blank" rel="noopener noreferrer">Facebook</a>
+  </div>
+</footer>
 
 <div id="cookie-banner">
   We use cookies to improve your experience.
