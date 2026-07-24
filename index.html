@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-  <title>Escaper Map</title>
-  <meta name="description" content="Find and plan your next escape room adventure with Escaper Map. Explore escape rooms worldwide, submit your favorite escape rooms and create your perfect escape room itinerary. Join our community of escape room enthusiasts today!" />
+  <title>Escape Rooms Map | Find Escape Rooms by City, Horror, Puzzle and Riddle Themes</title>
+  <meta name="description" content="Discover escape rooms worldwide with Escaper Map. Find escape rooms by city, compare horror escape rooms, and explore puzzle and riddle themed rooms before planning your next visit." />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <link rel="canonical" href="https://escapermap.com/" />
+  <meta name="theme-color" content="#701f1f" />
 
   <!-- Favicon and Logo -->
   <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
@@ -15,15 +18,18 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://escapermap.com">
-  <meta property="og:title" content="Escaper Map">
-  <meta property="og:description" content="Find and plan your next escape room adventure with Escaper Map. Explore escape rooms worldwide, submit your favorite escape rooms and create your perfect escape room itinerary. Join our community of escape room enthusiasts today!" />
+  <meta property="og:site_name" content="Escaper Map">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:title" content="Escape Rooms Map | Find Escape Rooms by City and Theme">
+  <meta property="og:description" content="Find escape rooms in your city, discover horror escape rooms, and compare puzzle and riddle rooms on Escaper Map." />
   <meta property="og:image" content="https://escapermap.com/logo.png">
+  <meta property="og:image:alt" content="Escaper Map logo">
 
   <!-- Twitter -->
-  <meta property="twitter:card" content="summary">
+  <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://escapermap.com">
-  <meta property="twitter:title" content="Escaper Map">
-  <meta property="twitter:description" content="Find and plan your next escape room adventure with Escaper Map. Explore escape rooms worldwide, submit your favorite escape rooms and create your perfect escape room itinerary. Join our community of escape room enthusiasts today!" />
+  <meta property="twitter:title" content="Escape Rooms Map | Find Escape Rooms by City and Theme">
+  <meta property="twitter:description" content="Search escape rooms by city, horror style, puzzle difficulty, and riddle themes with Escaper Map." />
   <meta property="twitter:image" content="https://escapermap.com/logo.png">
 
   <!-- Leaflet -->
@@ -152,6 +158,34 @@ body {
   color: var(--text-color);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+.topbar-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar-link {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  font-weight: bold;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.topbar-link:hover {
+  border-color: var(--accent-color);
+}
+
+.topbar-link.active {
+  background: var(--accent-color);
+  color: #111;
+  border-color: var(--accent-color);
 }
 
 .auth-panel {
@@ -601,6 +635,82 @@ footer.app-footer a:hover {
   text-decoration: underline;
 }
 
+.site-page[hidden] {
+  display: none !important;
+}
+
+#homePage,
+#faqPage {
+  padding: 24px 18px;
+  background: linear-gradient(180deg, var(--secondary-bg) 0%, var(--primary-bg) 100%);
+  color: var(--text-color);
+  border-top: 3px solid var(--border-color);
+  min-height: calc(100vh - 64px);
+}
+
+#homePage .seo-wrap,
+#faqPage .seo-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+#homePage h1,
+#homePage h2,
+#homePage h3,
+#faqPage h1,
+#faqPage h2,
+#faqPage h3 {
+  margin: 0 0 10px 0;
+}
+
+#homePage p,
+#homePage li,
+#faqPage p,
+#faqPage li {
+  line-height: 1.55;
+}
+
+#homePage ul,
+#faqPage ul {
+  margin: 0 0 14px 20px;
+}
+
+#homePage .seo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+#homePage .seo-card,
+#faqPage .seo-card {
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 12px;
+}
+
+#faqPage .seo-faq {
+  margin-top: 18px;
+}
+
+#homePage .home-actions {
+  display: flex;
+  gap: 10px;
+  margin: 18px 0;
+  flex-wrap: wrap;
+}
+
+#homePage .home-actions button {
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--accent-color);
+  color: #111;
+  padding: 10px 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 /* Hamburger menu button */
 #menuToggle {
   display: none;
@@ -647,6 +757,25 @@ body.sidebar-open {
 
 /* Mobile responsive styles */
 @media (max-width: 768px) {
+  #topBar {
+    gap: 8px;
+    padding: 0 10px;
+  }
+
+  #topBar .brand-title {
+    font-size: 0.95rem;
+    letter-spacing: 0.03em;
+  }
+
+  .topbar-nav {
+    gap: 4px;
+  }
+
+  .topbar-link {
+    font-size: 0.8rem;
+    padding: 6px 9px;
+  }
+
   .multi-select-hint {
     display: none;
   }
@@ -1858,23 +1987,73 @@ body.sidebar-open {
 <header id="topBar">
   <img src="logo.png" alt="Escaper Map logo">
   <div class="brand-title">Escaper Map</div>
+  <nav class="topbar-nav" aria-label="Primary">
+    <button id="navHome" class="topbar-link active" data-page-target="home" type="button">Home</button>
+    <button id="navFaq" class="topbar-link" data-page-target="faq" type="button">FAQ</button>
+    <button id="navMap" class="topbar-link" data-page-target="map" type="button">Map</button>
+  </nav>
 </header>
 
 <!-- Structured Data for Search Engines -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Escape Rooms Map",
-  "description": "Find and plan escape room adventures",
-  "url": "https://escapermap.com",
-  "applicationCategory": "TravelApplication",
-  "operatingSystem": "Any",
-  "image": "https://escapermap.com/logo.png",
-  "logo": "https://escapermap.com/logo.png"
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "Escaper Map",
+      "url": "https://escapermap.com/",
+      "description": "Find escape rooms by city and theme, including horror, puzzle and riddle escape rooms.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://escapermap.com/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "name": "Escaper Map",
+      "url": "https://escapermap.com/",
+      "applicationCategory": "TravelApplication",
+      "operatingSystem": "Any",
+      "image": "https://escapermap.com/logo.png",
+      "description": "Global escape room directory for finding escape rooms in each city and filtering by horror, puzzle and riddle categories.",
+      "keywords": "escape rooms, escape room in city, horror escape rooms, puzzle escape rooms, riddle escape rooms"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How can I find escape rooms in a specific city?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Use the company, room name and map filters to discover escape rooms by city and nearby areas, then save your plan."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I find horror escape rooms on Escaper Map?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Select the Horror or Psychological horror categories in Filters to view horror escape rooms."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I search puzzle and riddle escape rooms?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Choose the Riddles category to discover puzzle-heavy and riddle-style escape rooms."
+          }
+        }
+      ]
+    }
+  ]
 }
 </script>
 
+<section id="mapPage" class="site-page" hidden>
 <button id="menuToggle" aria-label="Toggle menu">☰</button>
 
 <div id="layout">
@@ -2125,6 +2304,66 @@ body.sidebar-open {
     </div>
   </div>
 </div>
+
+</section>
+
+<section id="homePage" class="site-page" aria-labelledby="seoHeading">
+  <div class="seo-wrap">
+    <h1 id="seoHeading">Find Escape Rooms by City, Horror Theme, Puzzle and Riddle Style</h1>
+    <p>
+      Escaper Map helps players discover escape rooms in cities around the world. Search by company or room name,
+      filter by category, and build your ideal route for one-night or weekend escape room trips.
+    </p>
+
+    <div class="home-actions">
+      <button id="homeGoMap" type="button">Open Map</button>
+      <button id="homeGoFaq" type="button">Read FAQ</button>
+    </div>
+
+    <div class="seo-grid">
+      <article class="seo-card">
+        <h2>Escape Room in Your City</h2>
+        <p>Use map filters and location radius to find nearby escape rooms and compare options before booking.</p>
+      </article>
+      <article class="seo-card">
+        <h2>Horror Escape Rooms</h2>
+        <p>Filter Horror, Spooky, Splatter, or Psychological horror categories to find intense experiences.</p>
+      </article>
+      <article class="seo-card">
+        <h2>Puzzle and Riddle Escape Rooms</h2>
+        <p>Choose Riddles to discover logic-driven and puzzle-focused rooms with strong brain-teaser gameplay.</p>
+      </article>
+    </div>
+
+    <h2>Popular Search Topics</h2>
+    <ul>
+      <li>escape rooms near me</li>
+      <li>escape room in [city]</li>
+      <li>horror escape rooms</li>
+      <li>puzzle escape rooms and riddle escape rooms</li>
+    </ul>
+  </div>
+</section>
+
+<section id="faqPage" class="site-page" aria-labelledby="faqPageHeading" hidden>
+  <div class="seo-wrap">
+    <h1 id="faqPageHeading">Escape Room FAQ</h1>
+    <div class="seo-faq" id="faq">
+      <div class="seo-card">
+        <h2>How do I find escape rooms in a specific city?</h2>
+        <p>Search by room or company name and use your location radius to focus on one city or nearby areas.</p>
+      </div>
+      <div class="seo-card">
+        <h2>How do I find horror escape rooms?</h2>
+        <p>Open Filters and select Horror, Psychological horror, Spooky, or Splatter categories.</p>
+      </div>
+      <div class="seo-card">
+        <h2>How do I find puzzle or riddle escape rooms?</h2>
+        <p>Select Riddles in Filters to surface puzzle-heavy experiences built around clues and logic challenges.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- Submission confirmation modal -->
 <div id="submitConfirmationModal" class="page-overlay" style="display: none;">
@@ -5657,6 +5896,63 @@ if (openSubmitButton) openSubmitButton.onclick = () => {
 document.getElementById("closeSubmit").onclick = () => {
   closeSidebarTab();
 };
+
+const pageSections = {
+  home: document.getElementById("homePage"),
+  faq: document.getElementById("faqPage"),
+  map: document.getElementById("mapPage")
+};
+
+function showTopPage(pageKey, options = {}) {
+  const targetPage = pageSections[pageKey] ? pageKey : "home";
+  const updateHash = options.updateHash !== false;
+
+  Object.entries(pageSections).forEach(([key, section]) => {
+    if (!section) return;
+    section.hidden = key !== targetPage;
+  });
+
+  document.querySelectorAll(".topbar-link").forEach((button) => {
+    const isActive = button.dataset.pageTarget === targetPage;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-current", isActive ? "page" : "false");
+  });
+
+  if (targetPage !== "map") {
+    closeMobileSidebar();
+  }
+
+  if (targetPage === "map") {
+    setTimeout(() => {
+      if (typeof map !== "undefined") {
+        map.invalidateSize();
+      }
+    }, 120);
+  }
+
+  if (updateHash && window.location.hash !== `#${targetPage}`) {
+    history.replaceState(null, "", `#${targetPage}`);
+  }
+}
+
+document.querySelectorAll(".topbar-link").forEach((button) => {
+  button.addEventListener("click", () => {
+    showTopPage(button.dataset.pageTarget);
+  });
+});
+
+const homeGoMapButton = document.getElementById("homeGoMap");
+if (homeGoMapButton) {
+  homeGoMapButton.onclick = () => showTopPage("map");
+}
+
+const homeGoFaqButton = document.getElementById("homeGoFaq");
+if (homeGoFaqButton) {
+  homeGoFaqButton.onclick = () => showTopPage("faq");
+}
+
+const initialPage = (window.location.hash || "#home").replace("#", "").toLowerCase();
+showTopPage(initialPage, { updateHash: true });
 
 // GPS functionality - Uses WGS84 coordinate system (EPSG:4326)
 // Compatible with all modern browsers that support Geolocation API
