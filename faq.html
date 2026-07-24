@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escaper Map | FAQ</title>
+  <meta name="description" content="Frequently asked questions about how to use Escaper Map to find escape rooms by city and theme." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://escapermap.com/faq.html" />
+  <style>
+    :root {
+      --primary-bg: #701f1f;
+      --secondary-bg: #9d2b2b;
+      --accent-color: #fdd835;
+      --border-color: #080808;
+      --text-color: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #9d2b2b 0%, #701f1f 100%);
+      color: var(--text-color);
+      min-height: 100vh;
+    }
+
+    #topBar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 18px;
+      background: var(--primary-bg);
+      border-bottom: 3px solid var(--border-color);
+    }
+
+    #topBar img { width: 44px; height: 44px; object-fit: contain; }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .topbar-nav {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .topbar-link {
+      display: inline-block;
+      border: 2px solid transparent;
+      border-radius: 999px;
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: bold;
+      padding: 8px 14px;
+    }
+
+    .topbar-link:hover { border-color: var(--accent-color); }
+
+    .topbar-link.active {
+      background: var(--accent-color);
+      color: #111;
+      border-color: var(--accent-color);
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+
+    h1, h2 { margin: 0 0 12px; }
+    p { line-height: 1.55; margin: 0; }
+
+    .faq-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .faq-card {
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      padding: 14px;
+    }
+
+    footer {
+      border-top: 3px solid var(--border-color);
+      padding: 14px 18px;
+      background: var(--primary-bg);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 768px) {
+      #topBar { gap: 8px; padding: 0 10px; }
+      .brand-title { font-size: 0.95rem; letter-spacing: 0.03em; }
+      .topbar-nav { gap: 4px; }
+      .topbar-link { font-size: 0.8rem; padding: 6px 9px; }
+    }
+  </style>
+</head>
+<body>
+  <header id="topBar">
+    <img src="logo.png" alt="Escaper Map logo">
+    <div class="brand-title">Escaper Map</div>
+    <nav class="topbar-nav" aria-label="Primary">
+      <a class="topbar-link" href="index.html">Home</a>
+      <a class="topbar-link active" href="faq.html" aria-current="page">FAQ</a>
+      <a class="topbar-link" href="map.html">Map</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Escape Room FAQ</h1>
+    <div class="faq-list">
+      <article class="faq-card">
+        <h2>How do I find escape rooms in a specific city?</h2>
+        <p>Open the Map page, then search by room name or company and use location radius to focus on one city.</p>
+      </article>
+      <article class="faq-card">
+        <h2>How do I find horror escape rooms?</h2>
+        <p>In the Map filters, select Horror, Psychological horror, Spooky, or Splatter categories.</p>
+      </article>
+      <article class="faq-card">
+        <h2>How do I find puzzle or riddle escape rooms?</h2>
+        <p>Select the Riddles category to focus on puzzle-heavy and clue-based rooms.</p>
+      </article>
+      <article class="faq-card">
+        <h2>Can I submit an escape room?</h2>
+        <p>Yes. On the Map page, open the Submit tab and send the room details for review.</p>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    © Escape Rooms Map • Connect with your favorite escape room locations and save your plans.
+  </footer>
+</body>
+</html>

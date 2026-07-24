@@ -1,0 +1,6030 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>Escaper Map | Map</title>
+  <meta name="description" content="Browse the Escaper Map interactive map to find escape rooms by city, horror theme, and puzzle or riddle category." />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <link rel="canonical" href="https://escapermap.com/map.html" />
+  <meta name="theme-color" content="#701f1f" />
+
+  <!-- Favicon and Logo -->
+  <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+  <link rel="shortcut icon" href="logo.png">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://escapermap.com">
+  <meta property="og:site_name" content="Escaper Map">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:title" content="Escape Rooms Map | Find Escape Rooms by City and Theme">
+  <meta property="og:description" content="Find escape rooms in your city, discover horror escape rooms, and compare puzzle and riddle rooms on Escaper Map." />
+  <meta property="og:image" content="https://escapermap.com/logo.png">
+  <meta property="og:image:alt" content="Escaper Map logo">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://escapermap.com">
+  <meta property="twitter:title" content="Escape Rooms Map | Find Escape Rooms by City and Theme">
+  <meta property="twitter:description" content="Search escape rooms by city, horror style, puzzle difficulty, and riddle themes with Escaper Map." />
+  <meta property="twitter:image" content="https://escapermap.com/logo.png">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!-- Marker clustering -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+
+  <!-- Your CSS -->
+  <style>
+
+:root {
+  /* Classic Theme (default) */
+  --primary-bg: #701f1f;
+  --secondary-bg: #9d2b2b;
+  --accent-color: #fdd835;
+  --border-color: #080808;
+  --text-color: #fff;
+  --button-hover: #5a1818;
+}
+
+/* Midnight Blue Theme */
+body[data-theme="midnight"] {
+  --primary-bg: #1a2332;
+  --secondary-bg: #2d3e50;
+  --accent-color: #3498db;
+  --border-color: #0a0f16;
+  --text-color: #ecf0f1;
+  --button-hover: #1c2938;
+}
+
+/* Forest Green Theme */
+body[data-theme="forest"] {
+  --primary-bg: #1b4d3e;
+  --secondary-bg: #2d7a5f;
+  --accent-color: #52c896;
+  --border-color: #0d2419;
+  --text-color: #e8f5e9;
+  --button-hover: #163d31;
+}
+
+/* Royal Purple Theme */
+body[data-theme="royal"] {
+  --primary-bg: #3d1e5f;
+  --secondary-bg: #5b2c8a;
+  --accent-color: #b19cd9;
+  --border-color: #1a0d2e;
+  --text-color: #f3e5f5;
+  --button-hover: #2f1848;
+}
+
+/* Steampunk Theme */
+body[data-theme="steampunk"] {
+  --primary-bg: #4a3121;
+  --secondary-bg: #6b4423;
+  --accent-color: #d4af37;
+  --border-color: #2d1f15;
+  --text-color: #f5e6d3;
+  --button-hover: #3a2618;
+}
+
+/* Ice Theme */
+body[data-theme="ice"] {
+  --primary-bg: #1e3a4f;
+  --secondary-bg: #2e5266;
+  --accent-color: #64b5f6;
+  --border-color: #0f1d28;
+  --text-color: #e1f5fe;
+  --button-hover: #1a2f3f;
+}
+
+/* Neon Theme */
+body[data-theme="neon"] {
+  --primary-bg: #1a1a2e;
+  --secondary-bg: #16213e;
+  --accent-color: #0f3460;
+  --border-color: #e94560;
+  --text-color: #00fff5;
+  --button-hover: #0e1929;
+}
+
+/* Bright Theme */
+body[data-theme="bright"] {
+  --primary-bg: #ffffff;
+  --secondary-bg: #f7f7f7;
+  --accent-color: #333333;
+  --border-color: #cccccc;
+  --text-color: #000000;
+  --button-hover: #e6e6e6;
+}
+
+body {
+  margin: 0;
+  padding-top: 64px;
+  font-family: Arial, sans-serif;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#topBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 18px;
+  background: var(--primary-bg);
+  border-bottom: 3px solid var(--border-color);
+  z-index: 3000;
+}
+
+#topBar img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+#topBar .brand-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.topbar-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar-link {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  font-weight: bold;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.topbar-link:hover {
+  border-color: var(--accent-color);
+}
+
+.topbar-link.active {
+  background: var(--accent-color);
+  color: #111;
+  border-color: var(--accent-color);
+}
+
+.auth-panel {
+  margin-bottom: 14px;
+  padding: 12px;
+  background: var(--secondary-bg);
+  border: 3px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.auth-panel h2 {
+  margin: 0 0 8px 0;
+}
+
+.auth-summary,
+.auth-note,
+.auth-status {
+  color: var(--text-color);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.auth-summary {
+  margin-bottom: 10px;
+}
+
+.auth-status {
+  display: block;
+  margin-top: 8px;
+  min-height: 18px;
+}
+
+.auth-status.error {
+  color: #ffd3d3;
+}
+
+.auth-status.success {
+  color: #ccffcc;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.auth-buttons button {
+  flex: 1;
+}
+
+.auth-google,
+.auth-logout {
+  width: 100%;
+}
+
+.auth-google {
+  background: #ffffff;
+  color: #1f1f1f;
+  border: 2px solid #d0d0d0;
+}
+
+.auth-google:hover:not(:disabled) {
+  background: #f3f3f3;
+}
+
+.auth-note {
+  display: block;
+  margin-top: 8px;
+}
+
+/* Avatar Styling */
+.user-avatar {
+  position: absolute;
+  top: 76px;
+  right: 20px;
+  z-index: 2000;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid var(--border-color);
+  cursor: pointer;
+  display: none;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d0d0d0;
+}
+
+.user-avatar:hover {
+  transform: scale(1.1);
+}
+
+.avatar-dropdown {
+  position: absolute;
+  top: 136px;
+  right: 20px;
+  background: var(--secondary-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 150px;
+  z-index: 2001;
+  display: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.avatar-dropdown a, .avatar-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.avatar-dropdown a:hover, .avatar-dropdown button:hover {
+  background: var(--button-hover);
+}
+
+/* Cookie Banner */
+#cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--secondary-bg);
+  color: var(--text-color);
+  padding: 12px 20px;
+  text-align: center;
+  border-top: 3px solid var(--border-color);
+  z-index: 2500;
+  font-size: 14px;
+}
+
+#cookie-banner button {
+  margin-left: 12px;
+  padding: 6px 12px;
+  background: var(--accent-color);
+  color: var(--text-color);
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#cookie-banner button:hover {
+  background: var(--button-hover);
+}
+
+.page-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.55);
+  z-index: 2200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+#termsPage,
+#privacyPage {
+  top: 20px;
+  right: 20px;
+  left: auto;
+  bottom: auto;
+  width: auto;
+  height: auto;
+  background: transparent;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 0;
+  z-index: 2300;
+}
+
+#termsPage .page-card,
+#privacyPage .page-card {
+  width: min(480px, calc(100vw - 40px));
+  max-width: 480px;
+  max-height: calc(100vh - 40px);
+  margin: 0;
+}
+
+.page-card {
+  width: 100%;
+  max-width: 520px;
+  background: var(--secondary-bg);
+  border: 4px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 32px rgba(0,0,0,0.35);
+  color: var(--text-color);
+  overflow-y: auto;
+  max-height: calc(100vh - 40px);
+  position: relative;
+}
+
+.page-card h3 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  font-size: 20px;
+}
+
+.profile-field {
+  margin-bottom: 14px;
+}
+
+.profile-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.profile-field input,
+.profile-field select {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #555;
+  border-radius: 8px;
+  background: #111;
+  color: var(--text-color);
+}
+
+.photo-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  line-height: 1;
+  margin: 0 auto 12px auto;
+  background-color: #222;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  text-align: center;
+  overflow: hidden;
+}
+
+.default-avatar-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 auto 14px auto;
+  width: fit-content;
+}
+
+.default-avatar-list button {
+  width: 100%;
+  height: 48px;
+  border-radius: 12px;
+  border: 2px solid #555;
+  background: #111;
+  color: var(--text-color);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.default-avatar-list button.selected {
+  border-color: var(--accent-color);
+  background: var(--accent-color);
+  color: #000;
+}
+
+.page-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.page-actions button {
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.page-actions .btn-cancel {
+  background: transparent;
+  color: var(--text-color);
+}
+
+.page-actions .btn-save {
+  background: var(--accent-color);
+  color: #000;
+  border-color: var(--accent-color);
+}
+
+@media (max-width: 768px) {
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    top: 72px;
+    right: 10px;
+  }
+
+  .avatar-dropdown {
+    top: 122px;
+    right: 10px;
+    min-width: 130px;
+  }
+}
+
+/* Allow user interaction with input fields */
+input, select, textarea, button {
+  -webkit-user-select: auto;
+  user-select: auto;
+  -webkit-touch-callout: default;
+}
+
+input[type="time"] {
+  -webkit-appearance: auto;
+  appearance: auto;
+  cursor: pointer;
+}
+
+#layout {
+  display: flex;
+  height: calc(100vh - 64px);
+  flex-direction: row;
+}
+
+#sidebar {
+  width: 320px;
+  padding: 12px;
+  padding-top: 24px;
+  overflow-y: auto;
+  background: var(--primary-bg);
+  border: 6px solid var(--border-color);
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+#sidebarTabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+#sidebarTabs button {
+  flex: 1 1 auto;
+  min-width: 90px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 2px solid var(--border-color);
+  background: var(--secondary-bg);
+  color: var(--text-color);
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+#sidebarTabs button.active {
+  background: var(--accent-color);
+  color: #000;
+  border-color: var(--accent-color);
+}
+
+#sidebarTabPanels {
+  margin-bottom: 16px;
+}
+
+#sidebarTabPanels > .tab-panel {
+  display: none;
+}
+
+#sidebarTabPanels > .tab-panel:not([hidden]) {
+  display: block;
+}
+
+#sidebar #planPanel,
+#sidebar #submitPanel,
+#sidebar #filtersPanel {
+  width: 100% !important;
+  background: var(--secondary-bg) !important;
+  border: 2px solid var(--border-color) !important;
+  border-radius: 14px !important;
+  padding: 12px !important;
+  box-sizing: border-box !important;
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  box-shadow: none !important;
+}
+
+#planPanel .plan-section,
+#submitPanel label,
+#submitPanel input,
+#submitPanel select {
+  margin-bottom: 10px;
+}
+
+#planPanel .panel-close-btn,
+#submitPanel .panel-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+#sidebar .tab-panel {
+  position: relative;
+}
+
+#map {
+  flex: 1;
+  touch-action: manipulation;
+}
+
+footer.app-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--secondary-bg);
+  color: var(--text-color);
+  border-top: 3px solid var(--border-color);
+  font-size: 0.92rem;
+}
+
+footer.app-footer a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+footer.app-footer a:hover {
+  text-decoration: underline;
+}
+
+.site-page[hidden] {
+  display: none !important;
+}
+
+#homePage,
+#faqPage {
+  padding: 24px 18px;
+  background: linear-gradient(180deg, var(--secondary-bg) 0%, var(--primary-bg) 100%);
+  color: var(--text-color);
+  border-top: 3px solid var(--border-color);
+  min-height: calc(100vh - 64px);
+}
+
+#homePage .seo-wrap,
+#faqPage .seo-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+#homePage h1,
+#homePage h2,
+#homePage h3,
+#faqPage h1,
+#faqPage h2,
+#faqPage h3 {
+  margin: 0 0 10px 0;
+}
+
+#homePage p,
+#homePage li,
+#faqPage p,
+#faqPage li {
+  line-height: 1.55;
+}
+
+#homePage ul,
+#faqPage ul {
+  margin: 0 0 14px 20px;
+}
+
+#homePage .seo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+#homePage .seo-card,
+#faqPage .seo-card {
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 12px;
+}
+
+#faqPage .seo-faq {
+  margin-top: 18px;
+}
+
+#homePage .home-actions {
+  display: flex;
+  gap: 10px;
+  margin: 18px 0;
+  flex-wrap: wrap;
+}
+
+#homePage .home-actions button {
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--accent-color);
+  color: #111;
+  padding: 10px 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Hamburger menu button */
+#menuToggle {
+  display: none;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 3100;
+  background: var(--primary-bg);
+  color: var(--text-color);
+  border: 3px solid var(--border-color);
+  border-radius: 8px;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  padding: 0;
+  line-height: 1;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#menuToggle:active {
+  transform: scale(0.95);
+}
+
+.sidebar-close-btn {
+  display: none;
+}
+
+.multi-select-hint {
+  display: inline;
+}
+
+.sidebar-content {
+  display: block;
+}
+
+body.sidebar-open {
+  overflow: hidden;
+}
+
+
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  #topBar {
+    gap: 8px;
+    padding: 0 10px;
+  }
+
+  #topBar .brand-title {
+    font-size: 0.95rem;
+    letter-spacing: 0.03em;
+  }
+
+  .topbar-nav {
+    gap: 4px;
+  }
+
+  .topbar-link {
+    font-size: 0.8rem;
+    padding: 6px 9px;
+  }
+
+  .multi-select-hint {
+    display: none;
+  }
+
+  #menuToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #layout {
+    flex-direction: row;
+  }
+
+  #sidebar {
+    position: fixed !important;
+    left: 0 !important;
+    top: calc(64px + env(safe-area-inset-top)) !important;
+    width: 238px !important;
+    height: calc(100dvh - 64px - env(safe-area-inset-top)) !important;
+    max-height: calc(100dvh - 64px - env(safe-area-inset-top)) !important;
+    border: none;
+    border-right: 4px solid #080808;
+    padding: 52px 10px 10px 10px !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1500;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+  }
+
+  body.in-app-browser #sidebar {
+    top: 64px !important;
+    height: calc(90dvh - 64px) !important;
+    max-height: calc(90dvh - 64px) !important;
+  }
+
+  #sidebarTabs {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    gap: 6px;
+  }
+
+  #sidebarTabs button {
+    min-width: 70px;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .sidebar-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    padding-right: 2px;
+    padding-bottom: calc(110px + env(safe-area-inset-bottom));
+  }
+
+  body.in-app-browser .sidebar-content {
+    padding-bottom: calc(150px + env(safe-area-inset-bottom));
+  }
+
+  #category[multiple] {
+    min-height: 88px !important;
+    max-height: 120px !important;
+    overflow-y: auto !important;
+  }
+
+  #sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  body.sidebar-open #menuToggle {
+    display: none !important;
+  }
+
+  .sidebar-close-btn {
+    display: flex;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--secondary-bg);
+    color: var(--text-color);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 1601;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .sidebar-close-btn:active {
+    transform: scale(0.95);
+  }
+
+  #map {
+    width: 100%;
+    height: 100vh;
+    max-height: none;
+  }
+
+  #sidebar h2 {
+    margin-top: 0;
+    font-size: 14px !important;
+    margin-bottom: 6px;
+    color: var(--text-color);
+  }
+
+  #sidebar h1 {
+    font-size: 16px !important;
+    color: var(--text-color);
+  }
+
+  #sidebar label {
+    font-size: 11px !important;
+    margin-bottom: 3px;
+  }
+
+  #sidebar input[type="text"], 
+  #sidebar input[type="number"], 
+  #sidebar select {
+    font-size: 12px !important;
+    padding: 6px !important;
+    margin-bottom: 6px;
+  }
+
+  #sidebar hr {
+    margin: 6px 0 !important;
+  }
+
+  #sidebar small {
+    font-size: 10px !important;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  #calendar .calendar-container {
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+
+  #calendar .calendar-header {
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  #calendar .calendar-header button {
+    padding: 5px 7px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  #calendar .calendar-header span {
+    font-size: 13px;
+    margin: 0;
+    text-align: center;
+    flex: 1;
+  }
+
+  #calendar .calendar-weekdays,
+  #calendar .calendar-days {
+    gap: 3px;
+  }
+
+  #calendar .calendar-weekday {
+    font-size: 10px;
+    padding: 3px 0;
+  }
+
+  #calendar .calendar-day {
+    min-height: 24px;
+    font-size: 11px;
+  }
+
+  #selectedDateDisplay {
+    font-size: 12px !important;
+    margin-top: 8px !important;
+  }
+
+  #applyFilters,
+  #locateMe,
+  #openPlan,
+  #openSubmit {
+    padding: 8px 6px !important;
+    font-size: 11px !important;
+    min-height: 40px !important;
+    width: 100%;
+    margin-bottom: 6px;
+  }
+
+  #actionButtons {
+    display: flex !important;
+    gap: 4px !important;
+    width: 100%;
+    margin-bottom: calc(18px + env(safe-area-inset-bottom));
+    margin-top: 0;
+  }
+
+  #actionButtons button {
+    flex: 1 !important;
+    min-width: 45% !important;
+    width: auto !important;
+    margin-bottom: 0 !important;
+  }
+
+
+
+  button {
+    min-height: 44px;
+  }
+
+  .leaflet-popup-content-wrapper {
+    max-width: 90vw !important;
+  }
+
+  .escape-room-popup {
+    font-size: 13px;
+  }
+
+  .escape-room-popup h3 {
+    font-size: 15px;
+  }
+
+  .popup-section {
+    margin-bottom: 6px;
+  }
+
+  .popup-icon {
+    font-size: 16px;
+  }
+}
+
+
+
+  #submitPanel {
+  margin-top: 20px;
+  padding: 12px;
+  background: var(--secondary-bg);
+  border: 5px solid var(--border-color);
+  max-height: 80vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  }
+
+  .panel-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  font-size: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  z-index: 10;
+  -webkit-appearance: none;
+  appearance: none;
+  }
+
+  .panel-close-btn:hover {
+  color: var(--accent-color);
+  }
+
+  .panel-close-btn:active {
+  transform: scale(0.9);
+  }
+
+/* Mobile styles for submit panel */
+@media (max-width: 768px) {
+  #submitPanel {
+    position: fixed !important;
+    width: 200px !important;
+    max-width: 80vw !important;
+    height: 40vh !important;
+    max-height: 300px !important;
+    top: auto !important;
+    bottom: 10px !important;
+    right: 10px !important;
+    left: auto !important;
+    transform: none !important;
+    border: 4px solid #080808;
+    border-radius: 8px;
+    z-index: 1600;
+    padding: 12px;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  #submitPanel h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  #submitPanel label {
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+
+  #submitPanel input,
+  #submitPanel select {
+    font-size: 14px;
+    padding: 8px;
+    margin-bottom: 6px;
+  }
+
+  #submitBtn {
+    font-size: 13px;
+    padding: 10px;
+    min-height: 40px;
+  }
+}
+
+#submitPanel input, #submitPanel select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#submitPanel label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--text-color);
+  font-weight: bold;
+}
+
+#submitBtn {
+  width: 100%;
+  padding: 12px;
+  background: #4CAF50;
+  color: white;
+  border: 2px solid #45a049;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  min-height: 44px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* User location marker styling */
+.user-location-marker {
+  background: none !important;
+  border: none !important;
+  font-size: 24px;
+  color: #27b622;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+/* GPS button styling */
+#locateMe {
+  background: #4CAF50;
+  color: white;
+  border: 2px solid #45a049;
+  padding: 10px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  min-height: 44px;
+  min-width: 44px;
+  width: 100%;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#locateMe:hover:not(:disabled) {
+  background: #45a049;
+}
+
+#locateMe:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+#locateMe:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Filter input styling */
+#sidebar input[type="text"], #sidebar input[type="number"], #sidebar select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+  color: #000;
+  background: #ffffff;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#sidebar input[type="text"]::placeholder,
+#sidebar input[type="number"]::placeholder,
+#sidebar select::placeholder {
+  color: #888;
+  opacity: 0.7;
+}
+
+#sidebar input[type="text"]:focus, #sidebar input[type="number"]:focus, #sidebar select:focus {
+  border-color: #3388ff;
+  outline: none;
+}
+
+#sidebar label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+#applyFilters, #openSubmit {
+  width: 100%;
+  padding: 12px;
+  background: var(--secondary-bg);
+  color: var(--text-color);
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  min-height: 44px;
+  min-width: 44px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#applyFilters:hover, #openSubmit:hover {
+  background: var(--button-hover);
+}
+
+#applyFilters:active, #openSubmit:active {
+  transform: scale(0.98);
+}
+
+/* Custom marker styling */
+.marker-pin-red {
+  position: relative;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 20px solid #ff4444;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  cursor: pointer;
+}
+
+.marker-pin-red::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.marker-pin-red::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  top: 8px;
+  left: -4px;
+}
+
+.marker-pin-red.marker-highlight-green {
+  border-top-color: #2ecc71;
+  filter: drop-shadow(0 0 8px rgba(46, 204, 113, 0.9));
+}
+
+.marker-pin-red.marker-highlight-green::before {
+  border-color: #2ecc71;
+  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.3);
+}
+
+.marker-pin-red.marker-highlight-green::after {
+  background: #2ecc71;
+}
+
+.marker-pin-red.marker-highlight-yellow {
+  border-top-color: #f1c40f;
+  filter: drop-shadow(0 0 8px rgba(241, 196, 15, 0.9));
+}
+
+.marker-pin-red.marker-highlight-yellow::before {
+  border-color: #f1c40f;
+  box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.25);
+}
+
+.marker-pin-red.marker-highlight-yellow::after {
+  background: #f1c40f;
+}
+
+.marker-blue {
+  background: #3388ff;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.marker-green {
+  background: #27b622;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.marker-yellow {
+  background: #fdd835;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.marker-pin-blue {
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 20px solid #3388ff;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.marker-pin-blue::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  top: 8px;
+  left: -4px;
+}
+
+.marker-pin-green {
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 20px solid #27b622;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.marker-pin-green::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  top: 8px;
+  left: -4px;
+}
+
+/* Escape Room Popup Styling */
+.leaflet-popup-content-wrapper {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+  border: 3px solid #fdd835 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 0 10px rgba(253,216,53,0.1) !important;
+}
+
+.leaflet-popup-content {
+  color: #fff !important;
+  font-size: 14px !important;
+  line-height: 1.6;
+  margin: 0 !important;
+}
+
+.leaflet-popup-tip {
+  background: #1a1a1a !important;
+  border-top: 3px solid #fdd835 !important;
+}
+
+.escape-room-popup {
+  padding: 12px;
+}
+
+.escape-room-popup h3 {
+  color: #fdd835;
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  border-bottom: 2px solid #fdd835;
+  padding-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.escape-room-popup h4 {
+  color: #ff6b6b;
+  margin: 8px 0 4px 0;
+  font-size: 13px;
+}
+
+.popup-section {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.popup-icon {
+  font-size: 18px;
+  min-width: 20px;
+  margin-top: 2px;
+}
+
+.popup-text {
+  flex: 1;
+  word-break: break-word;
+}
+
+.popup-text a {
+  color: #3388ff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.popup-text a:hover {
+  text-decoration: underline;
+}
+
+.leaflet-div-icon {
+  background: none !important;
+  border: none !important;
+}
+
+/* Cluster markers styling */
+.cluster-blue {
+  background: #3388ff !important;
+}
+
+.cluster-green {
+  background: #27b622 !important;
+}
+
+.cluster-yellow {
+  background: #fdd835 !important;
+}
+
+.cluster-blue, .cluster-green, .cluster-yellow {
+  border-radius: 50% !important;
+  border: 3px solid white !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white !important;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.cluster-yellow {
+  color: #333 !important;
+}
+
+.cluster-blue div, .cluster-green div, .cluster-yellow div {
+  text-align: center;
+}
+
+/* Plan Panel Styling */
+#planPanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  background: linear-gradient(135deg, var(--primary-bg) 0%, var(--button-hover) 100%);
+  border: 6px solid var(--border-color);
+  z-index: 1000;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: -4px 0 8px rgba(0,0,0,0.5);
+}
+
+#planPanel h3 {
+  color: var(--accent-color);
+  margin: 0 0 15px 0;
+  padding: 15px 15px 0 15px;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.plan-section {
+  padding: 15px;
+  border-bottom: 2px solid var(--secondary-bg);
+}
+
+.plan-section label {
+  color: var(--text-color);
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.plan-section input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+.plan-section .time-input {
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+.room-selector {
+  background: var(--secondary-bg);
+  padding: 10px;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.room-option {
+  background: var(--primary-bg);
+  border: 2px solid var(--accent-color);
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: all 0.3s;
+}
+
+.room-option:hover {
+  background: var(--button-hover);
+  border-color: var(--text-color);
+}
+
+.room-option.selected {
+  background: var(--accent-color);
+  color: #000;
+  border-color: var(--accent-color);
+}
+
+.itinerary-item {
+  background: #2d2d2d;
+  border-left: 4px solid var(--accent-color);
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  color: var(--text-color);
+}
+
+.itinerary-room-name {
+  color: var(--accent-color);
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.saved-plan-item,
+.submitted-room-item {
+  background: #1f1f1f;
+  border: 1px solid #444;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.saved-plan-actions,
+.submitted-room-status {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.submitted-room-header {
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-bottom: 6px;
+}
+
+.itinerary-time {
+  color: #3388ff;
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+
+.itinerary-time input[type="time"] {
+  background: #1a1a1a;
+  color: var(--text-color);
+  border: 2px solid var(--accent-color);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  min-width: 120px;
+  min-height: 44px;
+  font-family: monospace;
+  -webkit-user-select: auto;
+  user-select: auto;
+  -webkit-appearance: menulist-button;
+  appearance: menulist-button;
+}
+
+.itinerary-time input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  font-size: 18px;
+  padding: 5px;
+}
+
+.itinerary-time input[type="time"]:hover {
+  border-color: var(--text-color);
+  background: #2a2a2a;
+}
+
+.itinerary-time input[type="time"]:focus {
+  outline: 2px solid #3388ff;
+  border-color: #3388ff;
+}
+
+.travel-time {
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 5px;
+  padding-top: 8px;
+  border-top: 1px solid #444;
+}
+
+.status-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.status-green {
+  background: #27b622;
+}
+
+.status-yellow {
+  background: #fdd835;
+}
+
+.status-red {
+  background: #ff4444;
+}
+
+.plan-buttons {
+  padding: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.plan-buttons button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  min-height: 44px;
+}
+
+.btn-add {
+  background: #4CAF50;
+  color: white;
+}
+
+.btn-close {
+  background: #cc5555;
+  color: white;
+}
+
+.btn-clear {
+  background: #999;
+  color: white;
+}
+
+.btn-export {
+  background: #3388ff;
+  color: white;
+}
+
+.btn-map {
+  background: #27b622;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  #planPanel {
+    position: fixed !important;
+    width: calc(100vw - 20px) !important;
+    max-width: none !important;
+    height: 50vh !important;
+    max-height: 50vh !important;
+    top: auto !important;
+    bottom: 10px !important;
+    right: 10px !important;
+    left: 10px !important;
+    transform: none !important;
+    border: 4px solid #080808;
+    border-radius: 8px;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  #planPanel h3 {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .plan-section {
+    padding: 12px;
+  }
+
+  .plan-section label {
+    font-size: 14px;
+  }
+
+  .plan-section input {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .plan-buttons {
+    padding: 10px;
+  }
+
+  .plan-buttons {
+    padding: 8px;
+  }
+
+  .plan-buttons button {
+    font-size: 12px;
+    padding: 8px;
+    min-height: 38px;
+  }
+}
+
+/* Trip markers on map */
+.trip-marker {
+  background: var(--accent-color);
+  color: #000;
+  border: 2px solid #000;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.trip-start-marker,
+.trip-end-marker,
+.trip-start-end-marker {
+  font-size: 24px;
+  line-height: 1;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+/* Calendar Styling */
+.calendar-container {
+  background: #2d2d2d;
+  border: 2px solid var(--accent-color);
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  color: var(--accent-color);
+}
+
+.calendar-header button {
+  background: var(--primary-bg);
+  color: var(--accent-color);
+  border: 1px solid var(--accent-color);
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+.calendar-header button:hover {
+  background: var(--button-hover);
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-bottom: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.calendar-weekday {
+  box-sizing: border-box;
+  text-align: center;
+  color: var(--accent-color);
+  font-weight: bold;
+  font-size: 12px;
+  padding: 5px 0;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.calendar-day {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  color: #ccc;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.calendar-day:hover {
+  background: #3a3a3a;
+  border-color: var(--accent-color);
+}
+
+.calendar-day.other-month {
+  color: #555;
+  cursor: default;
+}
+
+.calendar-day.today {
+  border: 2px solid #3388ff;
+}
+
+.calendar-day.selected {
+  background: var(--accent-color);
+  color: #000;
+  border: 2px solid var(--accent-color);
+  font-weight: bold;
+}
+
+.calendar-day.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Logo Styling */
+.logo-link {
+  position: absolute;
+  bottom: 45px;
+  right: 25px;
+  z-index: 1000;
+  text-decoration: none;
+  display: block;
+  line-height: 0;
+}
+
+.map-corner-logo {
+  width: 180px;
+  height: 180px;
+  cursor: pointer;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  filter: contrast(1.15) brightness(1.08) saturate(1.1);
+  transition: transform 0.3s ease;
+  will-change: transform;
+}
+
+.map-corner-logo:hover {
+  transform: scale(1.08);
+}
+
+  .social-popup {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    right: 0;
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(0,0,0,0.88);
+    border: 2px solid var(--border-color);
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 2500;
+  }
+
+  .social-popup.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 18px;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .social-link:hover {
+    transform: translateY(-2px);
+    background: var(--accent-color);
+    color: #000;
+  }
+
+  .logo-button {
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .corner-brand {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    z-index: 1000;
+  }
+
+  .corner-brand .logo-menu {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  @media (max-width: 768px) {
+    .corner-brand {
+      bottom: 16px;
+      right: 16px;
+    }
+
+    .map-corner-logo {
+      width: 104px;
+      height: 104px;
+    }
+
+}
+
+  </style>
+</head>
+
+<body>
+
+<header id="topBar">
+  <img src="logo.png" alt="Escaper Map logo">
+  <div class="brand-title">Escaper Map</div>
+  <nav class="topbar-nav" aria-label="Primary">
+    <a class="topbar-link" data-page-target="home" href="index.html">Home</a>
+    <a class="topbar-link" data-page-target="faq" href="faq.html">FAQ</a>
+    <a class="topbar-link active" data-page-target="map" href="map.html" aria-current="page">Map</a>
+  </nav>
+</header>
+
+<!-- Structured Data for Search Engines -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "Escaper Map",
+      "url": "https://escapermap.com/",
+      "description": "Find escape rooms by city and theme, including horror, puzzle and riddle escape rooms.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://escapermap.com/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "name": "Escaper Map",
+      "url": "https://escapermap.com/",
+      "applicationCategory": "TravelApplication",
+      "operatingSystem": "Any",
+      "image": "https://escapermap.com/logo.png",
+      "description": "Global escape room directory for finding escape rooms in each city and filtering by horror, puzzle and riddle categories.",
+      "keywords": "escape rooms, escape room in city, horror escape rooms, puzzle escape rooms, riddle escape rooms"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How can I find escape rooms in a specific city?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Use the company, room name and map filters to discover escape rooms by city and nearby areas, then save your plan."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I find horror escape rooms on Escaper Map?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Select the Horror or Psychological horror categories in Filters to view horror escape rooms."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I search puzzle and riddle escape rooms?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Choose the Riddles category to discover puzzle-heavy and riddle-style escape rooms."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<section id="mapPage" class="site-page" hidden>
+<button id="menuToggle" aria-label="Toggle menu">☰</button>
+
+<div id="layout">
+  <aside id="sidebar">
+    <button id="closeSidebar" class="sidebar-close-btn" aria-label="Close filters">×</button>
+    <div class="sidebar-content">
+    <div id="authPanel" class="auth-panel">
+      <h2 style="color: white">Account</h2>
+      <div id="authSummary" class="auth-summary">Sign in to save your preferences and access future features.</div>
+
+      <div id="authInitialButtons">
+        <div class="auth-buttons">
+          <button id="signupButton" type="button">Sign up</button>
+          <button id="loginButton" type="button">Log in</button>
+        </div>
+        <button id="continueAsGuest" type="button" style="width: 100%; margin-top: 8px;">Continue as Guest</button>
+      </div>
+
+      <div id="authGuestFields" hidden>
+        <label for="authEmail">Email</label>
+        <input id="authEmail" type="email" placeholder="you@example.com" autocomplete="email">
+
+        <label for="authPassword">Password</label>
+        <input id="authPassword" type="password" placeholder="Password" autocomplete="current-password">
+
+        <label><input type="checkbox" id="agreeTerms" required> I agree to the <a href="#terms" onclick="showTerms(); return false;">Terms of Service</a></label>
+        <label><input type="checkbox" id="agreePrivacy" required> I agree to the <a href="#privacy" onclick="showPrivacy(); return false;">Privacy Policy</a></label>
+      </div>
+
+      <div id="authUserActions" hidden>
+        <small class="auth-note">Your preferences are saved for this account.</small>
+      </div>
+
+      <small id="authStatus" class="auth-status"> </small>
+    </div>
+
+    <div id="sidebarTabs">
+      <button id="tabFilters" class="active" type="button">Filters</button>
+      <button id="tabPlan" type="button">Plan</button>
+      <button id="tabSubmit" type="button">Submit</button>
+    </div>
+
+    <div id="sidebarTabPanels">
+      <div id="planPanel" class="tab-panel" hidden>
+        <button id="closePlan" class="panel-close-btn" aria-label="Close">×</button>
+        <h3>📅 Plan your escape</h3>
+        <div class="plan-section">
+          <label>Select Trip Date:</label>
+          <div id="calendar"></div>
+          <div id="selectedDateDisplay" style="color: #fdd835; text-align: center; margin-top: 10px; font-weight: bold;"></div>
+        </div>
+        <div class="plan-section">
+          <label>Search escape rooms:</label>
+          <input type="text" id="planSearchInput" placeholder="Search by name or company...">
+          <div class="room-selector" id="roomSelector"></div>
+          <button id="addToItinerary" class="btn-add" style="width: 100%; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; min-height: 44px;">Add Selected</button>
+        </div>
+        <div class="plan-section">
+          <label>Your Itinerary:</label>
+          <div id="itineraryList"></div>
+        </div>
+        <div class="plan-buttons">
+          <button id="savePlan" class="btn-add">💾 Save Plan</button>
+          <button id="showTripOnMap" class="btn-map">Show Trip</button>
+          <button id="openRouteInGoogleMaps" class="btn-map">🗺️ Route in Maps</button>
+        </div>
+        <div class="plan-buttons" style="padding-top: 0;">
+          <button id="exportPDF" class="btn-export">📄 Export PDF</button>
+        </div>
+        <div class="plan-buttons" style="padding-top: 0;">
+          <button id="clearItinerary" class="btn-clear">Clear All</button>
+        </div>
+      </div>
+      <div id="submitPanel" class="tab-panel" hidden>
+        <button id="closeSubmit" class="panel-close-btn" aria-label="Close">×</button>
+        <h3>Submit an escape room</h3>
+        <label for="nameInput">Name *</label>
+        <input id="nameInput" placeholder="Name" required>
+        <label for="companyInput">Company *</label>
+        <input id="companyInput" placeholder="Company" required>
+        <label for="durationInput">Duration</label>
+        <input id="durationInput" type="number" placeholder="Duration (optional)">
+        <label for="yearInput">Year created</label>
+        <input id="yearInput" type="number" placeholder="Year created (optional)">
+        <label for="websiteInput">Website</label>
+        <input id="websiteInput" placeholder="Website (optional)">
+        <label for="addressInput">Address *</label>
+        <input id="addressInput" placeholder="Address" required>
+        <label for="categoryInput">Category *<span class="multi-select-hint"> (hold Ctrl to select multiple)</span></label>
+        <select id="categoryInput" multiple required>
+          <option value="Action">Action</option>
+          <option value="Comedy">Comedy</option>
+          <option value="Horror">Horror</option>
+          <option value="Kids">Kids</option>
+          <option value="Outer Space">Outer Space</option>
+          <option value="Portable">Portable</option>
+          <option value="Psychological horror">Psychological horror</option>
+          <option value="Role playing">Role playing</option>
+          <option value="Riddles">Riddles</option>
+          <option value="Spooky">Spooky</option>
+          <option value="Splatter">Splatter</option>
+          <option value="Sci-fi">Sci-fi</option>
+          <option value="VR">VR</option>
+        </select>
+        <button id="submitBtn">Submit</button>
+      </div>
+      <div id="filtersPanel" class="tab-panel">
+        <h2 style="color: white;">Filters</h2>
+
+        <label>Theme</label>
+    <select id="themeSelector">
+      <option value="classic">🔴 Classic Red</option>
+      <option value="midnight">🌙 Midnight Blue</option>
+      <option value="forest">🌲 Forest Green</option>
+      <option value="royal">👑 Royal Purple</option>
+      <option value="steampunk">⚙️ Steampunk</option>
+      <option value="ice">❄️ Ice</option>
+      <option value="neon">💠 Neon</option>
+    </select>
+
+    <label>Category</label>
+    <select id="category" multiple>
+      <option value="Any" selected>Any</option>
+      <option value="Action">Action</option>
+      <option value="Comedy">Comedy</option>
+      <option value="Horror">Horror</option>
+      <option value="Kids">Kids</option>
+      <option value="Outer Space">Outer Space</option>
+      <option value="Portable">Portable</option>
+      <option value="Psychological horror">Psychological horror</option>
+      <option value="Role playing">Role playing</option>
+      <option value="Riddles">Riddles</option>
+      <option value="Splatter">Splatter</option>
+      <option value="Spooky">Spooky</option>
+      <option value="Sci-fi">Sci-fi</option>
+      <option value="VR">VR</option>
+    </select>
+
+    <label>Company Name</label>
+    <input type="text" id="company">
+
+    <label>Escape Room Name</label>
+    <input type="text" id="escapeRoomName" placeholder="Search by name">
+
+    <div id="toggleAdvancedFilters" onclick="toggleAdvancedFilters()" style="cursor: pointer; text-decoration: underline; color: var(--text-color); margin-bottom: 10px;">Advanced Filters <span id="advancedArrow">▼</span></div>
+
+    <div id="advancedFilters" style="display: none;">
+      <label>Duration (minutes)</label>
+      <input type="number" id="minDuration" placeholder="Min">
+      <input type="number" id="maxDuration" placeholder="Max">
+
+      <label>Year</label>
+      <input type="number" id="minYear" placeholder="From">
+      <input type="number" id="maxYear" placeholder="To">
+
+      <label>Radius from my location (km)</label>
+      <input type="number" id="radius" placeholder="e.g., 5" min="0.1" step="0.1">
+      <small id="locationStatus" style="color: #ffcccc; font-size: 12px;">Location not set - use "📍 Locate Me" first</small>
+    </div>
+
+    <button id="applyFilters">Apply filters</button>
+
+    <hr>
+
+    <button id="locateMe">📍 Locate Me</button>
+
+    <hr>
+  </div>
+    </div>
+  </aside>
+
+  <div id="map"></div>
+  <div id="userAvatar" class="user-avatar" title="Click for menu"></div>
+  <div id="avatarDropdown" class="avatar-dropdown">
+    <button id="profileBtn">Profile</button>
+    <button id="savedPlansBtn">Saved Plans</button>
+    <button id="submittedRoomsBtn">Submitted Rooms</button>
+    <button id="logoutBtn">Log Out</button>
+  </div>
+
+  <div id="profilePage" class="page-overlay" hidden>
+    <div class="page-card">
+      <h3>Profile</h3>
+      <div class="profile-field">
+        <label for="profileName">Full Name</label>
+        <input id="profileName" type="text" placeholder="First Last">
+      </div>
+      <div class="profile-field">
+        <label for="profileAge">Age</label>
+        <input id="profileAge" type="number" placeholder="Your age" min="1" max="120">
+      </div>
+      <div class="profile-field">
+        <label for="profileGender">Gender</label>
+        <select id="profileGender">
+          <option value="">Select one</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="profile-field">
+        <label>Photo</label>
+        <div id="profilePhotoPreview" class="photo-preview">?</div>
+        <input id="profilePhotoFile" type="file" accept="image/*">
+      </div>
+      <div class="profile-field">
+        <label>Or choose a default avatar</label>
+        <div class="default-avatar-list" id="defaultAvatarList"></div>
+      </div>
+      <div class="page-actions">
+        <button id="profileCancel" class="btn-cancel" type="button">Cancel</button>
+        <button id="profileSave" class="btn-save" type="button">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="savedPlansPage" class="page-overlay" hidden>
+    <div class="page-card">
+      <h3>Saved Plans</h3>
+      <div id="savedPlansList" style="max-height: calc(100vh - 220px); overflow-y: auto; margin-bottom: 12px;"></div>
+      <div class="page-actions">
+        <button id="savedPlansClear" class="btn-clear" type="button">Clear all</button>
+        <button id="savedPlansBack" class="btn-cancel" type="button">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="submittedRoomsPage" class="page-overlay" hidden>
+    <div class="page-card">
+      <h3>Submitted Rooms</h3>
+      <div id="submittedRoomsList" style="max-height: calc(100vh - 220px); overflow-y: auto; margin-bottom: 12px;"></div>
+      <div class="page-actions">
+        <button id="submittedRoomsRefresh" class="btn-map" type="button">Refresh</button>
+        <button id="submittedRoomsBack" class="btn-cancel" type="button">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="corner-brand">
+    <div class="logo-menu">
+      <button id="cornerLogoButton" class="logo-button" aria-expanded="false" type="button">
+        <img src="logo.png" alt="Escaper Map" class="map-corner-logo">
+      </button>
+      <div id="socialPopup" class="social-popup">
+        <a href="https://www.instagram.com/escapermap/" target="_blank" rel="noopener noreferrer" class="social-link" title="Instagram">📷</a>
+        <a href="https://www.facebook.com/escapermap" target="_blank" rel="noopener noreferrer" class="social-link" title="Facebook">👍</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section id="homePage" class="site-page" aria-labelledby="seoHeading">
+  <div class="seo-wrap">
+    <h1 id="seoHeading">Find Escape Rooms by City, Horror Theme, Puzzle and Riddle Style</h1>
+    <p>
+      Escaper Map helps players discover escape rooms in cities around the world. Search by company or room name,
+      filter by category, and build your ideal route for one-night or weekend escape room trips.
+    </p>
+
+    <div class="home-actions">
+      <button id="homeGoMap" type="button">Open Map</button>
+      <button id="homeGoFaq" type="button">Read FAQ</button>
+    </div>
+
+    <div class="seo-grid">
+      <article class="seo-card">
+        <h2>Escape Room in Your City</h2>
+        <p>Use map filters and location radius to find nearby escape rooms and compare options before booking.</p>
+      </article>
+      <article class="seo-card">
+        <h2>Horror Escape Rooms</h2>
+        <p>Filter Horror, Spooky, Splatter, or Psychological horror categories to find intense experiences.</p>
+      </article>
+      <article class="seo-card">
+        <h2>Puzzle and Riddle Escape Rooms</h2>
+        <p>Choose Riddles to discover logic-driven and puzzle-focused rooms with strong brain-teaser gameplay.</p>
+      </article>
+    </div>
+
+    <h2>Popular Search Topics</h2>
+    <ul>
+      <li>escape rooms near me</li>
+      <li>escape room in [city]</li>
+      <li>horror escape rooms</li>
+      <li>puzzle escape rooms and riddle escape rooms</li>
+    </ul>
+  </div>
+</section>
+
+<section id="faqPage" class="site-page" aria-labelledby="faqPageHeading" hidden>
+  <div class="seo-wrap">
+    <h1 id="faqPageHeading">Escape Room FAQ</h1>
+    <div class="seo-faq" id="faq">
+      <div class="seo-card">
+        <h2>How do I find escape rooms in a specific city?</h2>
+        <p>Search by room or company name and use your location radius to focus on one city or nearby areas.</p>
+      </div>
+      <div class="seo-card">
+        <h2>How do I find horror escape rooms?</h2>
+        <p>Open Filters and select Horror, Psychological horror, Spooky, or Splatter categories.</p>
+      </div>
+      <div class="seo-card">
+        <h2>How do I find puzzle or riddle escape rooms?</h2>
+        <p>Select Riddles in Filters to surface puzzle-heavy experiences built around clues and logic challenges.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Submission confirmation modal -->
+<div id="submitConfirmationModal" class="page-overlay" style="display: none;">
+  <div class="page-card" style="max-width: 500px;">
+    <h3 style="color: #27b622; margin-bottom: 20px;">✅ Submission Successful!</h3>
+    <p style="margin-bottom: 15px;">Your escape room has been submitted for review. You can track its status in the <strong>Submitted Rooms</strong> section.</p>
+    
+    <div id="submittedRoomDetails" style="background: #fd0800; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <!-- Room details will be populated here -->
+    </div>
+    
+    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+      <button id="closeConfirmationModal" style="background: #0d0d0d; color: rgb(250, 244, 244); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Close</button>
+      <button id="viewSubmittedRooms" style="background: #27b622; color: rgb(240, 235, 235); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">View Submitted Rooms</button>
+    </div>
+  </div>
+</div>
+
+  <!-- Terms of Service -->
+  <div id="termsPage" class="page-overlay" hidden>
+    <div class="page-card">
+      <h1>Terms of Service / Όροι Χρήσης</h1>
+
+      <h2>English</h2>
+
+      <p>Welcome to Escaper Map. By accessing or using our platform, you agree to these Terms of Service.</p>
+
+      <h3>1. Use of the Platform</h3>
+      <p>You agree to use the platform only for lawful purposes and not to misuse or disrupt the service.</p>
+
+      <h3>2. Accounts</h3>
+      <p>You are responsible for maintaining the confidentiality of your account and all activities under it.</p>
+
+      <h3>3. User Submissions</h3>
+      <p>By submitting content (e.g. escape rooms), you grant Escaper Map the right to use, display, and modify this content. We reserve the right to remove or edit any content.</p>
+
+      <h3>4. Accuracy of Information</h3>
+      <p>We do not guarantee that all information is accurate or up to date.</p>
+
+      <h3>5. External Links</h3>
+      <p>We are not responsible for the content of third-party websites.</p>
+
+      <h3>6. Limitation of Liability</h3>
+      <p>Escaper Map is not liable for any damages resulting from the use of the platform.</p>
+
+      <h3>7. Termination</h3>
+      <p>We reserve the right to suspend or terminate accounts that violate these terms.</p>
+
+      <h3>8. Changes</h3>
+      <p>We may update these terms at any time.</p>
+
+      ---
+
+      <h2>Ελληνικά</h2>
+
+      <p>Καλώς ήρθατε στο Escaper Map. Με τη χρήση της πλατφόρμας αποδέχεστε τους παρόντες όρους.</p>
+
+      <h3>1. Χρήση Πλατφόρμας</h3>
+      <p>Συμφωνείτε να χρησιμοποιείτε την πλατφόρμα νόμιμα και χωρίς κατάχρηση.</p>
+
+      <h3>2. Λογαριασμοί</h3>
+      <p>Είστε υπεύθυνοι για την ασφάλεια του λογαριασμού σας.</p>
+
+      <h3>3. Περιεχόμενο Χρηστών</h3>
+      <p>Με την υποβολή περιεχομένου, δίνετε το δικαίωμα στο Escaper Map να το χρησιμοποιεί και να το τροποποιεί.</p>
+
+      <h3>4. Ακρίβεια Πληροφοριών</h3>
+      <p>Δεν εγγυόμαστε ότι οι πληροφορίες είναι πάντα ακριβείς ή ενημερωμένες.</p>
+
+      <h3>5. Εξωτερικοί Σύνδεσμοι</h3>
+      <p>Δεν φέρουμε ευθύνη για τρίτες ιστοσελίδες.</p>
+
+      <h3>6. Περιορισμός Ευθύνης</h3>
+      <p>Το Escaper Map δεν ευθύνεται για ζημιές από τη χρήση της πλατφόρμας.</p>
+
+      <h3>7. Τερματισμός</h3>
+      <p>Μπορούμε να διαγράψουμε λογαριασμούς που παραβιάζουν τους όρους.</p>
+
+      <h3>8. Αλλαγές</h3>
+      <p>Οι όροι μπορεί να τροποποιηθούν.</p>
+
+      <div class="page-actions">
+        <button onclick="hideTerms()" class="btn-cancel" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy Policy -->
+  <div id="privacyPage" class="page-overlay" hidden>
+    <div class="page-card">
+      <h1>Privacy Policy / Πολιτική Απορρήτου</h1>
+
+      <h2>English</h2>
+
+      <p>This Privacy Policy explains how we collect and use your data.</p>
+
+      <h3>1. Data We Collect</h3>
+      <ul>
+      <li>Email address (for account creation)</li>
+      <li>User-submitted content</li>
+      <li>Technical data (IP address, browser)</li>
+      </ul>
+
+      <h3>2. Purpose</h3>
+      <p>We collect data to provide and improve the platform.</p>
+
+      <h3>3. Legal Basis</h3>
+      <p>We process data based on consent and legitimate interest.</p>
+
+      <h3>4. Data Storage</h3>
+      <p>Your data is securely stored using Supabase infrastructure.</p>
+
+      <h3>5. Data Sharing</h3>
+      <p>We do not sell your data.</p>
+
+      <h3>6. Your Rights (GDPR)</h3>
+      <ul>
+      <li>Access your data</li>
+      <li>Request deletion</li>
+      <li>Request correction</li>
+      </ul>
+
+      <h3>7. Contact</h3>
+      <p>Email: contact@escapermap.com</p>
+
+      ---
+
+      <h2>Ελληνικά</h2>
+
+      <p>Η παρούσα πολιτική εξηγεί πώς συλλέγουμε και χρησιμοποιούμε τα δεδομένα σας.</p>
+
+      <h3>1. Δεδομένα που συλλέγουμε</h3>
+      <ul>
+      <li>Email (για λογαριασμό)</li>
+      <li>Περιεχόμενο χρηστών</li>
+      <li>Τεχνικά δεδομένα (IP)</li>
+      </ul>
+
+      <h3>2. Σκοπός</h3>
+      <p>Για τη λειτουργία και βελτίωση της πλατφόρμας.</p>
+
+      <h3>3. Νομική Βάση</h3>
+      <p>Συγκατάθεση και έννομο συμφέρον.</p>
+
+      <h3>4. Αποθήκευση</h3>
+      <p>Τα δεδομένα αποθηκεύονται με ασφάλεια μέσω Supabase.</p>
+
+      <h3>5. Διαμοιρασμός</h3>
+      <p>Δεν πουλάμε δεδομένα.</p>
+
+      <h3>6. Δικαιώματα</h3>
+      <ul>
+      <li>Πρόσβαση</li>
+      <li>Διαγραφή</li>
+      <li>Διόρθωση</li>
+      </ul>
+
+      <h3>7. Επικοινωνία</h3>
+      <p>Email: escapermap@gmail.com</p>
+
+      <div class="page-actions">
+        <button onclick="hidePrivacy()" class="btn-cancel" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Overlay -->
+  <div id="loginPage" class="page-overlay">
+    <div class="page-card">
+      <button class="panel-close-btn" type="button" aria-label="Close log in" onclick="hideLogin()">×</button>
+      <h3>Log in</h3>
+      <div class="profile-field">
+        <label for="loginEmail">Email</label>
+        <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="profile-field">
+        <label for="loginPassword">Password</label>
+        <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
+      </div>
+      <div class="auth-buttons">
+        <button id="loginSubmitButton" type="button">Log in</button>
+        <button onclick="hideLogin()" class="btn-cancel" type="button">Cancel</button>
+      </div>
+      <div style="text-align: center; margin-top: 12px;">
+        <a href="#" onclick="showForgotPassword(); return false;">Forgot your password?</a>
+      </div>
+      <small id="loginStatus" class="auth-status" style="display: block; margin-top: 8px; min-height: 18px;"></small>
+    </div>
+  </div>
+
+  <!-- Signup Overlay -->
+  <div id="signupPage" class="page-overlay">
+    <div class="page-card">
+      <button class="panel-close-btn" type="button" aria-label="Close sign up" onclick="hideSignup()">×</button>
+      <h3>Sign up</h3>
+      <div class="profile-field">
+        <label for="signupEmail">Email</label>
+        <input id="signupEmail" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="profile-field">
+        <label for="signupPassword">Password</label>
+        <input id="signupPassword" type="password" placeholder="Password" autocomplete="current-password">
+      </div>
+      <div class="profile-field">
+        <label><input type="checkbox" id="signupAgreeTerms" required> I agree to the <a href="#terms" onclick="showTerms(); return false;">Terms of Service</a></label>
+        <label><input type="checkbox" id="signupAgreePrivacy" required> I agree to the <a href="#privacy" onclick="showPrivacy(); return false;">Privacy Policy</a></label>
+      </div>
+      <div class="auth-buttons">
+        <button id="signupSubmitButton" type="button">Create account</button>
+        <button onclick="hideSignup()" class="btn-cancel" type="button">Cancel</button>
+      </div>
+      <small id="signupStatus" class="auth-status" style="display: block; margin-top: 8px; min-height: 18px;"></small>
+    </div>
+  </div>
+
+  <!-- Forgot Password Overlay -->
+  <div id="forgotPasswordPage" class="page-overlay">
+    <div class="page-card">
+      <h3>Reset Password</h3>
+      <p>Enter your email address and we'll send you a link to reset your password.</p>
+      <div class="profile-field">
+        <label for="forgotEmail">Email</label>
+        <input id="forgotEmail" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="auth-buttons">
+        <button id="forgotSubmitButton" type="button">Send Reset Link</button>
+        <button onclick="hideForgotPassword()" class="btn-cancel" type="button">Cancel</button>
+      </div>
+      <small id="forgotStatus" class="auth-status" style="display: block; margin-top: 8px; min-height: 18px;"></small>
+    </div>
+  </div>
+
+  <!-- Email Confirmation Overlay -->
+  <div id="emailConfirmationPage" class="page-overlay">
+    <div class="page-card">
+      <h3>Check Your Email</h3>
+      <p>We've sent a confirmation link to your email address. Please check your email and click the link to confirm your account.</p>
+      <p>Once confirmed, you can sign in to your account.</p>
+      <div class="auth-buttons">
+        <button onclick="hideEmailConfirmation()" class="btn-cancel" type="button">Continue</button>
+      </div>
+    </div>
+  </div>
+
+<!-- Scripts -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const db = supabase.createClient(
+  "https://ypmtgvoadqtcspcrtemy.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwbXRndm9hZHF0Y3NwY3J0ZW15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg0NjE4MjIsImV4cCI6MjA4NDAzNzgyMn0.9m6Wi-y0xZ3BafqHJzGLPgLhsBOuSlTZ3mu4Bq28SGI"
+);
+
+const STORAGE_KEYS = {
+  filters: "filters",
+  theme: "theme",
+  mapState: "mapState",
+  itinerary: "itinerary",
+  tripDate: "tripDate",
+  userLocation: "userLocation",
+  profile: "profile"
+};
+
+const DEFAULT_MAP_VIEW = {
+  lat: 37.9838,
+  lng: 23.7275,
+  zoom: 12
+};
+
+let currentUser = null;
+let currentProfile = null;
+let authInitialized = false;
+
+function isInAppBrowser() {
+  const ua = navigator.userAgent || "";
+  return /Instagram|FBAN|FBAV|FB_IAB|Line|wv/i.test(ua);
+}
+
+if (window.matchMedia('(max-width: 768px)').matches && isInAppBrowser()) {
+  document.body.classList.add('in-app-browser');
+}
+
+function getStoragePrefix() {
+  return "escapeRoom:";
+}
+
+function getStorageKey(key) {
+  return `${getStoragePrefix()}${key}`;
+}
+
+function setStoredValue(key, value) {
+  localStorage.setItem(getStorageKey(key), value);
+}
+
+function getStoredValue(key) {
+  return localStorage.getItem(getStorageKey(key));
+}
+
+function removeStoredValue(key) {
+  localStorage.removeItem(getStorageKey(key));
+}
+
+function loadProfile() {
+  const profileKey = getProfileStorageKey();
+  const saved = localStorage.getItem(profileKey) || (!currentUser ? getStoredValue(STORAGE_KEYS.profile) : null);
+  if (!saved) {
+    currentProfile = null;
+    return;
+  }
+
+  try {
+    currentProfile = JSON.parse(saved);
+  } catch (error) {
+    console.error("Failed to load profile:", error);
+    currentProfile = null;
+  }
+}
+
+function saveProfile() {
+  if (!currentProfile) return;
+  const profileKey = getProfileStorageKey();
+  localStorage.setItem(profileKey, JSON.stringify(currentProfile));
+}
+
+function getProfileInitials(name) {
+  if (!name) return "?";
+  const parts = name.trim().split(/\s+/);
+  const first = parts[0] || "";
+  const second = parts[1] || "";
+  return (first.charAt(0) + second.charAt(0)).toUpperCase() || first.charAt(0).toUpperCase();
+}
+
+function renderProfilePreview() {
+  const preview = document.getElementById("profilePhotoPreview");
+  if (!preview || !currentProfile) return;
+
+  preview.style.backgroundImage = "";
+  preview.innerHTML = "";
+
+  if (currentProfile.photoType === "upload" && currentProfile.photoValue) {
+    preview.style.backgroundImage = `url(${currentProfile.photoValue})`;
+  } else if (currentProfile.photoType === "avatar" && currentProfile.photoValue) {
+    preview.textContent = currentProfile.photoValue;
+  } else {
+    const initials = getProfileInitials(currentProfile.fullName || currentUser?.email || "?");
+    preview.textContent = initials;
+  }
+}
+
+function openProfilePage() {
+  if (!currentUser) {
+    setAuthStatus("Please sign in to edit your profile.", "error");
+    document.getElementById("authPanel").style.display = "block";
+    return;
+  }
+
+  const page = document.getElementById("profilePage");
+  page.hidden = false;
+  page.style.display = "flex";
+
+  currentProfile = currentProfile || {
+    fullName: "",
+    age: "",
+    gender: "",
+    photoType: "initials",
+    photoValue: ""
+  };
+
+  document.getElementById("profileName").value = currentProfile.fullName || "";
+  document.getElementById("profileAge").value = currentProfile.age || "";
+  document.getElementById("profileGender").value = currentProfile.gender || "";
+  document.getElementById("profilePhotoFile").value = "";
+  renderProfilePreview();
+  renderAvatarOptions();
+}
+
+function closeProfilePage() {
+  const page = document.getElementById("profilePage");
+  if (page) {
+    page.hidden = true;
+    page.style.display = "none";
+  }
+}
+
+function renderAvatarOptions() {
+  const container = document.getElementById("defaultAvatarList");
+  if (!container) return;
+
+  container.innerHTML = ESCAPE_ROOM_AVATARS.map(avatar => {
+    const selected = currentProfile?.photoType === "avatar" && currentProfile.photoValue === avatar.emoji;
+    return `<button type="button" class="avatar-option${selected ? ' selected' : ''}" data-avatar="${avatar.emoji}" title="${avatar.label}">${avatar.emoji}</button>`;
+  }).join("");
+
+  container.querySelectorAll(".avatar-option").forEach(button => {
+    button.addEventListener("click", () => {
+      currentProfile.photoType = "avatar";
+      currentProfile.photoValue = button.dataset.avatar;
+      renderProfilePreview();
+      renderAvatarOptions();
+    });
+  });
+}
+
+function handleProfileFileChange() {
+  const fileInput = document.getElementById("profilePhotoFile");
+  if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+  reader.onload = () => {
+    currentProfile.photoType = "upload";
+    currentProfile.photoValue = reader.result;
+    renderProfilePreview();
+    renderAvatarOptions();
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveProfileChanges() {
+  currentProfile.fullName = document.getElementById("profileName").value.trim();
+  currentProfile.age = document.getElementById("profileAge").value;
+  currentProfile.gender = document.getElementById("profileGender").value;
+
+  if (!currentProfile.fullName) {
+    alert("Please enter your full name.");
+    return;
+  }
+
+  saveProfile();
+  if (currentUser) {
+    await saveProfileToDb();
+  }
+
+  renderProfilePreview();
+  updateAuthUI();
+  closeProfilePage();
+  setAuthStatus("Profile saved.", "success");
+}
+
+function showPageOverlay(pageId) {
+  const pages = ["profilePage", "savedPlansPage", "submittedRoomsPage"];
+  pages.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.hidden = id !== pageId;
+      el.style.display = id === pageId ? 'flex' : 'none';
+    }
+  });
+}
+
+function hideAllPageOverlays() {
+  showPageOverlay(null);
+}
+
+function showTerms() {
+  const termsPage = document.getElementById("termsPage");
+  termsPage.hidden = false;
+  termsPage.style.display = 'flex';
+}
+
+function hideTerms() {
+  const termsPage = document.getElementById("termsPage");
+  termsPage.hidden = true;
+  termsPage.style.display = 'none';
+}
+
+function showPrivacy() {
+  const privacyPage = document.getElementById("privacyPage");
+  privacyPage.hidden = false;
+  privacyPage.style.display = 'flex';
+}
+
+function hidePrivacy() {
+  const privacyPage = document.getElementById("privacyPage");
+  privacyPage.hidden = true;
+  privacyPage.style.display = 'none';
+}
+
+function showLogin() {
+  document.getElementById("loginPage").style.display = 'flex';
+}
+
+function hideLogin() {
+  document.getElementById("loginPage").style.display = 'none';
+  clearLoginForm();
+}
+
+function showSignup() {
+  document.getElementById("signupPage").style.display = 'flex';
+}
+
+function hideSignup() {
+  document.getElementById("signupPage").style.display = 'none';
+  clearSignupForm();
+}
+
+function toggleAdvancedFilters() {
+  const advanced = document.getElementById("advancedFilters");
+  if (advanced.style.display === "none") {
+    advanced.style.display = "block";
+  } else {
+    advanced.style.display = "none";
+  }
+}
+
+function showSidebarTab(tab) {
+  const tabButtons = {
+    filters: document.getElementById('tabFilters'),
+    plan: document.getElementById('tabPlan'),
+    submit: document.getElementById('tabSubmit')
+  };
+
+  const tabPanels = {
+    filters: document.getElementById('filtersPanel'),
+    plan: document.getElementById('planPanel'),
+    submit: document.getElementById('submitPanel')
+  };
+
+  Object.keys(tabButtons).forEach(key => {
+    const button = tabButtons[key];
+    if (!button) return;
+    button.classList.toggle('active', key === tab);
+  });
+
+  Object.keys(tabPanels).forEach(key => {
+    const panel = tabPanels[key];
+    if (!panel) return;
+    panel.hidden = key !== tab;
+  });
+}
+
+async function openPlanPanel() {
+  showSidebarTab('plan');
+
+  if (!window.calendarInstance) {
+    window.calendarInstance = new Calendar();
+  } else {
+    window.calendarInstance.render();
+  }
+
+  if (allEscapeRooms.length === 0) {
+    const { data } = await db
+      .from("Escape_Rooms")
+      .select("*")
+      .eq("Status", "approved")
+      .eq("Operational", "Yes");
+    allEscapeRooms = data || [];
+  }
+
+  Storage.loadItinerary();
+  updateItinerary();
+  updateRoomSelector();
+}
+
+function closeSidebarTab() {
+  showSidebarTab('filters');
+}
+
+function showForgotPassword() {
+  hideLogin();
+  clearForgotForm();
+  document.getElementById("forgotPasswordPage").style.display = 'flex';
+}
+
+function hideForgotPassword() {
+  document.getElementById("forgotPasswordPage").style.display = 'none';
+  clearForgotForm();
+}
+
+function showEmailConfirmation() {
+  document.getElementById("emailConfirmationPage").style.display = 'flex';
+}
+
+function hideEmailConfirmation() {
+  document.getElementById("emailConfirmationPage").style.display = 'none';
+}
+
+function getSiteUrl() {
+  return window.location.origin;
+}
+
+function getWelcomeEmailHtml() {
+  return `
+    <div style="font-family: Arial, sans-serif; background:#fff7ed; padding:40px;">
+      <div style="max-width:560px; margin:auto; background:white; border-radius:16px; padding:36px; text-align:center; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
+        <div style="margin-bottom:20px;">
+          <div style="font-size:36px; font-weight:bold;">
+            <span style="color:#111;">ESCAPER</span><br>
+            <span style="color:#f97316;">MAP</span>
+          </div>
+        </div>
+        <h2 style="color:#222;">Welcome to Escaper Map 🗺️</h2>
+        <p style="color:#666; font-size:15px;">
+          Escaper Map is built for people who don’t just play escape rooms —
+          they plan them, track them, and explore them.
+        </p>
+        <div style="margin-top:20px; text-align:left; font-size:14px; color:#444;">
+          <p>🧭 <b>Plan your trips</b> — organize escape room adventures anywhere</p>
+          <p>🧩 <b>Discover rooms</b> — find new challenges on the map</p>
+          <p>📍 <b>Contribute</b> — add rooms and help grow the community</p>
+        </div>
+        <div style="margin-top:20px; padding:16px; background:#fff3cd; border-radius:10px; font-size:14px; color:#856404;">
+          Our goal is simple: <b>Build the ultimate map of escape rooms worldwide.</b>
+        </div>
+        <a href="${getSiteUrl()}"
+           style="display:inline-block; margin-top:26px; padding:14px 28px; background:#f97316; color:white; text-decoration:none; border-radius:10px; font-weight:bold; font-size:16px;">
+           Start Exploring
+        </a>
+        <p style="margin-top:24px; font-size:13px; color:#888;">
+          Your next escape is waiting.
+        </p>
+        <div style="margin-top:30px; font-size:12px; color:#aaa;">
+          © 2026 Escaper Map
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function getFirstSubmissionEmailHtml() {
+  return `
+    <div style="font-family: Arial, sans-serif; background:#fff7ed; padding:40px;">
+      <div style="max-width:520px; margin:auto; background:white; border-radius:16px; padding:32px; text-align:center; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
+        <div style="margin-bottom:20px;">
+          <div style="font-size:34px; font-weight:bold;">
+            <span style="color:#111;">ESCAPER</span><br>
+            <span style="color:#f97316;">MAP</span>
+          </div>
+        </div>
+        <h2 style="color:#222;">You added your first escape room 🎉</h2>
+        <p style="color:#666; font-size:15px;">
+          Nice work! You’ve just contributed to the Escaper Map community.
+          Every room you add helps others discover new challenges and plan better adventures.
+        </p>
+        <div style="margin-top:20px; padding:16px; background:#fff3cd; border-radius:10px; font-size:14px; color:#856404;">
+          🌍 You’re not just playing — you’re building the map.
+        </div>
+        <a href="${getSiteUrl()}"
+           style="display:inline-block; margin-top:24px; padding:14px 28px; background:#f97316; color:white; text-decoration:none; border-radius:10px; font-weight:bold; font-size:16px;">
+           Explore the Map
+        </a>
+        <p style="margin-top:20px; font-size:13px; color:#888;">
+          Keep going — add more rooms, plan trips, and track your escapes.
+        </p>
+        <div style="margin-top:30px; font-size:12px; color:#aaa;">
+          © 2026 Escaper Map
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function getFirstSubmissionStorageKey(email) {
+  return `escaper:firstSubmissionEmailSent:${email}`;
+}
+
+function hasSentFirstSubmissionEmail(email) {
+  if (!email) return false;
+  return localStorage.getItem(getFirstSubmissionStorageKey(email)) === 'true';
+}
+
+function markFirstSubmissionEmailSent(email) {
+  if (!email) return;
+  localStorage.setItem(getFirstSubmissionStorageKey(email), 'true');
+}
+
+async function sendEmail(to, subject, html) {
+  try {
+    if (db.functions && typeof db.functions.invoke === 'function') {
+      const { error } = await db.functions.invoke('send-email', {
+        body: JSON.stringify({ to, subject, html }),
+      });
+      if (error) throw error;
+      return true;
+    }
+
+    const response = await fetch('/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to, subject, html }),
+    });
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text || 'Email send failed');
+    }
+    return true;
+  } catch (err) {
+    console.error('Email send failed:', err);
+    return false;
+  }
+}
+
+async function sendWelcomeEmail(email) {
+  if (!email) return;
+  await sendEmail(email, 'Welcome to Escaper Map', getWelcomeEmailHtml());
+}
+
+async function sendFirstSubmissionEmail(email) {
+  if (!email || hasSentFirstSubmissionEmail(email)) return;
+  const sent = await sendEmail(email, 'You added your first Escape Room', getFirstSubmissionEmailHtml());
+  if (sent) {
+    markFirstSubmissionEmailSent(email);
+  }
+}
+
+function clearLoginForm() {
+  document.getElementById("loginEmail").value = "";
+  document.getElementById("loginPassword").value = "";
+  setLoginStatus("");
+}
+
+function clearSignupForm() {
+  document.getElementById("signupEmail").value = "";
+  document.getElementById("signupPassword").value = "";
+  document.getElementById("signupAgreeTerms").checked = false;
+  document.getElementById("signupAgreePrivacy").checked = false;
+  setSignupStatus("");
+}
+
+function clearForgotForm() {
+  document.getElementById("forgotEmail").value = "";
+  setForgotStatus("");
+}
+
+function setLoginStatus(message, type = "") {
+  const statusEl = document.getElementById("loginStatus");
+  statusEl.textContent = message;
+  statusEl.className = `auth-status ${type}`;
+}
+
+function setSignupStatus(message, type = "") {
+  const statusEl = document.getElementById("signupStatus");
+  statusEl.textContent = message;
+  statusEl.className = `auth-status ${type}`;
+}
+
+function setForgotStatus(message, type = "") {
+  const statusEl = document.getElementById("forgotStatus");
+  statusEl.textContent = message;
+  statusEl.className = `auth-status ${type}`;
+}
+
+// Storage keys for played rooms
+const STORAGE_KEYS_PLAYED = {
+  playedRooms: "escapeRoom:playedRooms"
+};
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].toLowerCase().split(',').map(h => h.trim());
+  const rooms = [];
+  
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',').map(v => v.trim());
+    const room = {};
+    headers.forEach((header, idx) => {
+      room[header] = values[idx];
+    });
+    if (room.name || room.company) {
+      rooms.push(room);
+    }
+  }
+  return rooms;
+}
+
+async function parsePDF(arrayBuffer) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+  let text = '';
+  
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const textContent = await page.getTextContent();
+    text += textContent.items.map(item => item.str).join(' ') + '\n';
+  }
+  
+  return extractRoomsFromText(text);
+}
+
+async function parseDOCX(arrayBuffer) {
+  const result = await mammoth.extractRawText({ arrayBuffer });
+  return extractRoomsFromText(result.value);
+}
+
+function parseXLSX(arrayBuffer) {
+  const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+  const rooms = [];
+  workbook.SheetNames.forEach(sheetName => {
+    const sheet = workbook.Sheets[sheetName];
+    const json = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+    json.forEach(row => {
+      if (row.name || row.Name || row.company || row.Company) {
+        rooms.push(row);
+      }
+    });
+  });
+  return rooms;
+}
+
+function extractRoomsFromText(text) {
+  const rooms = [];
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  
+  lines.forEach(line => {
+    const parts = line.split(/[-–—:|]/).map(p => p.trim()).filter(Boolean);
+    if (parts.length >= 2) {
+      const name = parts[0];
+      const company = parts[1];
+      if (name.length > 2 && company.length > 2) {
+        rooms.push({ name, company });
+      }
+    } else if (line.length > 5 && line.split(' ').length <= 6) {
+      rooms.push({ name: line, company: '' });
+    }
+  });
+  
+  return rooms;
+}
+
+function parseJSON(text) {
+  try {
+    const data = JSON.parse(text);
+    if (Array.isArray(data)) {
+      return data.filter(item => item.name || item.Name || item.company || item.Company);
+    }
+    return [];
+  } catch (e) {
+    console.error("Failed to parse JSON:", e);
+    return [];
+  }
+}
+
+function normalizeString(str) {
+  return (str || "").toLowerCase().trim();
+}
+
+// Build index for faster matching
+let roomIndexByName = {};
+let roomIndexByCompany = {};
+
+function buildRoomIndex() {
+  roomIndexByName = {};
+  roomIndexByCompany = {};
+  
+  cachedAllRooms.forEach(room => {
+    const name = normalizeString(room['Escape room'] || room.Name || "");
+    const company = normalizeString(room.Company || "");
+    
+    if (name) {
+      const nameWords = name.split(/\s+/);
+      nameWords.forEach(word => {
+        if (word.length > 2) {
+          if (!roomIndexByName[word]) roomIndexByName[word] = [];
+          roomIndexByName[word].push(room);
+        }
+      });
+    }
+    
+    if (company) {
+      const companyWords = company.split(/\s+/);
+      companyWords.forEach(word => {
+        if (word.length > 2) {
+          if (!roomIndexByCompany[word]) roomIndexByCompany[word] = [];
+          roomIndexByCompany[word].push(room);
+        }
+      });
+    }
+  });
+}
+
+function matchRoomWithDatabase(uploadedRoom) {
+  const uploadedName = normalizeString(uploadedRoom.name || uploadedRoom.Name || "");
+  const uploadedCompany = normalizeString(uploadedRoom.company || uploadedRoom.Company || "");
+
+  if (!uploadedName && !uploadedCompany) return null;
+
+  let candidates = new Set();
+  
+  // Get candidates from name index
+  if (uploadedName) {
+    const nameWords = uploadedName.split(/\s+/).filter(w => w.length > 2);
+    nameWords.forEach(word => {
+      if (roomIndexByName[word]) {
+        roomIndexByName[word].forEach(room => candidates.add(room.id));
+      }
+    });
+  }
+  
+  // Get candidates from company index
+  if (uploadedCompany) {
+    const companyWords = uploadedCompany.split(/\s+/).filter(w => w.length > 2);
+    companyWords.forEach(word => {
+      if (roomIndexByCompany[word]) {
+        roomIndexByCompany[word].forEach(room => candidates.add(room.id));
+      }
+    });
+  }
+
+  // Find best match from candidates
+  let bestMatch = null;
+  let bestScore = 0;
+
+  candidates.forEach(roomId => {
+    const room = cachedAllRooms.find(r => r.id === roomId);
+    if (!room) return;
+    
+    const dbName = normalizeString(room['Escape room'] || room.Name || "");
+    const dbCompany = normalizeString(room.Company || "");
+    
+    let score = 0;
+    
+    // Calculate similarity score
+    if (uploadedName && dbName) {
+      const nameOverlap = calculateStringSimilarity(uploadedName, dbName);
+      score += nameOverlap * 2; // Name match weighted higher
+    }
+    
+    if (uploadedCompany && dbCompany) {
+      const companyOverlap = calculateStringSimilarity(uploadedCompany, dbCompany);
+      score += companyOverlap;
+    }
+    
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = room;
+    }
+  });
+
+  return bestScore > 0 ? bestMatch : null;
+}
+
+function calculateStringSimilarity(str1, str2) {
+  const shorter = str1.length < str2.length ? str1 : str2;
+  const longer = str1.length < str2.length ? str2 : str1;
+  
+  if (longer.includes(shorter)) return 1.0;
+  
+  let matches = 0;
+  const shorter_words = shorter.split(/\s+/);
+  const longer_words = longer.split(/\s+/);
+  
+  shorter_words.forEach(word => {
+    if (longer_words.some(w => w === word || w.includes(word) || word.includes(w))) {
+      matches++;
+    }
+  });
+  
+  return matches / longer_words.length;
+}
+
+function savePlayedRooms(roomIds) {
+  localStorage.setItem(STORAGE_KEYS_PLAYED.playedRooms, JSON.stringify(roomIds));
+}
+
+function loadPlayedRooms() {
+  const saved = localStorage.getItem(STORAGE_KEYS_PLAYED.playedRooms);
+  return saved ? JSON.parse(saved) : [];
+}
+
+function displayPlayedRooms() {
+  const playedRoomIds = loadPlayedRooms();
+  const container = document.getElementById("myRoomsMatchedList");
+  
+  if (playedRoomIds.length === 0) {
+    container.innerHTML = "<p style='color: #aaa; font-size: 13px; margin: 0;'>No rooms matched or uploaded yet.</p>";
+    return;
+  }
+
+  let html = "";
+  playedRoomIds.forEach(roomId => {
+    const room = allEscapeRooms.find(r => r.id === roomId);
+    if (room) {
+      html += `
+        <div style="padding: 10px; border-bottom: 1px solid #555; font-size: 13px;">
+          <strong>${room.Name || "Unknown"}</strong><br>
+          <small style="color: #aaa;">${room.Company || "Unknown Company"}</small>
+        </div>
+      `;
+    }
+  });
+  
+  container.innerHTML = html || "<p style='color: #aaa; font-size: 13px; margin: 0;'>No rooms available.</p>";
+}
+
+async function fetchEscapeallProfile(url) {
+  try {
+    // Extract user ID from URL
+    const userIdMatch = url.match(/Profile\/([a-f0-9-]+)/i);
+    if (!userIdMatch) {
+      throw new Error("Invalid Escapeall URL format");
+    }
+    
+    const userId = userIdMatch[1];
+    
+    // Try to fetch profile data from Escapeall API
+    // Note: This may not work due to CORS restrictions without a backend proxy
+    const apiUrl = `https://www.escapeall.gr/api/users/${userId}`;
+    
+    try {
+      const response = await fetch(apiUrl);
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Extract rooms from the profile data
+        let rooms = [];
+        if (data.playedRooms && Array.isArray(data.playedRooms)) {
+          rooms = data.playedRooms;
+        } else if (data.rooms && Array.isArray(data.rooms)) {
+          rooms = data.rooms;
+        }
+        
+        return rooms;
+      }
+    } catch (apiError) {
+      console.log("API fetch failed, attempting profile page scrape...");
+    }
+    
+    // Fallback: Try to fetch and parse the profile page
+    const proxyUrl = `https://cors-anywhere.herokuapp.com/${url}`;
+    const response = await fetch(proxyUrl);
+    
+    if (!response.ok) {
+      throw new Error("Failed to fetch Escapeall profile. Make sure the URL is public and accessible.");
+    }
+    
+    const html = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    
+    // Look for room listings in the profile page
+    const rooms = [];
+    const roomElements = doc.querySelectorAll('[class*="room"], [class*="played"], [data-room]');
+    
+    roomElements.forEach(elem => {
+      const roomName = elem.textContent?.trim();
+      if (roomName && roomName.length > 3) {
+        rooms.push({ name: roomName, company: '' });
+      }
+    });
+    
+    return rooms;
+  } catch (error) {
+    console.error("Error fetching Escapeall profile:", error);
+    throw error;
+  }
+}
+
+function initializeMyRooms() {
+  displayPlayedRooms();
+}
+
+function initializeProfileData() {
+  loadProfile();
+  if (!currentProfile) {
+    currentProfile = {
+      fullName: "",
+      age: "",
+      gender: "",
+      photoType: "initials",
+      photoValue: ""
+    };
+  }
+}
+
+function getUserStorageSuffix() {
+  if (currentUser?.id) return currentUser.id;
+  if (currentUser?.email) return currentUser.email.replace(/[@.\s]/g, "_");
+  return "guest";
+}
+
+function isValidUuid(value) {
+  return typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
+
+function getProfileStorageKey() {
+  return currentUser ? `${getStoragePrefix()}profile:${getUserStorageSuffix()}` : getStorageKey(STORAGE_KEYS.profile);
+}
+
+function tableMissing(error) {
+  const msg = (error?.message || error?.details || "").toString().toLowerCase();
+  return msg.includes("does not exist") || msg.includes("relation") && msg.includes("not found");
+}
+
+async function loadRemoteProfile() {
+  if (!currentUser) return null;
+
+  try {
+    const { data, error } = await db.from("profiles")
+      .select("full_name,age,gender,photo_type,photo_value")
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+
+    if (error) {
+      if (!tableMissing(error)) {
+        console.error("Failed to load remote profile:", error);
+      }
+      return null;
+    }
+
+    if (!data) return null;
+
+    currentProfile = {
+      fullName: data.full_name || currentProfile?.fullName || "",
+      age: data.age || currentProfile?.age || "",
+      gender: data.gender || currentProfile?.gender || "",
+      photoType: data.photo_type || currentProfile?.photoType || "initials",
+      photoValue: data.photo_value || currentProfile?.photoValue || ""
+    };
+
+    saveProfile();
+    return currentProfile;
+  } catch (err) {
+    console.error("Error loading remote profile:", err);
+    return null;
+  }
+}
+
+async function saveProfileToDb() {
+  if (!currentUser || !currentProfile) return;
+
+  try {
+    const { error } = await db.from("profiles").upsert({
+      user_id: currentUser.id,
+      full_name: currentProfile.fullName,
+      age: currentProfile.age,
+      gender: currentProfile.gender,
+      photo_type: currentProfile.photoType,
+      photo_value: currentProfile.photoValue,
+      updated_at: new Date().toISOString()
+    }, { onConflict: "user_id" });
+
+    if (error && !tableMissing(error)) {
+      console.error("Failed to save profile to DB:", error);
+    }
+  } catch (err) {
+    console.error("Error saving profile to DB:", err);
+  }
+}
+
+async function loadSavedPlansFromDb() {
+  if (!currentUser) return null;
+
+  try {
+    const { data, error } = await db.from("saved_plans")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .order("saved_at", { ascending: false });
+
+    if (error) {
+      if (!tableMissing(error)) {
+        console.error("Failed to load remote saved plans:", error);
+      }
+      return null;
+    }
+
+    return Array.isArray(data) ? data.map(plan => ({
+      id: String(plan.id),
+      name: plan.name,
+      date: plan.date,
+      savedAt: plan.saved_at,
+      rooms: plan.rooms || []
+    })) : [];
+  } catch (err) {
+    console.error("Error loading remote saved plans:", err);
+    return null;
+  }
+}
+
+async function savePlanToDb(plan) {
+  if (!currentUser || !plan) return;
+
+  try {
+    const payload = {
+      user_id: currentUser.id,
+      name: plan.name,
+      date: plan.date,
+      saved_at: plan.savedAt,
+      rooms: plan.rooms || []
+    };
+
+    if (isValidUuid(plan.remoteId)) {
+      payload.id = plan.remoteId;
+    } else if (isValidUuid(plan.id)) {
+      payload.id = plan.id;
+    }
+
+    let result;
+    if (payload.id) {
+      result = await db.from("saved_plans").upsert(payload, { onConflict: "id" }).select("id").single();
+    } else {
+      result = await db.from("saved_plans").insert(payload).select("id").single();
+    }
+
+    const { data, error } = result;
+    if (error && !tableMissing(error)) {
+      console.error("Failed to save plan to DB:", error);
+      return;
+    }
+
+    if (data?.id) {
+      plan.remoteId = String(data.id);
+    }
+  } catch (err) {
+    console.error("Error saving plan to DB:", err);
+  }
+}
+
+async function deletePlanFromDb(planId) {
+  if (!currentUser || !planId) return;
+
+  try {
+    const { error } = await db.from("saved_plans")
+      .delete()
+      .eq("user_id", currentUser.id)
+      .eq("id", planId);
+    if (error && !tableMissing(error)) {
+      console.error("Failed to delete plan from DB:", error);
+    }
+  } catch (err) {
+    console.error("Error deleting plan from DB:", err);
+  }
+}
+
+async function clearSavedPlansFromDb() {
+  if (!currentUser) return;
+
+  try {
+    const { error } = await db.from("saved_plans")
+      .delete()
+      .eq("user_id", currentUser.id);
+    if (error && !tableMissing(error)) {
+      console.error("Failed to clear saved plans from DB:", error);
+    }
+  } catch (err) {
+    console.error("Error clearing saved plans from DB:", err);
+  }
+}
+
+async function loadSubmittedRoomsFromDb() {
+  if (!currentUser) return null;
+
+  try {
+    const { data, error } = await db.from("submitted_rooms")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .order("submitted_at", { ascending: false });
+
+    if (error) {
+      if (!tableMissing(error)) {
+        console.error("Failed to load remote submitted rooms:", error);
+      }
+      return null;
+    }
+
+    return Array.isArray(data) ? data.map(item => ({
+      id: String(item.id),
+      dbId: item.db_id || null,
+      name: item.name,
+      company: item.company,
+      address: item.address,
+      category: item.category,
+      duration: item.duration,
+      year: item.year,
+      website: item.website,
+      status: item.status,
+      submittedAt: item.submitted_at
+    })) : [];
+  } catch (err) {
+    console.error("Error loading remote submitted rooms:", err);
+    return null;
+  }
+}
+
+async function saveSubmittedRoomToDb(submission) {
+  if (!currentUser || !submission) return;
+
+  try {
+    const payload = {
+      user_id: currentUser.id,
+      db_id: submission.dbId,
+      name: submission.name,
+      company: submission.company,
+      address: submission.address,
+      category: submission.category,
+      duration: submission.duration,
+      year: submission.year,
+      website: submission.website,
+      status: submission.status,
+      submitted_at: submission.submittedAt
+    };
+
+    if (isValidUuid(submission.remoteId)) {
+      payload.id = submission.remoteId;
+    } else if (isValidUuid(submission.id)) {
+      payload.id = submission.id;
+    }
+
+    let result;
+    if (payload.id) {
+      result = await db.from("submitted_rooms").upsert(payload, { onConflict: "id" }).select("id").single();
+    } else {
+      result = await db.from("submitted_rooms").insert(payload).select("id").single();
+    }
+
+    const { data, error } = result;
+    if (error && !tableMissing(error)) {
+      console.error("Failed to save submitted room to DB:", error);
+      return;
+    }
+
+    if (data?.id) {
+      submission.remoteId = String(data.id);
+    }
+  } catch (err) {
+    console.error("Error saving submitted room to DB:", err);
+  }
+}
+
+async function loadUserData() {
+  if (!currentUser) return;
+
+  loadProfile();
+  const remoteProfile = await loadRemoteProfile();
+  if (!remoteProfile && currentProfile?.fullName) {
+    await saveProfileToDb();
+  }
+
+  const localPlans = loadSavedPlans();
+  const remotePlans = await loadSavedPlansFromDb();
+  if (remotePlans !== null) {
+    if (remotePlans.length > 0) {
+      saveSavedPlans(remotePlans);
+    } else if (localPlans.length > 0) {
+      await Promise.all(localPlans.map(savePlanToDb));
+    }
+  }
+
+  const localSubmissions = loadStoredSubmittedRooms();
+  const remoteSubmissions = await loadSubmittedRoomsFromDb();
+  if (remoteSubmissions !== null) {
+    if (remoteSubmissions.length > 0) {
+      saveSubmittedRooms(remoteSubmissions);
+    } else if (localSubmissions.length > 0) {
+      await Promise.all(localSubmissions.map(saveSubmittedRoomToDb));
+    }
+  }
+}
+
+function getProfileAvatarPreview() {
+  if (!currentProfile) return "?";
+  if (currentProfile.photoType === "upload" && currentProfile.photoValue) return currentProfile.photoValue;
+  if (currentProfile.photoType === "avatar" && currentProfile.photoValue) return currentProfile.photoValue;
+  return getProfileInitials(currentProfile.fullName || currentUser?.email || "?");
+}
+
+function setAuthStatus(message, type) {
+  const status = document.getElementById("authStatus");
+  status.textContent = message || " ";
+  status.className = "auth-status";
+  if (type) {
+    status.classList.add(type);
+  }
+}
+
+function getSavedPlansStorageKey() {
+  return `${getStoragePrefix()}savedPlans:${getUserStorageSuffix()}`;
+}
+
+function getSubmittedRoomsStorageKey() {
+  return `${getStoragePrefix()}submittedRooms:${getUserStorageSuffix()}`;
+}
+
+function saveSavedPlans(plans) {
+  localStorage.setItem(getSavedPlansStorageKey(), JSON.stringify(plans || []));
+}
+
+function loadSavedPlans() {
+  const saved = localStorage.getItem(getSavedPlansStorageKey());
+  return saved ? JSON.parse(saved) : [];
+}
+
+function saveSubmittedRooms(submissions) {
+  localStorage.setItem(getSubmittedRoomsStorageKey(), JSON.stringify(submissions || []));
+}
+
+function loadStoredSubmittedRooms() {
+  const saved = localStorage.getItem(getSubmittedRoomsStorageKey());
+  return saved ? JSON.parse(saved) : [];
+}
+
+async function renderSavedPlansPage() {
+  let plans = loadSavedPlans();
+  const list = document.getElementById("savedPlansList");
+  if (!list) return;
+
+  if (currentUser) {
+    const remotePlans = await loadSavedPlansFromDb();
+    if (remotePlans !== null) {
+      if (remotePlans.length > 0) {
+        plans = remotePlans;
+        saveSavedPlans(plans);
+      } else if (plans.length === 0) {
+        saveSavedPlans([]);
+      }
+    }
+  }
+
+  if (plans.length === 0) {
+    list.innerHTML = '<p style="color: #aaa; margin: 0 0 10px 0;">No saved plans yet. Save your current itinerary from the Plan panel.</p>';
+    return;
+  }
+
+  list.innerHTML = plans.map((plan, index) => {
+    return `
+      <div class="saved-plan-item">
+        <div>
+          <strong>${plan.name}</strong>
+          <div style="font-size: 13px; color: #ccc; margin-top: 4px;">
+            ${plan.rooms.length} room${plan.rooms.length === 1 ? '' : 's'} • ${new Date(plan.savedAt).toLocaleString('en-GB')}
+          </div>
+        </div>
+        <div class="saved-plan-actions">
+          <button type="button" class="btn-map" onclick="loadSavedPlan(${index})">Load</button>
+          <button type="button" class="btn-clear" onclick="deleteSavedPlan(${index})">Delete</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.saveCurrentPlan = async function() {
+  if (!itinerary.length) {
+    alert("Please add rooms to your itinerary before saving.");
+    return;
+  }
+
+  const defaultName = `Trip plan ${new Date().toLocaleDateString('en-GB')}`;
+  const planName = prompt("Enter a name for this saved plan:", defaultName);
+
+  if (planName === null) return;
+  if (!planName.trim()) {
+    alert("Please enter a valid plan name.");
+    return;
+  }
+
+  const savedPlans = loadSavedPlans();
+  const newPlan = {
+    id: Date.now().toString(),
+    name: planName.trim(),
+    date: selectedTripDate.toISOString().split("T")[0],
+    savedAt: new Date().toISOString(),
+    rooms: itinerary.map(item => ({ ...item }))
+  };
+
+  savedPlans.unshift(newPlan);
+  saveSavedPlans(savedPlans);
+  if (currentUser) {
+    await savePlanToDb(newPlan);
+  }
+
+  renderSavedPlansPage();
+  alert("Plan saved to Saved Plans.");
+};
+
+window.loadSavedPlan = function(index) {
+  const savedPlans = loadSavedPlans();
+  const plan = savedPlans[index];
+  if (!plan) return;
+
+  itinerary = plan.rooms.map(item => ({ ...item }));
+  selectedTripDate = new Date(plan.date);
+  if (!window.calendarInstance) {
+    window.calendarInstance = new Calendar();
+  }
+  window.calendarInstance.currentDate = new Date(selectedTripDate);
+  window.calendarInstance.selectedDate = new Date(selectedTripDate);
+  window.calendarInstance.render();
+  updateItinerary();
+  document.getElementById("planPanel").hidden = false;
+};
+
+window.deleteSavedPlan = async function(index) {
+  if (!confirm("Delete this saved plan?")) return;
+  const savedPlans = loadSavedPlans();
+  const [removedPlan] = savedPlans.splice(index, 1);
+  saveSavedPlans(savedPlans);
+  if (currentUser) {
+    const planId = removedPlan?.remoteId || removedPlan?.id;
+    if (planId) {
+      await deletePlanFromDb(planId);
+    }
+  }
+  renderSavedPlansPage();
+};
+
+async function loadSubmittedRooms() {
+  const list = document.getElementById("submittedRoomsList");
+  if (!list) return;
+
+  let submissions = loadStoredSubmittedRooms();
+  if (currentUser) {
+    const remoteSubmissions = await loadSubmittedRoomsFromDb();
+    if (remoteSubmissions !== null) {
+      if (remoteSubmissions.length > 0) {
+        submissions = remoteSubmissions;
+        saveSubmittedRooms(submissions);
+      } else if (submissions.length === 0) {
+        saveSubmittedRooms([]);
+      }
+    }
+  }
+
+  if (submissions.length === 0) {
+    list.innerHTML = '<p style="color: #aaa; margin: 0;">No submitted rooms yet. Submit a room from the submission panel.</p>';
+    return;
+  }
+
+  const idsToRefresh = submissions.filter(item => item.dbId).map(item => item.dbId);
+  if (idsToRefresh.length > 0) {
+    const { data, error } = await db.from("Escape_Rooms").select("id,Status").in("id", idsToRefresh);
+    if (!error && Array.isArray(data)) {
+      const statusMap = new Map(data.map(item => [item.id, item.Status]));
+      submissions.forEach(item => {
+        if (item.dbId && statusMap.has(item.dbId)) {
+          item.status = statusMap.get(item.dbId);
+        }
+      });
+      saveSubmittedRooms(submissions);
+    }
+  }
+
+  list.innerHTML = submissions.map((submission) => {
+    const statusClass = submission.status === 'confirmed' ? 'status-green'
+      : submission.status === 'rejected' ? 'status-red'
+      : 'status-yellow';
+
+    return `
+      <div class="submitted-room-item">
+        <div class="submitted-room-header">🔐 ${submission.name}</div>
+        <div style="font-size: 13px; color: #ccc; margin: 4px 0;">
+          ${submission.company}${submission.address ? ' • ' + submission.address : ''}
+        </div>
+        <div class="submitted-room-status">
+          <span class="status-indicator ${statusClass}"></span>
+          <strong>${submission.status || 'pending'}</strong>
+        </div>
+        <div style="font-size: 12px; color: #aaa; margin-top: 6px;">
+          Submitted ${new Date(submission.submittedAt).toLocaleString('en-GB')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function showMyRoomsStatus(message, type) {
+  const status = document.getElementById("myRoomsStatus");
+  if (!status) return;
+  status.textContent = message || "";
+  status.style.color = type === 'success' ? '#8cff8c' : type === 'error' ? '#ff8c8c' : '#ddd';
+}
+
+function setLocationStatus(hasLocation) {
+  const el = document.getElementById("locationStatus");
+  if (!el) return;
+
+  if (hasLocation) {
+    el.textContent = "✓ Location set - radius filter available";
+    el.style.color = "#ccffcc";
+    return;
+  }
+
+  el.textContent = 'Location not set - use "📍 Locate Me" first';
+  el.style.color = "#ffcccc";
+}
+
+const DEFAULT_AVATARS = ['🧑‍🔬', '🕵️', '🤔', '😨', '🧗', '👨‍🎤', '🏃', '🧌'];
+const ESCAPE_ROOM_AVATARS = [
+  { emoji: '🧑‍🔬', label: 'Investigator' },
+  { emoji: '🕵️', label: 'Detective' },
+  { emoji: '🤔', label: 'Curious' },
+  { emoji: '😨', label: 'Scared' },
+  { emoji: '🧗', label: 'Adventurer' },
+  { emoji: '👨‍🎤', label: 'Performer' },
+  { emoji: '🏃', label: 'Runner' },
+  { emoji: '🧌', label: 'Mystery' }
+];
+
+function getDefaultAvatar(userId) {
+  const hash = userId.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+  return DEFAULT_AVATARS[hash % DEFAULT_AVATARS.length];
+}
+
+function updateAuthUI() {
+  if (!currentProfile) {
+    loadProfile();
+  }
+  
+  const summary = document.getElementById("authSummary");
+  const guestFields = document.getElementById("authGuestFields");
+  const userActions = document.getElementById("authUserActions");
+  const authPanel = document.getElementById("authPanel");
+  const avatar = document.getElementById("userAvatar");
+
+  if (currentUser) {
+    const email = currentUser.email || "Signed in user";
+    const name = currentUser.user_metadata?.full_name || email.split('@')[0];
+    const photo = currentProfile?.photoType === 'upload' ? currentProfile.photoValue
+      : currentProfile?.photoType === 'avatar' ? currentProfile.photoValue
+      : currentUser.user_metadata?.avatar_url || getDefaultAvatar(currentUser.id);
+    const isImageUrl = typeof photo === 'string' && /^(https?:\/\/|data:)/.test(photo);
+
+    avatar.style.backgroundImage = isImageUrl ? `url(${photo})` : 'none';
+    avatar.textContent = isImageUrl ? '' : (photo || getProfileInitials(currentProfile?.fullName || name));
+    avatar.title = `Signed in as ${name}. Click for menu.`;
+    avatar.style.display = 'block';
+
+    authPanel.style.display = 'none';
+  } else {
+    avatar.style.display = 'none';
+    authPanel.style.display = 'block';
+    summary.textContent = "Sign in to save your preferences and access future features.";
+    document.getElementById("authInitialButtons").hidden = false;
+    document.getElementById("authGuestFields").hidden = true;
+    userActions.hidden = true;
+  }
+}
+
+function setAuthBusy(isBusy) {
+  ["loginButton", "signupButton"].forEach((id) => {
+    const button = document.getElementById(id);
+    if (button) {
+      button.disabled = isBusy;
+    }
+  });
+}
+
+function getAuthFormValues() {
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+  return { email, password };
+}
+
+function clearAuthForm() {
+  document.getElementById("authPassword").value = "";
+}
+
+async function applyScopedState() {
+  initializeProfileData();
+  Storage.loadTheme();
+  Storage.loadFilters();
+  Storage.loadMapState();
+  Storage.loadTripDateTime();
+  Storage.loadUserLocation();
+  itinerary = [];
+
+  // Pre-cache all escape rooms on init
+  await cacheAllEscapeRooms();
+  loadEscapeRooms();
+
+  if (allEscapeRooms.length > 0) {
+    Storage.loadItinerary();
+  }
+
+  loadEscapeRooms();
+
+  if (!document.getElementById("planPanel").hidden) {
+    updateItinerary();
+  }
+}
+
+async function initializeAuth() {
+  db.auth.onAuthStateChange(async (_event, session) => {
+    currentUser = session?.user || null;
+    if (currentUser) {
+      await loadUserData();
+    }
+    updateAuthUI();
+
+    if (authInitialized) {
+      setAuthStatus(currentUser ? "Signed in." : "Signed out.", currentUser ? "success" : "");
+      applyScopedState();
+    }
+  });
+
+  const { data, error } = await db.auth.getSession();
+  if (error) {
+    console.error("Auth session error:", error);
+    setAuthStatus(error.message, "error");
+  }
+
+  currentUser = data.session?.user || null;
+  if (currentUser) {
+    await loadUserData();
+  }
+  updateAuthUI();
+  authInitialized = true;
+}
+
+// localStorage helper functions
+const Storage = {
+  saveFilters: function() {
+    const filters = {
+      categories: [...document.getElementById("category").selectedOptions].map(o => o.value),
+      minDuration: document.getElementById("minDuration").value,
+      maxDuration: document.getElementById("maxDuration").value,
+      minYear: document.getElementById("minYear").value,
+      maxYear: document.getElementById("maxYear").value,
+      company: document.getElementById("company").value,
+      escapeRoomName: document.getElementById("escapeRoomName").value,
+      radius: document.getElementById("radius").value
+    };
+    setStoredValue(STORAGE_KEYS.filters, JSON.stringify(filters));
+  },
+  
+  saveTheme: function(theme) {
+    setStoredValue(STORAGE_KEYS.theme, theme);
+  },
+  
+  loadTheme: function() {
+    const theme = getStoredValue(STORAGE_KEYS.theme) || "classic";
+    document.body.setAttribute("data-theme", theme);
+    document.getElementById("themeSelector").value = theme;
+  },
+  
+  loadFilters: function() {
+    const saved = getStoredValue(STORAGE_KEYS.filters);
+    if (saved) {
+      const filters = JSON.parse(saved);
+      
+      // Restore categories
+      if (Array.isArray(filters.categories) && filters.categories.length > 0) {
+        [...document.getElementById("category").options].forEach((option) => {
+          option.selected = filters.categories.includes(option.value);
+        });
+      }
+      
+      // Restore other fields
+      if (filters.minDuration) document.getElementById("minDuration").value = filters.minDuration;
+      if (filters.maxDuration) document.getElementById("maxDuration").value = filters.maxDuration;
+      if (filters.minYear) document.getElementById("minYear").value = filters.minYear;
+      if (filters.maxYear) document.getElementById("maxYear").value = filters.maxYear;
+      if (filters.company) document.getElementById("company").value = filters.company;
+      if (filters.escapeRoomName) document.getElementById("escapeRoomName").value = filters.escapeRoomName;
+      if (filters.radius) document.getElementById("radius").value = filters.radius;
+      return;
+    }
+
+    [...document.getElementById("category").options].forEach((option) => {
+      option.selected = option.value === "Any";
+    });
+    document.getElementById("minDuration").value = "";
+    document.getElementById("maxDuration").value = "";
+    document.getElementById("minYear").value = "";
+    document.getElementById("maxYear").value = "";
+    document.getElementById("company").value = "";
+    document.getElementById("escapeRoomName").value = "";
+    document.getElementById("radius").value = "";
+  },
+  
+  saveMapState: function() {
+    const center = map.getCenter();
+    const zoom = map.getZoom();
+    setStoredValue(STORAGE_KEYS.mapState, JSON.stringify({
+      lat: center.lat,
+      lng: center.lng,
+      zoom: zoom
+    }));
+  },
+  
+  loadMapState: function() {
+    const saved = getStoredValue(STORAGE_KEYS.mapState);
+    if (saved) {
+      const state = JSON.parse(saved);
+      map.setView([state.lat, state.lng], state.zoom);
+      return;
+    }
+
+    map.setView([DEFAULT_MAP_VIEW.lat, DEFAULT_MAP_VIEW.lng], DEFAULT_MAP_VIEW.zoom);
+  },
+
+  saveUserLocation: function(location) {
+    setStoredValue(STORAGE_KEYS.userLocation, JSON.stringify(location));
+  },
+
+  loadUserLocation: function() {
+    const saved = getStoredValue(STORAGE_KEYS.userLocation);
+    if (!saved) {
+      userLocation = null;
+      setLocationStatus(false);
+      return;
+    }
+
+    try {
+      userLocation = JSON.parse(saved);
+      setLocationStatus(Boolean(userLocation));
+    } catch (error) {
+      console.error("Failed to restore stored location:", error);
+      userLocation = null;
+      removeStoredValue(STORAGE_KEYS.userLocation);
+      setLocationStatus(false);
+    }
+  },
+
+  removeUserLocation: function() {
+    removeStoredValue(STORAGE_KEYS.userLocation);
+    userLocation = null;
+    setLocationStatus(false);
+  }
+};
+
+const map = L.map("map", {
+  maxZoom: 17,
+  zoomControl: true,
+  touchZoom: true,
+  doubleClickZoom: true,
+  scrollWheelZoom: true,
+  boxZoom: true,
+  keyboard: true,
+  tap: true,
+  preferCanvas: true,
+  renderer: L.canvas({ padding: 0.5 })
+}).setView([DEFAULT_MAP_VIEW.lat, DEFAULT_MAP_VIEW.lng], DEFAULT_MAP_VIEW.zoom);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "© OpenStreetMap contributors"
+}).addTo(map);
+
+const markers = L.markerClusterGroup({
+  iconCreateFunction: function(cluster) {
+    const count = cluster.getChildCount();
+    let clusterClass = 'cluster-blue';
+    let size = '40px';
+
+    // Determine cluster color and size based on count
+    if (count >= 50) {
+      clusterClass = 'cluster-yellow';
+      size = '60px';
+    } else if (count >= 10) {
+      clusterClass = 'cluster-green';
+      size = '50px';
+    } else {
+      clusterClass = 'cluster-blue';
+      size = '40px';
+    }
+
+    return L.divIcon({
+      html: `<div>${count}</div>`,
+      className: clusterClass,
+      iconSize: [size, size],
+      iconAnchor: [parseInt(size)/2, parseInt(size)/2]
+    });
+  },
+  maxClusterRadius: 80,
+  disableClusteringAtZoom: 18,
+  chunkedLoading: true,
+  chunkInterval: 50,
+  removeOutsideVisibleBounds: true,
+  spiderfyOnMaxZoom: true,
+  showCoverageOnHover: false
+});
+map.addLayer(markers);
+
+// Trip visualization layer
+const tripLayer = L.layerGroup().addTo(map);
+let tripLine = null;
+let selectedMapMarkers = new Map();
+let selectedMarkerTimer = null;
+
+function createEscapeRoomPinIcon(highlightClass = '') {
+  const classes = ['marker-pin-red'];
+  if (highlightClass) {
+    classes.push(highlightClass);
+  }
+
+  return L.divIcon({
+    html: `<div class="${classes.join(' ')}"></div>`,
+    className: 'leaflet-div-icon',
+    iconSize: [30, 40],
+    iconAnchor: [15, 40]
+  });
+}
+
+function getMarkerHighlightClass(marker) {
+  if (!marker?.selectedAt) return '';
+
+  const elapsedMinutes = (Date.now() - marker.selectedAt) / 60000;
+  if (elapsedMinutes < 5) return 'marker-highlight-green';
+  if (elapsedMinutes < 15) return 'marker-highlight-yellow';
+
+  marker.selectedAt = null;
+  return '';
+}
+
+function applyMarkerHighlight(marker) {
+  if (!marker) return;
+
+  const highlightClass = getMarkerHighlightClass(marker);
+  marker.setIcon(createEscapeRoomPinIcon(highlightClass));
+}
+
+function clearMarkerHighlight(marker) {
+  if (!marker) return;
+  marker.selectedAt = null;
+  marker.setIcon(createEscapeRoomPinIcon());
+}
+
+function updateSelectedMarkerHighlights() {
+  let hasActiveSelections = false;
+
+  selectedMapMarkers.forEach((selectedAt, marker) => {
+    marker.selectedAt = selectedAt;
+    const highlightClass = getMarkerHighlightClass(marker);
+
+    if (!highlightClass) {
+      clearMarkerHighlight(marker);
+      selectedMapMarkers.delete(marker);
+      return;
+    }
+
+    hasActiveSelections = true;
+    applyMarkerHighlight(marker);
+  });
+
+  if (!hasActiveSelections) {
+    clearInterval(selectedMarkerTimer);
+    selectedMarkerTimer = null;
+  }
+}
+
+function selectMapMarker(marker) {
+  if (!marker) return;
+
+  marker.selectedAt = Date.now();
+  selectedMapMarkers.set(marker, marker.selectedAt);
+  applyMarkerHighlight(marker);
+
+  if (!selectedMarkerTimer) {
+    selectedMarkerTimer = setInterval(updateSelectedMarkerHighlights, 1000);
+  }
+}
+
+// Haversine formula to calculate distance between two WGS84 coordinates in kilometers
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Earth's radius in kilometers
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+async function loadEscapeRooms() {
+  if (!map.hasLayer(markers)) {
+    map.addLayer(markers);
+  }
+  markers.clearLayers();
+
+  // Use cached data instead of querying Supabase again
+  let data = cachedAllRooms;
+  if (data.length === 0) {
+    data = await cacheAllEscapeRooms();
+  }
+
+  // Extract filter values
+  const categories = [...document.getElementById("category").selectedOptions]
+    .map(o => o.value);
+  const hasAny = categories.includes("Any");
+  const minDuration = parseInt(document.getElementById("minDuration").value) || 0;
+  const maxDuration = parseInt(document.getElementById("maxDuration").value) || Infinity;
+  const minYear = parseInt(document.getElementById("minYear").value) || 0;
+  const maxYear = parseInt(document.getElementById("maxYear").value) || Infinity;
+  const company = document.getElementById("company").value.toLowerCase();
+  const escapeRoomName = document.getElementById("escapeRoomName").value.toLowerCase();
+  const radius = parseFloat(document.getElementById("radius").value) || 0;
+
+  // Apply all filters in single pass (more efficient than chaining)
+  let filteredData = data.filter(r => {
+    // Duration filter
+    if (r.Duration && (r.Duration < minDuration || r.Duration > maxDuration)) return false;
+    
+    // Year filter
+    if (r["Year of S"] && (r["Year of S"] < minYear || r["Year of S"] > maxYear)) return false;
+    
+    // Company filter
+    if (company && !String(r.Company || '').toLowerCase().includes(company)) return false;
+    
+    // Room name filter
+    if (escapeRoomName && !String(r["Escape room"] || '').toLowerCase().includes(escapeRoomName)) return false;
+    
+    // Category filter (only if not "Any")
+    if (categories.length && !hasAny) {
+      const roomCategory = (r.Category || '').toLowerCase();
+      if (!categories.some(cat => roomCategory.includes(cat.toLowerCase()))) return false;
+    }
+    
+    // Radius filter
+    if (radius > 0) {
+      if (!userLocation) {
+        alert("Please set your location first using the '📍 Locate Me' button to use radius filtering.");
+        return false;
+      }
+      const distance = calculateDistance(userLocation.lat, userLocation.lng, r.Lat, r.Lon);
+      if (distance > radius) return false;
+    }
+    
+    return true;
+  });
+
+  cachedFilteredRooms = filteredData;
+  console.log(`Loaded ${filteredData.length} rooms (from cache of ${data.length})`);
+
+  // Batch render markers for faster DOM updates
+  const markerBatch = [];
+  filteredData.forEach(r => {
+    let popupContent = `
+      <div class="escape-room-popup">
+        <h3>🔐 ${r["Escape room"]}</h3>
+        <h4>${r.Company}</h4>
+        
+        <div class="popup-section">
+          <div class="popup-icon">🎭</div>
+          <div class="popup-text"><strong>Category:</strong> ${r.Category}</div>
+        </div>
+        
+        <div class="popup-section">
+          <div class="popup-icon">⏱️</div>
+          <div class="popup-text"><strong>Duration:</strong> ${r.Duration} minutes</div>
+        </div>
+        
+        <div class="popup-section">
+          <div class="popup-icon">📍</div>
+          <div class="popup-text"><strong>Address:</strong> ${r.Address}</div>
+        </div>
+        
+        <div class="popup-section">
+          <div class="popup-icon">🎬</div>
+          <div class="popup-text"><strong>Actors:</strong> ${r.Actors === 'Yes' || r.Actors === true ? '✓ Yes' : '✗ No'}</div>
+        </div>
+        
+        <div class="popup-section">
+          <div class="popup-icon">📅</div>
+          <div class="popup-text"><strong>Year Created:</strong> ${r["Year of S"]}</div>
+        </div>
+        
+        <div class="popup-section">
+          <div class="popup-icon">🌐</div>
+          <div class="popup-text"><strong>Website:</strong> ${r.website ? `<a href="${r.website}" target="_blank">${r.website}</a>` : 'N/A'}</div>
+        </div>
+        <div class="popup-section">
+          <div class="popup-icon">🗺️</div>
+          <div class="popup-text"><strong>Directions:</strong> <a href="${getGoogleMapsDirectionsLink(r.Lat, r.Lon, 'driving')}" target="_blank">Car</a> | <a href="${getGoogleMapsDirectionsLink(r.Lat, r.Lon, 'walking')}" target="_blank">Walk</a></div>
+        </div>
+    `;
+    
+    popupContent += `</div>`;
+
+    // All escape rooms use red pin markers
+    const marker = L.marker([r.Lat, r.Lon], {
+      icon: createEscapeRoomPinIcon()
+    }).bindPopup(popupContent);
+
+    marker.on('click', () => {
+      selectMapMarker(marker);
+    });
+
+    markerBatch.push(marker);
+  });
+  
+  // Add all markers at once (batch operation is faster)
+  markers.addLayers(markerBatch);
+}
+
+// Debounce filter application for faster UX
+function debounceApplyFilters() {
+  clearTimeout(filterDebounceTimer);
+  filterDebounceTimer = setTimeout(() => {
+    closeMobileSidebar();
+    loadEscapeRooms();
+  }, FILTER_DEBOUNCE_MS);
+}
+
+document.getElementById("applyFilters").onclick = debounceApplyFilters;
+
+// Load saved filters and map state on page load
+window.addEventListener('load', async function() {
+  await initializeAuth();
+  applyScopedState();
+});
+
+// Theme selector handler
+document.getElementById("themeSelector").addEventListener('change', function() {
+  const theme = this.value;
+  document.body.setAttribute("data-theme", theme);
+  Storage.saveTheme(theme);
+});
+
+// Save filters when they change
+document.getElementById("category").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+document.getElementById("minDuration").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+document.getElementById("maxDuration").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+document.getElementById("minYear").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+document.getElementById("maxYear").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+document.getElementById("company").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+document.getElementById("escapeRoomName").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+document.getElementById("radius").addEventListener('change', () => {
+  Storage.saveFilters();
+  debounceApplyFilters();
+});
+
+// Add Enter key support for filter inputs
+function handleFilterEnter(event) {
+  if (event.key === 'Enter') {
+    document.getElementById("applyFilters").click();
+  }
+}
+
+// Debounce text input for faster live search
+function debounceTextInput(event) {
+  event.preventDefault();
+  Storage.saveFilters();
+  debounceApplyFilters();
+}
+
+document.getElementById("category").addEventListener('keypress', handleFilterEnter);
+document.getElementById("minDuration").addEventListener('keypress', handleFilterEnter);
+document.getElementById("maxDuration").addEventListener('keypress', handleFilterEnter);
+document.getElementById("minYear").addEventListener('keypress', handleFilterEnter);
+document.getElementById("maxYear").addEventListener('keypress', handleFilterEnter);
+document.getElementById("company").addEventListener('keyup', debounceTextInput);
+document.getElementById("escapeRoomName").addEventListener('keyup', debounceTextInput);
+document.getElementById("radius").addEventListener('keypress', handleFilterEnter);
+
+// Save map state when it changes
+map.on('moveend', Storage.saveMapState);
+map.on('zoomend', Storage.saveMapState);
+
+// ===== PERFORMANCE: CACHED DATA & DEBOUNCING =====
+let cachedAllRooms = [];
+let cachedFilteredRooms = [];
+let filterDebounceTimer = null;
+const FILTER_DEBOUNCE_MS = 300;
+
+// Pre-cache all escape rooms on first load to avoid repeated Supabase queries
+async function cacheAllEscapeRooms() {
+  if (cachedAllRooms.length > 0) return cachedAllRooms;
+  try {
+    const { data, error } = await db
+      .from("Escape_Rooms")
+      .select("id,*")
+      .eq("Status", "approved")
+      .eq("Operational", "Yes")
+      .limit(5000);
+    if (error) {
+      console.error('Cache error:', error);
+      return [];
+    }
+    cachedAllRooms = data || [];
+    buildRoomIndex();
+    return cachedAllRooms;
+  } catch (err) {
+    console.error('Cache fetch failed:', err);
+    return [];
+  }
+}
+
+// ===== PLAN YOUR ESCAPE FEATURE =====
+let allEscapeRooms = [];
+let itinerary = [];
+let selectedTripDate = new Date();
+
+function combineDateAndTime(dateObj, timeStr) {
+  const [h, m] = timeStr.split(":").map(Number);
+  return new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate(), h || 0, m || 0, 0, 0);
+}
+
+function formatTimeHHMM(dateStr) {
+  const d = new Date(dateStr);
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  return `${hh}:${mm}`;
+}
+
+// Calendar functionality
+class Calendar {
+  constructor() {
+    this.currentDate = new Date(selectedTripDate);
+    this.selectedDate = new Date(selectedTripDate);
+    this.touchStartX = null;
+    this.touchStartY = null;
+    this.render();
+  }
+
+  render() {
+    const container = document.getElementById("calendar");
+    if (!container) return;
+    
+    const year = this.currentDate.getFullYear();
+    const month = this.currentDate.getMonth();
+    
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"];
+    
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+    
+    let html = `
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <button onclick="window.calendarInstance.prevMonth()">← Prev</button>
+          <span>${monthNames[month]} ${year}</span>
+          <button onclick="window.calendarInstance.nextMonth()">Next →</button>
+        </div>
+        <div class="calendar-weekdays">
+          <div class="calendar-weekday">Sun</div>
+          <div class="calendar-weekday">Mon</div>
+          <div class="calendar-weekday">Tue</div>
+          <div class="calendar-weekday">Wed</div>
+          <div class="calendar-weekday">Thu</div>
+          <div class="calendar-weekday">Fri</div>
+          <div class="calendar-weekday">Sat</div>
+        </div>
+        <div class="calendar-days">
+    `;
+    
+    // Add empty cells for days before month starts
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      html += `<div class="calendar-day other-month"></div>`;
+    }
+    
+    // Add days of month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      date.setHours(0, 0, 0, 0);
+      
+      const isToday = date.getTime() === today.getTime();
+      const isSelected = date.getTime() === this.selectedDate.getTime();
+      const isPast = date.getTime() < today.getTime();
+      
+      let classes = 'calendar-day';
+      if (isToday) classes += ' today';
+      if (isSelected) classes += ' selected';
+      if (isPast) classes += ' disabled';
+      
+      const dateStr = date.toISOString().split('T')[0];
+      html += `<div class="${classes}" onclick="window.calendarInstance.selectDate('${dateStr}')">${day}</div>`;
+    }
+    
+    html += `</div></div>`;
+    container.innerHTML = html;
+    this.attachSwipeHandlers(container);
+    
+    this.updateDisplay();
+  }
+
+  attachSwipeHandlers(container) {
+    if (!container || container.dataset.swipeBound === 'true') return;
+
+    container.dataset.swipeBound = 'true';
+
+    container.addEventListener('touchstart', (event) => {
+      if (!event.touches || event.touches.length !== 1) return;
+      const touch = event.touches[0];
+      this.touchStartX = touch.clientX;
+      this.touchStartY = touch.clientY;
+    }, { passive: true });
+
+    container.addEventListener('touchend', (event) => {
+      if (this.touchStartX === null || this.touchStartY === null) return;
+
+      const touch = event.changedTouches && event.changedTouches[0];
+      if (!touch) {
+        this.touchStartX = null;
+        this.touchStartY = null;
+        return;
+      }
+
+      const deltaX = touch.clientX - this.touchStartX;
+      const deltaY = touch.clientY - this.touchStartY;
+      this.touchStartX = null;
+      this.touchStartY = null;
+
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
+
+      // Trigger month navigation only for deliberate horizontal swipes.
+      if (absX < 45 || absX < absY * 1.3 || absY > 60) return;
+
+      if (deltaX > 0) {
+        this.prevMonth();
+      } else {
+        this.nextMonth();
+      }
+    }, { passive: true });
+  }
+
+  prevMonth() {
+    this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+    this.render();
+  }
+
+  nextMonth() {
+    this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+    this.render();
+  }
+
+  selectDate(dateStr) {
+    const selected = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (selected < today) return;
+    
+    this.selectedDate = selected;
+    selectedTripDate = selected;
+    Storage.saveTripDateTime();
+    this.render();
+  }
+
+  updateDisplay() {
+    const display = document.getElementById("selectedDateDisplay");
+    if (!display) return;
+    
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    display.textContent = `📅 Trip Date: ${this.selectedDate.toLocaleDateString('en-US', options)}`;
+  }
+}
+
+// Calculate speed based on time of day (rush hour is slower)
+function getSpeedByTime(date) {
+  const hour = new Date(date).getHours();
+  // 7-9am and 4-7pm: 30 km/h (rush hour)
+  // Rest: 50 km/h
+  if ((hour >= 7 && hour <= 9) || (hour >= 16 && hour <= 19)) {
+    return 30;
+  }
+  return 50;
+}
+
+// Calculate travel time between two escape rooms
+function calculateTravelTime(room1, room2, departureTime) {
+  const distance = calculateDistance(room1.Lat, room1.Lon, room2.Lat, room2.Lon);
+  const speed = getSpeedByTime(departureTime);
+  const travelTimeHours = distance / speed;
+  const travelTimeMinutes = Math.round(travelTimeHours * 60);
+  return { distance, travelTimeMinutes, speed };
+}
+
+// Get timing status (green/yellow/red)
+function getTimingStatus(room1, room2, departureTime, room1Duration) {
+  const { travelTimeMinutes } = calculateTravelTime(room1, room2, departureTime);
+  
+  // departure + room1 duration + travel time should be before room2 start time
+  const departTime = new Date(departureTime);
+  const arrivalTime = new Date(departTime.getTime() + (room1Duration + travelTimeMinutes) * 60000);
+  const room2StartTime = new Date(room2.scheduledTime);
+  
+  const timeGap = (room2StartTime - arrivalTime) / 60000; // minutes
+  
+  if (timeGap >= 30) return 'green'; // More than 30 minutes buffer
+  if (timeGap >= 0) return 'yellow'; // Some buffer but tight
+  return 'red'; // Late arrival
+}
+
+function getStatusComment(status) {
+  if (status === 'green') {
+    return '🟢 Green: good timing.';
+  }
+  if (status === 'yellow') {
+    return '🟠 Orange: tight timing.';
+  }
+  return '🔴 Red: not enough time buffer.';
+}
+
+function getSortedItineraryByTime() {
+  return [...itinerary].sort((a, b) => {
+    return new Date(a.scheduledTime) - new Date(b.scheduledTime);
+  });
+}
+
+function getGoogleMapsLink(address, lat, lon) {
+  const fallbackUrl = 'https://www.google.com/maps';
+
+  const sanitizeText = (value) => {
+    if (typeof value !== 'string') return '';
+    return value
+      .normalize('NFC')
+      .replace(/[\u0000-\u001F\u007F]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
+  const isValidCoordinate = (value, min, max) => {
+    return Number.isFinite(value) && value >= min && value <= max;
+  };
+
+  try {
+    if (isValidCoordinate(lat, -90, 90) && isValidCoordinate(lon, -180, 180)) {
+      const encodedCoordinates = encodeURIComponent(`${lat},${lon}`);
+      return `https://www.google.com/maps/search/?api=1&query=${encodedCoordinates}&hl=el`;
+    }
+
+    const safeAddress = sanitizeText(String(address || ''));
+    if (safeAddress) {
+      const encodedAddress = encodeURIComponent(safeAddress);
+      return `https://www.google.com/maps/search/?api=1&query=${encodedAddress}&hl=el`;
+    }
+  } catch (err) {
+    console.error('Failed to build Google Maps URL:', err);
+  }
+
+  return fallbackUrl;
+}
+
+// Update room selector
+async function updateRoomSelector() {
+  const searchTerm = document.getElementById("planSearchInput").value.toLowerCase();
+  const selector = document.getElementById("roomSelector");
+  
+  let filtered = allEscapeRooms.filter(r => 
+    r["Escape room"].toLowerCase().includes(searchTerm) ||
+    r.Company.toLowerCase().includes(searchTerm)
+  );
+  
+  selector.innerHTML = filtered.map(r => `
+    <div class="room-option" data-id="${r.id}">
+      <strong>${r["Escape room"]}</strong><br>
+      <small>${r.Company} • ${r.Duration}min</small>
+    </div>
+  `).join('');
+  
+  document.querySelectorAll('.room-option').forEach(el => {
+    el.addEventListener('click', function() {
+      this.classList.toggle('selected');
+    });
+  });
+}
+
+// Open plan panel
+const openPlanButton = document.getElementById("openPlan");
+if (openPlanButton) openPlanButton.onclick = openPlanPanel;
+
+// Add selected rooms to itinerary
+document.getElementById("addToItinerary").onclick = () => {
+  const selected = document.querySelectorAll('.room-option.selected');
+  
+  if (selected.length === 0) {
+    alert("Please select at least one escape room");
+    return;
+  }
+  
+  selected.forEach(el => {
+    const roomId = el.dataset.id;
+    const room = allEscapeRooms.find(r => r.id == roomId);
+    
+    if (!itinerary.some(item => item.id === roomId)) {
+      const baseTime = combineDateAndTime(selectedTripDate, "09:00");
+      const defaultTime = new Date(baseTime.getTime() + itinerary.length * 120 * 60000); // Add 2 hours per room
+
+      itinerary.push({
+        ...room,
+        scheduledTime: defaultTime.toISOString().slice(0, 16),
+        index: itinerary.length
+      });
+    }
+  });
+  
+  updateItinerary();
+  selected.forEach(el => el.classList.remove('selected'));
+};
+
+// Update itinerary display
+function updateItinerary() {
+  const list = document.getElementById("itineraryList");
+  
+  if (itinerary.length === 0) {
+    list.innerHTML = '<p style="color: #aaa; text-align: center;">No rooms planned yet</p>';
+    return;
+  }
+  
+  list.innerHTML = itinerary.map((item, idx) => {
+    let travelInfo = '';
+    let statusClass = '';
+    
+    if (idx > 0) {
+      const prevRoom = itinerary[idx - 1];
+      const { distance, travelTimeMinutes } = calculateTravelTime(
+        prevRoom, item, prevRoom.scheduledTime
+      );
+      const status = getTimingStatus(prevRoom, item, prevRoom.scheduledTime, prevRoom.Duration);
+      statusClass = `status-${status}`;
+      
+      const travelMinutes = travelTimeMinutes;
+      const travelHours = Math.floor(travelMinutes / 60);
+      const travelMins = travelMinutes % 60;
+      const timeStr = travelHours > 0 ? `${travelHours}h${travelMins}m` : `${travelMins}m`;
+      
+      travelInfo = `<div class="travel-time"><span class="status-indicator ${statusClass}"></span>Estimated travel time: ${distance.toFixed(1)}km • ${timeStr}</div>`;
+    }
+    
+    return `
+      <div class="itinerary-item">
+        <div class="itinerary-room-name">🎭 ${item["Escape room"]}</div>
+        <div style="font-size: 12px; color: #ccc;">${item.Company}</div>
+        <div class="itinerary-time">
+          📅 <input type="time" value="${formatTimeHHMM(item.scheduledTime)}" onchange="updateItemTime(${idx}, this.value)" title="Click to select time (24h format)" step="900">
+        </div>
+        <div style="font-size: 12px; color: #3388ff;">⏱️ Duration: ${item.Duration}min</div>
+        <div style="font-size: 12px; margin-top: 4px;">
+          <a href="${getGoogleMapsLink(item.Address, item.Lat, item.Lon)}" target="_blank" style="color: #27b622; text-decoration: none;">🗺️ View in Maps</a>
+        </div>
+        ${travelInfo}
+        <button onclick="removeFromItinerary(${idx})" style="margin-top: 8px; background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">Remove</button>
+      </div>
+    `;
+  }).join('');
+  
+  Storage.saveItinerary();
+}
+
+// Update item time
+window.updateItemTime = (idx, newTime) => {
+  // Keep the exact time selected by user without timezone conversion
+  const dateStr = selectedTripDate.toISOString().split('T')[0];
+  itinerary[idx].scheduledTime = `${dateStr}T${newTime}`;
+  updateItinerary();
+};
+
+// Remove from itinerary
+window.removeFromItinerary = (idx) => {
+  itinerary.splice(idx, 1);
+  itinerary = itinerary.map((item, i) => ({ ...item, index: i }));
+  updateItinerary();
+};
+
+// Clear itinerary
+document.getElementById("clearItinerary").onclick = () => {
+  if (confirm("Clear entire itinerary?")) {
+    itinerary = [];
+    updateItinerary();
+  }
+};
+
+// Close plan panel
+document.getElementById("closePlan").onclick = () => {
+  closeSidebarTab();
+  if (!map.hasLayer(markers)) {
+    map.addLayer(markers);
+  }
+};
+
+document.getElementById("savePlan").onclick = () => {
+  window.saveCurrentPlan();
+};
+
+// Plan search
+document.getElementById("planSearchInput").addEventListener('input', updateRoomSelector);
+
+
+// Add itinerary storage
+Storage.saveItinerary = function() {
+  const toSave = itinerary.map(r => ({
+    id: r.id,
+    scheduledTime: r.scheduledTime
+  }));
+  setStoredValue(STORAGE_KEYS.itinerary, JSON.stringify(toSave));
+};
+
+Storage.loadItinerary = function() {
+  const saved = getStoredValue(STORAGE_KEYS.itinerary);
+  if (saved && allEscapeRooms.length > 0) {
+    const plan = JSON.parse(saved);
+    itinerary = plan.map(p => {
+      const room = allEscapeRooms.find(r => r.id === p.id);
+      if (!room) return null;
+      return { ...room, scheduledTime: p.scheduledTime };
+    }).filter(r => r && r.Lat && r.Lon && !isNaN(r.Lat) && !isNaN(r.Lon));
+    
+    // Save cleaned itinerary back
+    if (itinerary.length !== plan.length) {
+      Storage.saveItinerary();
+    }
+  }
+};
+
+Storage.saveTripDateTime = function() {
+  setStoredValue(STORAGE_KEYS.tripDate, selectedTripDate.toISOString().split("T")[0]);
+};
+
+Storage.loadTripDateTime = function() {
+  const dateStr = getStoredValue(STORAGE_KEYS.tripDate);
+  if (dateStr) {
+    selectedTripDate = new Date(dateStr);
+    return;
+  }
+
+  selectedTripDate = new Date();
+};
+
+// Clean up invalid items from itinerary
+function cleanItinerary() {
+  const originalLength = itinerary.length;
+  itinerary = itinerary.filter(item => 
+    item.Lat && item.Lon && !isNaN(item.Lat) && !isNaN(item.Lon)
+  );
+  if (itinerary.length !== originalLength) {
+    console.log(`Removed ${originalLength - itinerary.length} invalid items from itinerary`);
+    Storage.saveItinerary();
+    updateItinerary();
+  }
+}
+
+// Visualize trip on map
+function renderTripOnMap() {
+  // Clean up invalid items first
+  cleanItinerary();
+  
+  if (map.hasLayer(markers)) {
+    map.removeLayer(markers);
+  }
+  tripLayer.clearLayers();
+  if (tripLine) {
+    map.removeLayer(tripLine);
+    tripLine = null;
+  }
+
+  if (!itinerary.length) {
+    alert("No rooms in itinerary to show on map");
+    return;
+  }
+
+  const sortedItinerary = getSortedItineraryByTime();
+
+  // Group by company and location to count games at each place
+  const locationGroups = [];
+  const routePoints = [];
+  
+  sortedItinerary.forEach((r) => {
+    // Find if this location already exists in our groups
+    const existingGroup = locationGroups.find(g => 
+      g.Company === r.Company && 
+      Math.abs(g.Lat - r.Lat) < 0.0001 && 
+      Math.abs(g.Lon - r.Lon) < 0.0001
+    );
+    
+    if (existingGroup) {
+      existingGroup.rooms.push(r);
+    } else {
+      locationGroups.push({
+        Company: r.Company,
+        Address: r.Address,
+        Lat: r.Lat,
+        Lon: r.Lon,
+        rooms: [r]
+      });
+    }
+  });
+
+  // Create markers showing count of games at each location
+  locationGroups.forEach((group) => {
+    const roomCount = group.rooms.length;
+    const roomList = group.rooms.map(r => 
+      `<div style="margin: 5px 0;">🔐 ${r["Escape room"]} - ${formatTimeHHMM(r.scheduledTime)}</div>`
+    ).join('');
+    
+    const marker = L.marker([group.Lat, group.Lon], {
+      icon: L.divIcon({
+        html: `<div class="trip-marker">${roomCount}</div>`,
+        className: 'leaflet-div-icon',
+        iconSize: [26, 26],
+        iconAnchor: [13, 13]
+      })
+    }).bindPopup(`
+      <div class="escape-room-popup\">
+        <h4>${group.Company}</h4>
+        <div class="popup-section"><div class="popup-icon">🎮</div><div class="popup-text"><strong>${roomCount} game${roomCount > 1 ? 's' : ''}</strong></div></div>
+        ${roomList}
+        <div class="popup-section"><div class="popup-icon">📍</div><div class="popup-text">${group.Address}</div></div>
+      </div>
+    `);
+    tripLayer.addLayer(marker);
+    routePoints.push([group.Lat, group.Lon]);
+  });
+
+  // Show route line connecting locations in visit order
+  if (routePoints.length > 1) {
+    tripLine = L.polyline(routePoints, { 
+      color: '#8e44ad', 
+      weight: 4, 
+      opacity: 0.9
+    }).addTo(map);
+    map.fitBounds(tripLine.getBounds(), { padding: [30, 30] });
+  } else if (routePoints.length === 1) {
+    map.setView(routePoints[0], 13);
+  }
+
+  const startRoom = sortedItinerary[0];
+  const endRoom = sortedItinerary[sortedItinerary.length - 1];
+  const sameStartAndEnd =
+    startRoom.Lat === endRoom.Lat && startRoom.Lon === endRoom.Lon;
+
+  if (sameStartAndEnd) {
+    const startEndMarker = L.marker([startRoom.Lat, startRoom.Lon], {
+      icon: L.divIcon({
+        html: '<div class="trip-start-end-marker">🔑🔒</div>',
+        className: 'leaflet-div-icon',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30]
+      })
+    }).bindPopup('<strong>Start & Finish</strong>');
+    tripLayer.addLayer(startEndMarker);
+  } else {
+    const startMarker = L.marker([startRoom.Lat, startRoom.Lon], {
+      icon: L.divIcon({
+        html: '<div class="trip-start-marker">🔑</div>',
+        className: 'leaflet-div-icon',
+        iconSize: [24, 24],
+        iconAnchor: [12, 24]
+      })
+    }).bindPopup('<strong>Start point</strong>');
+
+    const endMarker = L.marker([endRoom.Lat, endRoom.Lon], {
+      icon: L.divIcon({
+        html: '<div class="trip-end-marker">🔒</div>',
+        className: 'leaflet-div-icon',
+        iconSize: [24, 24],
+        iconAnchor: [12, 24]
+      })
+    }).bindPopup('<strong>Final point</strong>');
+
+    tripLayer.addLayer(startMarker);
+    tripLayer.addLayer(endMarker);
+  }
+}
+
+function openItineraryInGoogleMaps() {
+  const sortedItinerary = getSortedItineraryByTime();
+  
+  if (sortedItinerary.length === 0) {
+    alert("No rooms in itinerary to show route");
+    return;
+  }
+  
+  if (sortedItinerary.length === 1) {
+    // Single stop - just search for it
+    const room = sortedItinerary[0];
+    const url = getGoogleMapsLink(room.Address, room.Lat, room.Lon);
+    window.open(url, '_blank');
+    return;
+  }
+  
+  // Multiple stops - build directions URL
+  const origin = `${sortedItinerary[0].Lat},${sortedItinerary[0].Lon}`;
+  const destination = `${sortedItinerary[sortedItinerary.length - 1].Lat},${sortedItinerary[sortedItinerary.length - 1].Lon}`;
+  
+  let waypoints = '';
+  if (sortedItinerary.length > 2) {
+    // Middle stops as waypoints
+    const middleStops = sortedItinerary.slice(1, -1);
+    waypoints = middleStops.map(room => `${room.Lat},${room.Lon}`).join('|');
+  }
+  
+  let url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=driving`;
+  if (waypoints) {
+    url += `&waypoints=${encodeURIComponent(waypoints)}`;
+  }
+  
+  window.open(url, '_blank');
+}
+
+document.getElementById("showTripOnMap").onclick = () => {
+  renderTripOnMap();
+};
+
+document.getElementById("openRouteInGoogleMaps").onclick = () => {
+  openItineraryInGoogleMaps();
+};
+
+// Export itinerary as PDF
+document.getElementById("exportPDF").onclick = async () => {
+  if (itinerary.length === 0) {
+    alert("No rooms in itinerary to export");
+    return;
+  }
+
+  const pdfItinerary = getSortedItineraryByTime();
+
+  // Show loading message
+  const exportBtn = document.getElementById("exportPDF");
+  const originalText = exportBtn.textContent;
+  exportBtn.textContent = "⏳ Generating PDF...";
+  exportBtn.disabled = true;
+
+  try {
+    // First, render the trip on map to show route lines
+    renderTripOnMap();
+    
+    // Wait longer for map tiles and route lines to fully render
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Capture the map as an image using dom-to-image for better route rendering
+    const mapElement = document.getElementById('map');
+    let mapImageData;
+    
+    try {
+      // Try dom-to-image first (better for complex elements like map routes)
+      mapImageData = await domtoimage.toJpeg(mapElement, { 
+        quality: 0.9,
+        bgcolor: '#ffffff'
+      });
+    } catch (e) {
+      // Fallback to html2canvas
+      const mapCanvas = await html2canvas(mapElement, {
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        scale: 2,
+        logging: false
+      });
+      mapImageData = mapCanvas.toDataURL('image/jpeg', 0.9);
+    }
+
+    // Create PDF
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+    
+    const pageWidth = pdf.internal.pageSize.width;
+    const pageHeight = pdf.internal.pageSize.height;
+    const margin = 15;
+    const maxWidth = pageWidth - (2 * margin);
+    
+    // Title
+    pdf.setFontSize(18);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Escape Room Trip Plan', pageWidth / 2, 20, { align: 'center' });
+    
+    // Trip date
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'normal');
+    const dateStr = selectedTripDate.toLocaleDateString('en-GB', { 
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+    });
+    pdf.text(`Trip Date: ${dateStr}`, pageWidth / 2, 28, { align: 'center' });
+    
+    // Add map image with route
+    const mapImgWidth = maxWidth;
+    const mapImgHeight = 75;
+    pdf.addImage(mapImageData, 'JPEG', margin, 35, mapImgWidth, mapImgHeight);
+    
+    let yPos = 35 + mapImgHeight + 8;
+    
+    // Itinerary title
+    pdf.setFontSize(14);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Itinerary:', margin, yPos);
+    yPos += 8;
+    
+    // Render each room separately to avoid cutting in the middle
+    for (let idx = 0; idx < pdfItinerary.length; idx++) {
+      const item = pdfItinerary[idx];
+      let transferComment = '';
+
+      if (idx > 0) {
+        const prevItem = pdfItinerary[idx - 1];
+        const { distance, travelTimeMinutes } = calculateTravelTime(prevItem, item, prevItem.scheduledTime);
+        const status = getTimingStatus(prevItem, item, prevItem.scheduledTime, prevItem.Duration);
+        transferComment = `<div style="font-size: 12px; margin-top: 6px; color: #444;"><strong>Estimated travel time:</strong> ${distance.toFixed(1)} km • ${travelTimeMinutes} min<br>${getStatusComment(status)}</div>`;
+      }
+
+      // Create HTML for this single room
+      const roomDiv = document.createElement('div');
+      roomDiv.style.position = 'absolute';
+      roomDiv.style.left = '-9999px';
+      roomDiv.style.width = '700px';
+      roomDiv.style.backgroundColor = '#ffffff';
+      roomDiv.style.padding = '10px';
+      roomDiv.style.fontFamily = 'Arial, sans-serif';
+      roomDiv.style.color = '#000000';
+      
+      roomDiv.innerHTML = `
+        <div style="padding: 10px; border-left: 4px solid #8e44ad; background: #f9f9f9;">
+          <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">${idx + 1}. ${item["Escape room"]}</div>
+          <div style="font-size: 13px; margin-bottom: 4px;"><strong>Company:</strong> ${item.Company}</div>
+          <div style="font-size: 13px; margin-bottom: 4px;"><strong>Time:</strong> ${formatTimeHHMM(item.scheduledTime)}</div>
+          <div style="font-size: 13px; margin-bottom: 4px;"><strong>Duration:</strong> ${item.Duration} minutes</div>
+          <div style="font-size: 13px; margin-bottom: 4px;"><strong>Address:</strong> ${item.Address}</div>
+          ${transferComment}
+        </div>
+      `;
+      
+      document.body.appendChild(roomDiv);
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Capture this room as image
+      const roomCanvas = await html2canvas(roomDiv, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+        logging: false
+      });
+      const roomImageData = roomCanvas.toDataURL('image/png', 1.0);
+      document.body.removeChild(roomDiv);
+      
+      // Calculate image dimensions
+      const roomImgWidth = maxWidth;
+      const roomImgHeight = (roomCanvas.height / roomCanvas.width) * roomImgWidth;
+      
+      // Check if room fits on current page, if not add new page
+      if (yPos + roomImgHeight > pageHeight - 15) {
+        pdf.addPage();
+        yPos = 20;
+      }
+      
+      // Add room image
+      pdf.addImage(roomImageData, 'PNG', margin, yPos, roomImgWidth, roomImgHeight);
+      yPos += roomImgHeight + 3;
+    }
+    
+    // Add summary
+    const totalDuration = pdfItinerary.reduce((sum, r) => sum + (r.Duration || 0), 0);
+    
+    // Check if summary fits, if not add new page
+    if (yPos + 30 > pageHeight - 15) {
+      pdf.addPage();
+      yPos = 20;
+    }
+    
+    yPos += 5;
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Trip Summary', margin, yPos);
+    yPos += 7;
+    
+    pdf.setFontSize(10);
+    pdf.setFont(undefined, 'normal');
+    pdf.text(`Total rooms: ${pdfItinerary.length}`, margin + 3, yPos);
+    yPos += 5;
+    pdf.text(`Total play time: ${Math.floor(totalDuration / 60)}h ${totalDuration % 60}m`, margin + 3, yPos);
+
+    yPos += 8;
+    if (yPos > pageHeight - 20) {
+      pdf.addPage();
+      yPos = 20;
+    }
+
+    pdf.setFontSize(11);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('Google Maps links', margin, yPos);
+    yPos += 6;
+
+    pdf.setFontSize(9);
+    pdf.setFont(undefined, 'normal');
+    for (let idx = 0; idx < pdfItinerary.length; idx++) {
+      const item = pdfItinerary[idx];
+      const mapsUrl = getGoogleMapsLink(item.Address, item.Lat, item.Lon);
+
+      if (yPos > pageHeight - 15) {
+        pdf.addPage();
+        yPos = 20;
+      }
+
+      const roomLabel = `Stop ${idx + 1}`;
+      pdf.text(roomLabel, margin + 2, yPos);
+      yPos += 4;
+
+      pdf.setTextColor(20, 102, 204);
+      pdf.textWithLink('Open in Google Maps', margin + 8, yPos, { url: mapsUrl });
+      pdf.setTextColor(0, 0, 0);
+      yPos += 6;
+    }
+    
+    // Save the PDF
+    const filename = `escape-trip-${selectedTripDate.toISOString().split('T')[0]}.pdf`;
+    pdf.save(filename);
+    
+    // Reset button
+    exportBtn.textContent = originalText;
+    exportBtn.disabled = false;
+  } catch (error) {
+    console.error('PDF generation error:', error);
+    alert('Error generating PDF: ' + error.message);
+    exportBtn.textContent = originalText;
+    exportBtn.disabled = false;
+  }
+};
+
+let locationWatchId = null;
+let isFollowingUser = false;
+
+function isValidCoordinate(value, min, max) {
+  return Number.isFinite(value) && value >= min && value <= max;
+}
+
+function getGoogleMapsDirectionsLink(lat, lon, mode = 'driving') {
+  const fallbackUrl = 'https://www.google.com/maps';
+  if (!isValidCoordinate(lat, -90, 90) || !isValidCoordinate(lon, -180, 180)) {
+    return fallbackUrl;
+  }
+
+  const destination = `${lat},${lon}`;
+  let url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}&travelmode=${mode}`;
+
+  if (userLocation && isValidCoordinate(userLocation.lat, -90, 90) && isValidCoordinate(userLocation.lng, -180, 180)) {
+    url += `&origin=${encodeURIComponent(`${userLocation.lat},${userLocation.lng}`)}`;
+  }
+
+  return url;
+}
+
+function stopFollowingLocation() {
+  if (locationWatchId !== null) {
+    navigator.geolocation.clearWatch(locationWatchId);
+    locationWatchId = null;
+  }
+  isFollowingUser = false;
+  const button = document.getElementById("locateMe");
+  if (button) {
+    button.textContent = '📍 Locate Me';
+    button.disabled = false;
+  }
+}
+
+function updateUserLocationMarker(lat, lng, accuracy) {
+  userLocation = { lat, lng };
+  Storage.saveUserLocation(userLocation);
+  setLocationStatus(true);
+
+  if (userLocationMarker) {
+    userLocationMarker.setLatLng([lat, lng]);
+    if (userLocationMarker.accuracyCircle) {
+      userLocationMarker.accuracyCircle.setLatLng([lat, lng]);
+      userLocationMarker.accuracyCircle.setRadius(Math.max(accuracy, 10));
+    }
+  } else {
+    userLocationMarker = L.marker([lat, lng], {
+      icon: L.divIcon({
+        className: 'user-location-marker',
+        html: '📍',
+        iconSize: [25, 25],
+        iconAnchor: [12, 25]
+      })
+    }).addTo(map);
+
+    const accuracyCircle = L.circle([lat, lng], {
+      color: '#3388ff',
+      fillColor: '#3388ff',
+      fillOpacity: 0.1,
+      radius: Math.max(accuracy, 10),
+      weight: 2
+    }).addTo(map);
+    userLocationMarker.accuracyCircle = accuracyCircle;
+  }
+
+  userLocationMarker.bindPopup(`
+    <strong>You are here!</strong><br>
+    <small>WGS84 Coordinates:</small><br>
+    Latitude: ${lat.toFixed(6)}°<br>
+    Longitude: ${lng.toFixed(6)}°<br>
+  `);
+
+  if (isFollowingUser) {
+    const zoomLevel = accuracy > 100 ? 13 : accuracy > 50 ? 14 : 16;
+    map.panTo([lat, lng], { animate: true, duration: 0.5 });
+    map.setZoom(zoomLevel, { animate: true });
+  }
+}
+
+function startFollowingLocation() {
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by this browser. Please update your browser or use a different device.");
+    return;
+  }
+
+  const button = document.getElementById("locateMe");
+  if (button) {
+    button.textContent = '⏳ Following...';
+    button.disabled = true;
+  }
+
+  locationWatchId = navigator.geolocation.watchPosition(
+    position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const accuracy = position.coords.accuracy;
+
+      if (!isValidCoordinate(lat, -90, 90) || !isValidCoordinate(lng, -180, 180)) {
+        alert("Invalid coordinates received. Please try again.");
+        return;
+      }
+
+      console.log(`GPS Location (WGS84): Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}, Accuracy: ±${accuracy.toFixed(0)}m`);
+      isFollowingUser = true;
+      updateUserLocationMarker(lat, lng, accuracy);
+
+      if (button) {
+        button.textContent = '📍 Stop following';
+        button.disabled = false;
+      }
+    },
+    error => {
+      if (button) {
+        button.textContent = '📍 Locate Me';
+        button.disabled = false;
+      }
+
+      let errorMessage = "Unable to retrieve your location.";
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          errorMessage = "Location access denied. Please enable location permissions.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorMessage = "Location information is unavailable. Please try again in an open area.";
+          break;
+        case error.TIMEOUT:
+          errorMessage = "Location request timed out. Please try again.";
+          break;
+      }
+      alert(errorMessage);
+      console.error("Geolocation error:", error);
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    }
+  );
+}
+
+function toggleFollowLocation() {
+  if (locationWatchId !== null) {
+    stopFollowingLocation();
+    return;
+  }
+  startFollowingLocation();
+}
+
+// Initialize auth button listeners when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById("loginButton").onclick = () => {
+    showLogin();
+  };
+
+  document.getElementById("signupButton").onclick = () => {
+    showSignup();
+  };
+
+  document.getElementById("continueAsGuest").onclick = () => {
+    document.getElementById("authPanel").style.display = 'none';
+  };
+
+  document.getElementById("tabFilters").onclick = () => showSidebarTab('filters');
+  document.getElementById("tabPlan").onclick = openPlanPanel;
+  document.getElementById("tabSubmit").onclick = () => showSidebarTab('submit');
+  showSidebarTab('filters');
+
+  document.getElementById("loginSubmitButton").onclick = async () => {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+
+    if (!email || !password) {
+      setLoginStatus("Email and password are required.", "error");
+      return;
+    }
+
+    setLoginStatus("Signing in...");
+
+    const { error } = await db.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      console.error("Login error:", error);
+      setLoginStatus(error.message, "error");
+      return;
+    }
+
+    hideLogin();
+    setAuthStatus("Signed in.", "success");
+  };
+
+  document.getElementById("signupSubmitButton").onclick = async () => {
+    const email = document.getElementById("signupEmail").value.trim();
+    const password = document.getElementById("signupPassword").value;
+
+    if (!email || !password) {
+      setSignupStatus("Email and password are required.", "error");
+      return;
+    }
+
+    if (password.length < 6) {
+      setSignupStatus("Password must be at least 6 characters.", "error");
+      return;
+    }
+
+    const agreeTerms = document.getElementById("signupAgreeTerms").checked;
+    const agreePrivacy = document.getElementById("signupAgreePrivacy").checked;
+    if (!agreeTerms || !agreePrivacy) {
+      setSignupStatus("You must agree to the Terms of Service and Privacy Policy.", "error");
+      return;
+    }
+
+    setSignupStatus("Creating account...");
+
+    const redirectTo = getAuthRedirectUrl();
+    const { data, error } = await db.auth.signUp({
+      email,
+      password,
+      options: redirectTo ? { emailRedirectTo: redirectTo } : undefined
+    });
+
+    if (error) {
+      console.error("Signup error:", error);
+      setSignupStatus(error.message, "error");
+      return;
+    }
+
+    hideSignup();
+    if (data.session) {
+      setAuthStatus("Account created and signed in.", "success");
+      openProfilePage();
+    } else {
+      showEmailConfirmation();
+    }
+  };
+
+  document.getElementById("forgotSubmitButton").onclick = async () => {
+    const email = document.getElementById("forgotEmail").value.trim();
+
+    if (!email) {
+      setForgotStatus("Email is required.", "error");
+      return;
+    }
+
+    console.log("Forgot password requested for", email);
+    setForgotStatus("Sending reset link...");
+
+    let result = await db.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin
+    });
+    let error = result.error;
+
+    if (error && error.message?.toLowerCase().includes('redirect')) {
+      console.warn('Password reset redirect rejected; retrying without redirectTo.');
+      result = await db.auth.resetPasswordForEmail(email);
+      error = result.error;
+    }
+
+    if (error) {
+      console.error("Reset password error:", error);
+      setForgotStatus(error.message, "error");
+      return;
+    }
+
+    hideForgotPassword();
+    setAuthStatus(`Password reset link sent to ${email}.`, "success");
+  };
+});
+
+document.getElementById("userAvatar").onclick = () => {
+  const dropdown = document.getElementById("avatarDropdown");
+  dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+};
+
+// Close dropdown when clicking elsewhere
+document.addEventListener('click', (e) => {
+  const avatar = document.getElementById("userAvatar");
+  const dropdown = document.getElementById("avatarDropdown");
+  if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+    dropdown.style.display = 'none';
+  }
+
+  const popup = document.getElementById("socialPopup");
+  const logoButton = document.getElementById("cornerLogoButton");
+  if (popup && logoButton && !popup.contains(e.target) && !logoButton.contains(e.target)) {
+    popup.classList.remove('open');
+    logoButton.setAttribute('aria-expanded', 'false');
+  }
+});
+
+const cornerLogoButton = document.getElementById("cornerLogoButton");
+const socialPopup = document.getElementById("socialPopup");
+if (cornerLogoButton && socialPopup) {
+  cornerLogoButton.onclick = (event) => {
+    event.stopPropagation();
+    socialPopup.classList.toggle('open');
+    const expanded = socialPopup.classList.contains('open');
+    cornerLogoButton.setAttribute('aria-expanded', expanded.toString());
+  };
+  socialPopup.onclick = (event) => event.stopPropagation();
+}
+
+// Menu item handlers
+document.getElementById("profileBtn").onclick = () => {
+  document.getElementById("avatarDropdown").style.display = 'none';
+  openProfilePage();
+};
+
+document.getElementById("savedPlansBtn").onclick = async () => {
+  document.getElementById("avatarDropdown").style.display = 'none';
+  await renderSavedPlansPage();
+  showPageOverlay("savedPlansPage");
+};
+
+document.getElementById("submittedRoomsBtn").onclick = () => {
+  document.getElementById("avatarDropdown").style.display = 'none';
+  loadSubmittedRooms();
+  showPageOverlay("submittedRoomsPage");
+};
+
+document.getElementById("savedPlansClear").onclick = async () => {
+  if (confirm("Clear all saved plans?")) {
+    saveSavedPlans([]);
+    if (currentUser) {
+      await clearSavedPlansFromDb();
+    }
+    renderSavedPlansPage();
+  }
+};
+
+document.getElementById("savedPlansBack").onclick = () => {
+  hideAllPageOverlays();
+};
+
+document.getElementById("submittedRoomsRefresh").onclick = () => {
+  loadSubmittedRooms();
+};
+
+document.getElementById("submittedRoomsBack").onclick = () => {
+  hideAllPageOverlays();
+};
+
+document.getElementById("profileCancel").onclick = () => {
+  closeProfilePage();
+};
+
+document.getElementById("profileSave").onclick = () => {
+  saveProfileChanges();
+};
+
+// Fast direct room list input  
+
+document.getElementById("logoutBtn").onclick = async () => {
+  document.getElementById("avatarDropdown").style.display = 'none';
+  const { error } = await db.auth.signOut();
+  if (error) {
+    console.error("Logout error:", error);
+    setAuthStatus(error.message, "error");
+  } else {
+    setAuthStatus("Logged out.", "success");
+  }
+};
+
+document.getElementById("submitBtn").onclick = async () => {
+  console.log("Submit button clicked");
+
+  const name = document.getElementById("nameInput").value.trim();
+  if (!name) {
+    alert("Name is required");
+    return;
+  }
+
+  const company = document.getElementById("companyInput").value.trim();
+  if (!company) {
+    alert("Company is required");
+    return;
+  }
+
+  const categorySelect = document.getElementById("categoryInput");
+  const selectedCategories = [...categorySelect.selectedOptions].map(o => o.value);
+  if (selectedCategories.length === 0) {
+    alert("At least one category is required");
+    return;
+  }
+  const category = selectedCategories.join(", ");
+
+  const address = document.getElementById("addressInput").value.trim();
+  if (!address) {
+    alert("Address is required");
+    return;
+  }
+
+  try {
+    // Convert empty strings to null for optional numeric fields
+    const durationValue = document.getElementById("durationInput").value.trim();
+    const yearValue = document.getElementById("yearInput").value.trim();
+    const websiteValue = document.getElementById("websiteInput").value.trim();
+    
+    const { data, error } = await db.from("Escape_Rooms").insert({
+      "Escape room": document.getElementById("nameInput").value,
+      Company: document.getElementById("companyInput").value,
+      Duration: durationValue ? parseInt(durationValue) : null,
+      "Year of S": yearValue ? parseInt(yearValue) : null,
+      website: websiteValue || null,
+      Address: document.getElementById("addressInput").value,
+      Category: category,
+      Lat: null,
+      Lon: null,
+      City: "Athens",
+      Country: "Greece",
+      Status: "pending",
+    }).select("id,Status");
+
+    if (error) {
+      console.error("Insert error:", error);
+      alert("Error submitting: " + error.message);
+    } else {
+      const insertedRow = Array.isArray(data) ? data[0] : data;
+      const newSubmission = {
+        id: insertedRow?.id ? String(insertedRow.id) : `local-${Date.now()}`,
+        dbId: insertedRow?.id || null,
+        name: document.getElementById("nameInput").value.trim(),
+        company: document.getElementById("companyInput").value.trim(),
+        address,
+        category,
+        duration: durationValue ? parseInt(durationValue) : null,
+        year: yearValue ? parseInt(yearValue) : null,
+        website: websiteValue || null,
+        status: insertedRow?.Status || "pending",
+        submittedAt: new Date().toISOString()
+      };
+
+      const submissions = loadStoredSubmittedRooms();
+      submissions.unshift(newSubmission);
+      saveSubmittedRooms(submissions);
+      if (currentUser) {
+        await saveSubmittedRoomToDb(newSubmission);
+      }
+
+      // Show confirmation modal with room details
+      showSubmitConfirmation(newSubmission);
+      if (currentUser?.email) {
+        sendFirstSubmissionEmail(currentUser.email);
+      }
+      
+      // Clear form
+      document.getElementById("nameInput").value = "";
+      document.getElementById("companyInput").value = "";
+      document.getElementById("durationInput").value = "";
+      document.getElementById("yearInput").value = "";
+      document.getElementById("websiteInput").value = "";
+      document.getElementById("addressInput").value = "";
+      document.getElementById("categoryInput").selectedIndex = -1;
+    }
+  } catch (err) {
+    console.error("Submit error:", err);
+    alert("Error: " + err.message);
+  }
+};
+
+function showSubmitConfirmation(submission) {
+  const detailsDiv = document.getElementById("submittedRoomDetails");
+  detailsDiv.innerHTML = `
+    <h4 style="margin: 0 0 10px 0; color: #333;">${submission.name}</h4>
+    <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px 15px; font-size: 14px;">
+      <strong>Company:</strong> <span>${submission.company}</span>
+      <strong>Address:</strong> <span>${submission.address}</span>
+      <strong>Category:</strong> <span>${submission.category}</span>
+      <strong>Duration:</strong> <span>${submission.duration ? submission.duration + ' min' : 'N/A'}</span>
+      <strong>Year:</strong> <span>${submission.year || 'N/A'}</span>
+      <strong>Website:</strong> <span>${submission.website ? `<a href="${submission.website}" target="_blank">${submission.website}</a>` : 'N/A'}</span>
+      <strong>Status:</strong> <span style="color: #ff9800;">${submission.status}</span>
+    </div>
+  `;
+  
+  document.getElementById("submitConfirmationModal").style.display = "flex";
+}
+
+document.getElementById("closeConfirmationModal").onclick = () => {
+  document.getElementById("submitConfirmationModal").style.display = "none";
+};
+
+document.getElementById("viewSubmittedRooms").onclick = () => {
+  document.getElementById("submitConfirmationModal").style.display = "none";
+  showPageOverlay("submittedRoomsPage");
+  loadSubmittedRooms();
+};
+
+// Close modal when clicking outside
+document.getElementById("submitConfirmationModal").onclick = (e) => {
+  if (e.target === document.getElementById("submitConfirmationModal")) {
+    document.getElementById("submitConfirmationModal").style.display = "none";
+  }
+};
+
+// Close modal with ESC key
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && document.getElementById("submitConfirmationModal").style.display === "flex") {
+    document.getElementById("submitConfirmationModal").style.display = "none";
+  }
+});
+
+const openSubmitButton = document.getElementById("openSubmit");
+if (openSubmitButton) openSubmitButton.onclick = () => {
+  showSidebarTab('submit');
+};
+
+document.getElementById("closeSubmit").onclick = () => {
+  closeSidebarTab();
+};
+
+const pageSections = {
+  home: document.getElementById("homePage"),
+  faq: document.getElementById("faqPage"),
+  map: document.getElementById("mapPage")
+};
+
+function showTopPage(pageKey, options = {}) {
+  const targetPage = pageSections[pageKey] ? pageKey : "home";
+  const updateHash = options.updateHash !== false;
+
+  Object.entries(pageSections).forEach(([key, section]) => {
+    if (!section) return;
+    section.hidden = key !== targetPage;
+  });
+
+  document.querySelectorAll(".topbar-link").forEach((button) => {
+    const isActive = button.dataset.pageTarget === targetPage;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-current", isActive ? "page" : "false");
+  });
+
+  if (targetPage !== "map") {
+    closeMobileSidebar();
+  }
+
+  if (targetPage === "map") {
+    setTimeout(() => {
+      if (typeof map !== "undefined") {
+        map.invalidateSize();
+      }
+    }, 120);
+  }
+
+  if (updateHash && window.location.hash !== `#${targetPage}`) {
+    history.replaceState(null, "", `#${targetPage}`);
+  }
+}
+
+document.querySelectorAll(".topbar-link").forEach((button) => {
+  button.addEventListener("click", () => {
+    showTopPage(button.dataset.pageTarget);
+  });
+});
+
+const homeGoMapButton = document.getElementById("homeGoMap");
+if (homeGoMapButton) {
+  homeGoMapButton.onclick = () => showTopPage("map");
+}
+
+const homeGoFaqButton = document.getElementById("homeGoFaq");
+if (homeGoFaqButton) {
+  homeGoFaqButton.onclick = () => showTopPage("faq");
+}
+
+const initialPage = (window.location.hash || "#map").replace("#", "").toLowerCase();
+showTopPage(initialPage, { updateHash: true });
+
+// GPS functionality - Uses WGS84 coordinate system (EPSG:4326)
+// Compatible with all modern browsers that support Geolocation API
+let userLocationMarker = null;
+let userLocation = null; // Store user's current location for radius filtering
+let isLocating = false;
+
+document.getElementById("locateMe").onclick = () => {
+  toggleFollowLocation();
+};
+
+// Mobile menu toggle
+document.getElementById('menuToggle').onclick = () => {
+  const sidebar = document.getElementById('sidebar');
+  const isOpen = sidebar.classList.contains('mobile-open');
+  if (isOpen) {
+    closeMobileSidebar();
+  } else {
+    sidebar.classList.add('mobile-open');
+    document.body.classList.add('sidebar-open');
+  }
+};
+
+function closeMobileSidebar() {
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    document.getElementById('sidebar').classList.remove('mobile-open');
+    document.body.classList.remove('sidebar-open');
+  }
+}
+
+document.getElementById('closeSidebar').onclick = () => {
+  closeMobileSidebar();
+};
+
+// Close mobile menu when clicking on the map (only on mobile)
+if (window.innerWidth <= 768) {
+  map.on('click', () => {
+    closeMobileSidebar();
+  });
+}
+
+
+</script>
+
+
+<footer class="app-footer">
+  <div class="footer-left">
+    © Escape Rooms Map • Connect with your favorite escape room locations and save your plans.
+  </div>
+  <div class="footer-right">
+    <a href="https://www.instagram.com/escapermap/" target="_blank" rel="noopener noreferrer">Instagram</a>
+    <a href="https://www.facebook.com/escapermap" target="_blank" rel="noopener noreferrer">Facebook</a>
+  </div>
+</footer>
+
+<div id="cookie-banner">
+  We use cookies to improve your experience.
+  <button onclick="acceptCookies()">Accept</button>
+</div>
+
+<script>
+function acceptCookies() {
+  document.getElementById("cookie-banner").style.display = "none";
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
