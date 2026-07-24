@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escaper Map | Home</title>
+  <meta name="description" content="Escaper Map helps you find escape rooms by city and theme, then plan your next trip with an interactive map." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://escapermap.com/" />
+  <style>
+    :root {
+      --primary-bg: #701f1f;
+      --secondary-bg: #9d2b2b;
+      --accent-color: #fdd835;
+      --border-color: #080808;
+      --text-color: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #9d2b2b 0%, #701f1f 100%);
+      color: var(--text-color);
+      min-height: 100vh;
+    }
+
+    #topBar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 18px;
+      background: var(--primary-bg);
+      border-bottom: 3px solid var(--border-color);
+    }
+
+    #topBar img { width: 44px; height: 44px; object-fit: contain; }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .topbar-nav {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .topbar-link {
+      display: inline-block;
+      border: 2px solid transparent;
+      border-radius: 999px;
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: bold;
+      padding: 8px 14px;
+    }
+
+    .topbar-link:hover { border-color: var(--accent-color); }
+
+    .topbar-link.active {
+      background: var(--accent-color);
+      color: #111;
+      border-color: var(--accent-color);
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+
+    h1, h2 { margin: 0 0 12px; }
+    p, li { line-height: 1.55; }
+
+    .hero {
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px;
+      background: rgba(255,255,255,0.08);
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      padding: 12px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .btn-link {
+      display: inline-block;
+      background: var(--accent-color);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #111;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    footer {
+      border-top: 3px solid var(--border-color);
+      padding: 14px 18px;
+      background: var(--primary-bg);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 768px) {
+      #topBar { gap: 8px; padding: 0 10px; }
+      .brand-title { font-size: 0.95rem; letter-spacing: 0.03em; }
+      .topbar-nav { gap: 4px; }
+      .topbar-link { font-size: 0.8rem; padding: 6px 9px; }
+    }
+  </style>
+</head>
+<body>
+  <header id="topBar">
+    <img src="logo.png" alt="Escaper Map logo">
+    <div class="brand-title">Escaper Map</div>
+    <nav class="topbar-nav" aria-label="Primary">
+      <a class="topbar-link active" href="/" aria-current="page">Home</a>
+      <a class="topbar-link" href="/faq/">FAQ</a>
+      <a class="topbar-link" href="/map/">Map</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Welcome to Escaper Map</h1>
+      <p>
+        Escaper Map is a project for escape room players who want to discover new rooms, compare themes,
+        and plan better trips. Use it to find escape rooms in your city, filter by style, and save your route.
+      </p>
+      <div class="actions">
+        <a class="btn-link" href="/map/">Open the Map</a>
+        <a class="btn-link" href="/faq/">Read FAQ</a>
+      </div>
+    </section>
+
+    <section class="grid" aria-label="Highlights">
+      <article class="card">
+        <h2>Find by City</h2>
+        <p>Search and filter rooms near your location or in the city you plan to visit next.</p>
+      </article>
+      <article class="card">
+        <h2>Find by Theme</h2>
+        <p>Discover horror rooms, puzzle-focused rooms, and riddle-heavy adventures.</p>
+      </article>
+      <article class="card">
+        <h2>Plan Your Route</h2>
+        <p>Build your itinerary and map your escape room trip from one place.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    © Escape Rooms Map • Connect with your favorite escape room locations and save your plans.
+  </footer>
+</body>
+</html>
