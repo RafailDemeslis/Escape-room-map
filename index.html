@@ -1434,6 +1434,71 @@ body.sidebar-open {
   text-decoration: underline;
 }
 
+.popup-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.popup-header-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.wishlist-toggle {
+  border: 2px solid #fdd835;
+  background: transparent;
+  color: #fdd835;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.wishlist-toggle:hover {
+  background: rgba(253, 216, 53, 0.15);
+}
+
+.wishlist-toggle.active {
+  background: #fdd835;
+  color: #111;
+}
+
+.wishlist-empty {
+  color: #aaa;
+  margin: 0;
+}
+
+.wishlist-item {
+  background: #1f1f1f;
+  border: 1px solid #444;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.wishlist-item-title {
+  color: var(--accent-color);
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.wishlist-item-sub {
+  font-size: 13px;
+  color: #ccc;
+  margin: 4px 0;
+}
+
+.wishlist-item-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
 .leaflet-div-icon {
   background: none !important;
   border: none !important;
@@ -2230,6 +2295,7 @@ body.sidebar-open {
   <div id="avatarDropdown" class="avatar-dropdown">
     <button id="profileBtn">Profile</button>
     <button id="savedPlansBtn">Saved Plans</button>
+    <button id="wishlistBtn">Wishlist</button>
     <button id="submittedRoomsBtn">Submitted Rooms</button>
     <button id="logoutBtn">Log Out</button>
   </div>
@@ -2277,6 +2343,17 @@ body.sidebar-open {
       <div class="page-actions">
         <button id="savedPlansClear" class="btn-clear" type="button">Clear all</button>
         <button id="savedPlansBack" class="btn-cancel" type="button">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="wishlistPage" class="page-overlay" hidden>
+    <div class="page-card">
+      <h3>Wishlist</h3>
+      <div id="wishlistList" style="max-height: calc(100vh - 220px); overflow-y: auto; margin-bottom: 12px;"></div>
+      <div class="page-actions">
+        <button id="wishlistClear" class="btn-clear" type="button">Clear all</button>
+        <button id="wishlistBack" class="btn-cancel" type="button">Back</button>
       </div>
     </div>
   </div>
@@ -2813,7 +2890,7 @@ async function saveProfileChanges() {
 }
 
 function showPageOverlay(pageId) {
-  const pages = ["profilePage", "savedPlansPage", "submittedRoomsPage"];
+  const pages = ["profilePage", "savedPlansPage", "wishlistPage", "submittedRoomsPage"];
   pages.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -3719,6 +3796,16 @@ async function loadUserData() {
       await Promise.all(localSubmissions.map(saveSubmittedRoomToDb));
     }
   }
+
+  const localWishlist = loadWishlist();
+  const remoteWishlist = await loadWishlistFromDb();
+  if (remoteWishlist !== null) {
+    if (remoteWishlist.length > 0) {
+      saveWishlist(remoteWishlist);
+    } else if (localWishlist.length > 0) {
+      await Promise.all(localWishlist.map(saveWishlistItemToDb));
+    }
+  }
 }
 
 function getProfileAvatarPreview() {
@@ -3745,6 +3832,14 @@ function getSubmittedRoomsStorageKey() {
   return `${getStoragePrefix()}submittedRooms:${getUserStorageSuffix()}`;
 }
 
+function getWishlistStorageKey() {
+  return `${getStoragePrefix()}wishlist:${getUserStorageSuffix()}`;
+}
+
+let wishlistCache = null;
+let wishlistIdSetCache = null;
+let wishlistCacheKey = null;
+
 function saveSavedPlans(plans) {
   localStorage.setItem(getSavedPlansStorageKey(), JSON.stringify(plans || []));
 }
@@ -3761,6 +3856,265 @@ function saveSubmittedRooms(submissions) {
 function loadStoredSubmittedRooms() {
   const saved = localStorage.getItem(getSubmittedRoomsStorageKey());
   return saved ? JSON.parse(saved) : [];
+}
+
+function loadWishlist() {
+  const activeKey = getWishlistStorageKey();
+
+  if (Array.isArray(wishlistCache) && wishlistCacheKey === activeKey) {
+    return wishlistCache;
+  }
+
+  const saved = localStorage.getItem(activeKey);
+  wishlistCache = saved ? JSON.parse(saved) : [];
+  wishlistIdSetCache = null;
+  wishlistCacheKey = activeKey;
+  return wishlistCache;
+}
+
+function saveWishlist(wishlist) {
+  const activeKey = getWishlistStorageKey();
+  wishlistCache = wishlist || [];
+  wishlistIdSetCache = null;
+  wishlistCacheKey = activeKey;
+  localStorage.setItem(activeKey, JSON.stringify(wishlistCache));
+}
+
+function getWishlistIdSet() {
+  if (wishlistIdSetCache instanceof Set) {
+    return wishlistIdSetCache;
+  }
+
+  const wishlist = loadWishlist();
+  wishlistIdSetCache = new Set(wishlist.map(item => String(item.id)));
+  return wishlistIdSetCache;
+}
+
+function mapWishlistRowToLocalItem(row) {
+  return {
+    id: row.room_id,
+    remoteId: row.id ? String(row.id) : undefined,
+    name: row.name || "Unknown",
+    company: row.company || "Unknown company",
+    address: row.address || "",
+    category: row.category || "",
+    duration: row.duration || null,
+    year: row.year || null,
+    website: row.website || "",
+    lat: row.lat,
+    lon: row.lon,
+    addedAt: row.added_at || new Date().toISOString()
+  };
+}
+
+async function loadWishlistFromDb() {
+  if (!currentUser) return null;
+
+  try {
+    const { data, error } = await db.from("wishlist_rooms")
+      .select("id,room_id,name,company,address,category,duration,year,website,lat,lon,added_at")
+      .eq("user_id", currentUser.id)
+      .order("added_at", { ascending: false });
+
+    if (error) {
+      if (!tableMissing(error)) {
+        console.error("Failed to load remote wishlist:", error);
+      }
+      return null;
+    }
+
+    return Array.isArray(data) ? data.map(mapWishlistRowToLocalItem) : [];
+  } catch (err) {
+    console.error("Error loading remote wishlist:", err);
+    return null;
+  }
+}
+
+async function saveWishlistItemToDb(item) {
+  if (!currentUser || !item?.id) return;
+
+  const payload = {
+    user_id: currentUser.id,
+    room_id: String(item.id),
+    name: item.name,
+    company: item.company,
+    address: item.address,
+    category: item.category,
+    duration: item.duration,
+    year: item.year,
+    website: item.website,
+    lat: item.lat,
+    lon: item.lon,
+    added_at: item.addedAt || new Date().toISOString()
+  };
+
+  if (isValidUuid(item.remoteId)) {
+    payload.id = item.remoteId;
+  }
+
+  try {
+    const { data, error } = await db.from("wishlist_rooms")
+      .upsert(payload, { onConflict: "user_id,room_id" })
+      .select("id")
+      .single();
+
+    if (error) {
+      if (!tableMissing(error)) {
+        console.error("Failed to save wishlist item to DB:", error);
+      }
+      return;
+    }
+
+    if (data?.id) {
+      item.remoteId = String(data.id);
+    }
+  } catch (err) {
+    console.error("Error saving wishlist item to DB:", err);
+  }
+}
+
+async function deleteWishlistItemFromDb(roomId) {
+  if (!currentUser || !roomId) return;
+
+  try {
+    const { error } = await db.from("wishlist_rooms")
+      .delete()
+      .eq("user_id", currentUser.id)
+      .eq("room_id", String(roomId));
+    if (error && !tableMissing(error)) {
+      console.error("Failed to delete wishlist item from DB:", error);
+    }
+  } catch (err) {
+    console.error("Error deleting wishlist item from DB:", err);
+  }
+}
+
+async function clearWishlistFromDb() {
+  if (!currentUser) return;
+
+  try {
+    const { error } = await db.from("wishlist_rooms")
+      .delete()
+      .eq("user_id", currentUser.id);
+    if (error && !tableMissing(error)) {
+      console.error("Failed to clear wishlist from DB:", error);
+    }
+  } catch (err) {
+    console.error("Error clearing wishlist from DB:", err);
+  }
+}
+
+function isRoomInWishlist(roomId) {
+  if (!roomId) return false;
+  return getWishlistIdSet().has(String(roomId));
+}
+
+function toggleRoomInWishlist(room) {
+  if (!room || !room.id) {
+    return { inWishlist: false, item: null, removedRoomId: null };
+  }
+
+  const wishlist = loadWishlist();
+  const roomId = String(room.id);
+  const existingIndex = wishlist.findIndex(item => String(item.id) === roomId);
+
+  if (existingIndex >= 0) {
+    wishlist.splice(existingIndex, 1);
+    saveWishlist(wishlist);
+    return { inWishlist: false, item: null, removedRoomId: roomId };
+  }
+
+  const wishlistItem = {
+    id: room.id,
+    name: room["Escape room"] || "Unknown",
+    company: room.Company || "Unknown company",
+    address: room.Address || "",
+    category: room.Category || "",
+    duration: room.Duration || null,
+    year: room["Year of S"] || null,
+    website: room.website || "",
+    lat: room.Lat,
+    lon: room.Lon,
+    addedAt: new Date().toISOString()
+  };
+
+  wishlist.unshift(wishlistItem);
+
+  saveWishlist(wishlist);
+  return { inWishlist: true, item: wishlistItem, removedRoomId: null };
+}
+
+function renderWishlistPage() {
+  const list = document.getElementById("wishlistList");
+  if (!list) return;
+
+  const wishlist = loadWishlist();
+  if (wishlist.length === 0) {
+    list.innerHTML = '<p class="wishlist-empty">No rooms in wishlist yet. Use the heart button in room popups to add rooms.</p>';
+    return;
+  }
+
+  list.innerHTML = wishlist.map((item, index) => {
+    const mapsLink = getGoogleMapsLink(item.address, item.lat, item.lon);
+    return `
+      <div class="wishlist-item">
+        <div class="wishlist-item-title">❤ ${item.name}</div>
+        <div class="wishlist-item-sub">${item.company}</div>
+        <div class="wishlist-item-sub">${item.address || 'Address unavailable'}</div>
+        <div class="wishlist-item-actions">
+          <button type="button" class="btn-map" onclick="window.showWishlistRoomOnMap(${index})">Show on map</button>
+          <a href="${mapsLink}" target="_blank" class="btn-map" style="text-decoration: none; display: inline-flex; align-items: center;">Directions</a>
+          <button type="button" class="btn-clear" onclick="window.removeWishlistItem(${index})">Remove</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.removeWishlistItem = async function(index) {
+  const wishlist = loadWishlist();
+  const removed = wishlist.splice(index, 1)[0];
+  saveWishlist(wishlist);
+  if (currentUser && removed?.id) {
+    await deleteWishlistItemFromDb(String(removed.id));
+  }
+  if (removed?.id) {
+    updateWishlistButtonsForRoom(String(removed.id));
+  }
+  renderWishlistPage();
+};
+
+window.showWishlistRoomOnMap = function(index) {
+  const wishlist = loadWishlist();
+  const item = wishlist[index];
+  if (!item) return;
+
+  showTopPage('map');
+  hideAllPageOverlays();
+
+  if (isValidCoordinate(item.lat, -90, 90) && isValidCoordinate(item.lon, -180, 180)) {
+    map.setView([item.lat, item.lon], Math.max(map.getZoom(), 14));
+  }
+};
+
+function getWishlistButtonMarkup(room, wishlistIdSet) {
+  if (!currentUser || !room?.id) {
+    return '';
+  }
+
+  const inWishlist = wishlistIdSet
+    ? wishlistIdSet.has(String(room.id))
+    : isRoomInWishlist(room.id);
+  return `<button type="button" class="wishlist-toggle ${inWishlist ? 'active' : ''}" data-room-id="${room.id}" aria-label="${inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}">${inWishlist ? '❤ Saved' : '♡ Wishlist'}</button>`;
+}
+
+function updateWishlistButtonsForRoom(roomId) {
+  document.querySelectorAll(`.wishlist-toggle[data-room-id="${roomId}"]`).forEach(button => {
+    const inWishlist = isRoomInWishlist(roomId);
+    button.classList.toggle('active', inWishlist);
+    button.textContent = inWishlist ? '❤ Saved' : '♡ Wishlist';
+    button.setAttribute('aria-label', inWishlist ? 'Remove from wishlist' : 'Add to wishlist');
+  });
 }
 
 async function renderSavedPlansPage() {
@@ -4328,6 +4682,8 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 }
 
 async function loadEscapeRooms() {
+  const renderToken = ++loadEscapeRoomsToken;
+
   if (!map.hasLayer(markers)) {
     map.addLayer(markers);
   }
@@ -4387,65 +4743,85 @@ async function loadEscapeRooms() {
   cachedFilteredRooms = filteredData;
   console.log(`Loaded ${filteredData.length} rooms (from cache of ${data.length})`);
 
-  // Batch render markers for faster DOM updates
-  const markerBatch = [];
-  filteredData.forEach(r => {
-    let popupContent = `
-      <div class="escape-room-popup">
-        <h3>🔐 ${r["Escape room"]}</h3>
-        <h4>${r.Company}</h4>
-        
-        <div class="popup-section">
-          <div class="popup-icon">🎭</div>
-          <div class="popup-text"><strong>Category:</strong> ${r.Category}</div>
-        </div>
-        
-        <div class="popup-section">
-          <div class="popup-icon">⏱️</div>
-          <div class="popup-text"><strong>Duration:</strong> ${r.Duration} minutes</div>
-        </div>
-        
-        <div class="popup-section">
-          <div class="popup-icon">📍</div>
-          <div class="popup-text"><strong>Address:</strong> ${r.Address}</div>
-        </div>
-        
-        <div class="popup-section">
-          <div class="popup-icon">🎬</div>
-          <div class="popup-text"><strong>Actors:</strong> ${r.Actors === 'Yes' || r.Actors === true ? '✓ Yes' : '✗ No'}</div>
-        </div>
-        
-        <div class="popup-section">
-          <div class="popup-icon">📅</div>
-          <div class="popup-text"><strong>Year Created:</strong> ${r["Year of S"]}</div>
-        </div>
-        
-        <div class="popup-section">
-          <div class="popup-icon">🌐</div>
-          <div class="popup-text"><strong>Website:</strong> ${r.website ? `<a href="${r.website}" target="_blank">${r.website}</a>` : 'N/A'}</div>
-        </div>
-        <div class="popup-section">
-          <div class="popup-icon">🗺️</div>
-          <div class="popup-text"><strong>Directions:</strong> <a href="${getGoogleMapsDirectionsLink(r.Lat, r.Lon, 'driving')}" target="_blank">Car</a> | <a href="${getGoogleMapsDirectionsLink(r.Lat, r.Lon, 'walking')}" target="_blank">Walk</a></div>
-        </div>
-    `;
-    
-    popupContent += `</div>`;
+  const wishlistIdSet = currentUser ? getWishlistIdSet() : null;
 
-    // All escape rooms use red pin markers
-    const marker = L.marker([r.Lat, r.Lon], {
-      icon: createEscapeRoomPinIcon()
-    }).bindPopup(popupContent);
+  const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve));
 
-    marker.on('click', () => {
-      selectMapMarker(marker);
+  // Chunk marker creation so large result sets do not block the main thread.
+  for (let i = 0; i < filteredData.length; i += MARKER_RENDER_CHUNK_SIZE) {
+    if (renderToken !== loadEscapeRoomsToken) {
+      return;
+    }
+
+    const batch = filteredData.slice(i, i + MARKER_RENDER_CHUNK_SIZE);
+    const markerBatch = [];
+
+    batch.forEach(r => {
+      let popupContent = `
+        <div class="escape-room-popup">
+          <div class="popup-header">
+            <div class="popup-header-main">
+              <h3>🔐 ${r["Escape room"]}</h3>
+              <h4>${r.Company}</h4>
+            </div>
+            ${getWishlistButtonMarkup(r, wishlistIdSet)}
+          </div>
+          
+          <div class="popup-section">
+            <div class="popup-icon">🎭</div>
+            <div class="popup-text"><strong>Category:</strong> ${r.Category}</div>
+          </div>
+          
+          <div class="popup-section">
+            <div class="popup-icon">⏱️</div>
+            <div class="popup-text"><strong>Duration:</strong> ${r.Duration} minutes</div>
+          </div>
+          
+          <div class="popup-section">
+            <div class="popup-icon">📍</div>
+            <div class="popup-text"><strong>Address:</strong> ${r.Address}</div>
+          </div>
+          
+          <div class="popup-section">
+            <div class="popup-icon">🎬</div>
+            <div class="popup-text"><strong>Actors:</strong> ${r.Actors === 'Yes' || r.Actors === true ? '✓ Yes' : '✗ No'}</div>
+          </div>
+          
+          <div class="popup-section">
+            <div class="popup-icon">📅</div>
+            <div class="popup-text"><strong>Year Created:</strong> ${r["Year of S"]}</div>
+          </div>
+          
+          <div class="popup-section">
+            <div class="popup-icon">🌐</div>
+            <div class="popup-text"><strong>Website:</strong> ${r.website ? `<a href="${r.website}" target="_blank">${r.website}</a>` : 'N/A'}</div>
+          </div>
+          <div class="popup-section">
+            <div class="popup-icon">🗺️</div>
+            <div class="popup-text"><strong>Directions:</strong> <a href="${getGoogleMapsDirectionsLink(r.Lat, r.Lon, 'driving')}" target="_blank">Car</a> | <a href="${getGoogleMapsDirectionsLink(r.Lat, r.Lon, 'walking')}" target="_blank">Walk</a></div>
+          </div>
+      `;
+
+      popupContent += `</div>`;
+
+      const marker = L.marker([r.Lat, r.Lon], {
+        icon: createEscapeRoomPinIcon()
+      }).bindPopup(popupContent);
+
+      marker.on('click', () => {
+        selectMapMarker(marker);
+      });
+
+      markerBatch.push(marker);
     });
 
-    markerBatch.push(marker);
-  });
-  
-  // Add all markers at once (batch operation is faster)
-  markers.addLayers(markerBatch);
+    if (renderToken !== loadEscapeRoomsToken) {
+      return;
+    }
+
+    markers.addLayers(markerBatch);
+    await nextFrame();
+  }
 }
 
 // Debounce filter application for faster UX
@@ -4538,6 +4914,8 @@ let cachedAllRooms = [];
 let cachedFilteredRooms = [];
 let filterDebounceTimer = null;
 const FILTER_DEBOUNCE_MS = 300;
+let loadEscapeRoomsToken = 0;
+const MARKER_RENDER_CHUNK_SIZE = 120;
 
 // Pre-cache all escape rooms on first load to avoid repeated Supabase queries
 async function cacheAllEscapeRooms() {
@@ -4622,36 +5000,36 @@ class Calendar {
         </div>
         <div class="calendar-days">
     `;
-    
+
     // Add empty cells for days before month starts
     for (let i = 0; i < startingDayOfWeek; i++) {
       html += `<div class="calendar-day other-month"></div>`;
     }
-    
+
     // Add days of month
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       date.setHours(0, 0, 0, 0);
-      
+
       const isToday = date.getTime() === today.getTime();
       const isSelected = date.getTime() === this.selectedDate.getTime();
       const isPast = date.getTime() < today.getTime();
-      
+
       let classes = 'calendar-day';
       if (isToday) classes += ' today';
       if (isSelected) classes += ' selected';
       if (isPast) classes += ' disabled';
-      
+
       const dateStr = date.toISOString().split('T')[0];
       html += `<div class="${classes}" onclick="window.calendarInstance.selectDate('${dateStr}')">${day}</div>`;
     }
-    
+
     html += `</div></div>`;
     container.innerHTML = html;
     this.attachSwipeHandlers(container);
-    
+
     this.updateDisplay();
   }
 
@@ -5662,6 +6040,43 @@ document.getElementById("userAvatar").onclick = () => {
 
 // Close dropdown when clicking elsewhere
 document.addEventListener('click', (e) => {
+  const wishlistToggle = e.target.closest('.wishlist-toggle');
+  if (wishlistToggle) {
+    e.preventDefault();
+
+    if (!currentUser) {
+      setAuthStatus("Please sign in to use wishlist.", "error");
+      return;
+    }
+
+    const roomId = wishlistToggle.dataset.roomId;
+    const room = cachedAllRooms.find(item => String(item.id) === String(roomId));
+    if (!room) {
+      setAuthStatus("Room not found.", "error");
+      return;
+    }
+
+    (async () => {
+      const { inWishlist, item, removedRoomId } = toggleRoomInWishlist(room);
+
+      if (currentUser) {
+        if (inWishlist && item) {
+          await saveWishlistItemToDb(item);
+        } else if (removedRoomId) {
+          await deleteWishlistItemFromDb(removedRoomId);
+        }
+      }
+
+      updateWishlistButtonsForRoom(String(room.id));
+      setAuthStatus(inWishlist ? "Room added to wishlist." : "Room removed from wishlist.", "success");
+
+      if (document.getElementById("wishlistPage").style.display === 'flex') {
+        renderWishlistPage();
+      }
+    })();
+    return;
+  }
+
   const avatar = document.getElementById("userAvatar");
   const dropdown = document.getElementById("avatarDropdown");
   if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
@@ -5700,6 +6115,12 @@ document.getElementById("savedPlansBtn").onclick = async () => {
   showPageOverlay("savedPlansPage");
 };
 
+document.getElementById("wishlistBtn").onclick = () => {
+  document.getElementById("avatarDropdown").style.display = 'none';
+  renderWishlistPage();
+  showPageOverlay("wishlistPage");
+};
+
 document.getElementById("submittedRoomsBtn").onclick = () => {
   document.getElementById("avatarDropdown").style.display = 'none';
   loadSubmittedRooms();
@@ -5717,6 +6138,25 @@ document.getElementById("savedPlansClear").onclick = async () => {
 };
 
 document.getElementById("savedPlansBack").onclick = () => {
+  hideAllPageOverlays();
+};
+
+document.getElementById("wishlistClear").onclick = async () => {
+  if (!confirm("Clear wishlist?")) return;
+  const wishlist = loadWishlist();
+  saveWishlist([]);
+  if (currentUser) {
+    await clearWishlistFromDb();
+  }
+  wishlist.forEach(item => {
+    if (item?.id) {
+      updateWishlistButtonsForRoom(String(item.id));
+    }
+  });
+  renderWishlistPage();
+};
+
+document.getElementById("wishlistBack").onclick = () => {
   hideAllPageOverlays();
 };
 
