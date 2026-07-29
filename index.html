@@ -575,6 +575,7 @@ input[type="time"] {
 
 #sidebar #planPanel,
 #sidebar #submitPanel,
+#sidebar #graphsPanel,
 #sidebar #filtersPanel {
   width: 100% !important;
   background: var(--secondary-bg) !important;
@@ -593,15 +594,207 @@ input[type="time"] {
 #planPanel .plan-section,
 #submitPanel label,
 #submitPanel input,
+#graphsPanel label,
+#graphsPanel select,
+#graphsPanel input,
 #submitPanel select {
   margin-bottom: 10px;
 }
 
 #planPanel .panel-close-btn,
-#submitPanel .panel-close-btn {
+#submitPanel .panel-close-btn,
+#graphsPanel .panel-close-btn {
   position: absolute;
   top: 10px;
   right: 10px;
+}
+
+#submitPanel h3,
+#graphsPanel h3 {
+  color: #fff;
+}
+
+.graph-controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.graph-controls select[multiple] {
+  min-height: 150px;
+}
+
+.graph-filter-actions,
+.graph-year-range,
+.graph-heatmap-controls,
+.graph-heatmap-settings {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.graph-filter-actions button,
+.graph-year-range button,
+.graph-heatmap-controls button,
+.graph-heatmap-settings button {
+  flex: 1 1 120px;
+}
+
+.graph-year-range input[type="range"] {
+  flex: 1 1 100%;
+}
+
+.graph-range-readout {
+  font-size: 12px;
+  color: #ddd;
+}
+
+.graph-summary {
+  background: #1f1f1f;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+  color: #ddd;
+  margin-bottom: 10px;
+}
+
+.graph-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.graph-actions button {
+  flex: 1;
+}
+
+.graph-canvas-wrap {
+  background: #111;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 8px;
+  min-height: 360px;
+}
+
+.graph-canvas-wrap canvas {
+  width: 100% !important;
+  height: 340px !important;
+}
+
+#graphPreviewPage .page-card {
+  max-width: min(1180px, calc(100vw - 40px));
+  width: min(1180px, calc(100vw - 40px));
+  max-height: calc(100vh - 40px);
+}
+
+.graph-preview-wrap {
+  background: #111;
+  border: 1px solid #444;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.graph-preview-wrap canvas {
+  width: 100% !important;
+  height: min(70vh, 680px) !important;
+}
+
+.heatmap-legend {
+  background: rgba(17, 17, 17, 0.92);
+  color: #fff;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+  min-width: 180px;
+}
+
+.heatmap-legend-title {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.heatmap-legend-bar {
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3388ff 0%, #2ecc71 35%, #f1c40f 68%, #e74c3c 100%);
+  margin-bottom: 6px;
+}
+
+.heatmap-legend-scale,
+.heatmap-legend-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  color: #ddd;
+}
+
+.heatmap-legend-meta {
+  display: block;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+.graph-heatmap-settings label {
+  flex: 1 1 100%;
+  margin-bottom: 0;
+}
+
+.graph-setting-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: 0 0 22px;
+}
+
+.info-dot:hover {
+  background: var(--accent-color);
+  color: #111;
+}
+
+.graph-heatmap-settings input[type="range"] {
+  flex: 1 1 100%;
+}
+
+.graph-heatmap-readout {
+  font-size: 12px;
+  color: #ddd;
+}
+
+.graph-heatmap-mobile-toggle-wrap {
+  display: none;
+  margin-bottom: 8px;
+}
+
+.graph-heatmap-advanced-group {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.graph-heatmap-mobile-toggle-wrap button {
+  width: 100%;
 }
 
 #sidebar .tab-panel {
@@ -1032,6 +1225,56 @@ body.sidebar-open {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   position: relative;
+  }
+
+  #graphsPanel .graph-controls label {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  #graphsPanel .graph-controls select,
+  #graphsPanel .graph-controls input {
+    font-size: 13px;
+    padding: 8px;
+    margin-bottom: 6px;
+  }
+
+  #graphsPanel .graph-controls select[multiple] {
+    min-height: 110px;
+  }
+
+  #graphsPanel .graph-actions,
+  #graphsPanel .graph-heatmap-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  #graphsPanel .graph-actions button,
+  #graphsPanel .graph-heatmap-controls button {
+    min-height: 38px;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  #graphsPanel .graph-heatmap-mobile-toggle-wrap {
+    display: block;
+  }
+
+  #graphsPanel .graph-heatmap-advanced-group {
+    display: none;
+  }
+
+  #graphsPanel .graph-heatmap-advanced-group.is-open {
+    display: grid;
+  }
+
+  #graphsPanel .graph-canvas-wrap {
+    min-height: 260px;
+  }
+
+  #graphsPanel .graph-canvas-wrap canvas {
+    height: 230px !important;
   }
 
   .panel-close-btn {
@@ -2159,6 +2402,7 @@ body.sidebar-open {
       <button id="tabFilters" class="active" type="button">Filters</button>
       <button id="tabPlan" type="button">Plan</button>
       <button id="tabSubmit" type="button">Submit</button>
+      <button id="tabGraphs" type="button">Graphs</button>
     </div>
 
     <div id="sidebarTabPanels">
@@ -2224,6 +2468,110 @@ body.sidebar-open {
           <option value="VR">VR</option>
         </select>
         <button id="submitBtn">Submit</button>
+      </div>
+      <div id="graphsPanel" class="tab-panel" hidden>
+        <button id="closeGraphs" class="panel-close-btn" aria-label="Close">×</button>
+        <h3>GIS Graphs & Statistics</h3>
+        <div class="graph-controls">
+          <label for="graphDataScope">Data scope</label>
+          <select id="graphDataScope">
+            <option value="filtered">Current filtered rooms</option>
+            <option value="all">All approved rooms</option>
+          </select>
+
+          <label for="graphDimension">Dimension (X axis)</label>
+          <select id="graphDimension">
+            <option value="category">Categories</option>
+            <option value="year">Year</option>
+            <option value="yearCategory">Categories by year</option>
+          </select>
+
+          <label for="graphMetric">Y axis</label>
+          <select id="graphMetric">
+            <option value="number">Number</option>
+            <option value="duration">Duration</option>
+          </select>
+
+          <label for="graphCategoryFilter">Categories to include</label>
+          <select id="graphCategoryFilter" multiple>
+            <option value="Horror/Psychological horror">Horror/Psychological horror</option>
+            <option value="Splatter">Splatter</option>
+            <option value="Action">Action</option>
+            <option value="Spooky">Spooky</option>
+            <option value="Sci-fi">Sci-fi</option>
+            <option value="Puzzles">Puzzles</option>
+            <option value="Kids">Kids</option>
+            <option value="Comedy">Comedy</option>
+            <option value="Role Playing">Role Playing</option>
+            <option value="VR">VR</option>
+            <option value="Outer Space">Outer Space</option>
+            <option value="Portable">Portable</option>
+          </select>
+          <div class="graph-filter-actions">
+            <button id="selectAllGraphCategories" type="button" class="btn-map">Select all categories</button>
+            <button id="clearGraphCategories" type="button" class="btn-clear">Clear categories</button>
+          </div>
+
+          <label for="graphYearFilter">Years to include</label>
+          <select id="graphYearFilter" multiple></select>
+          <div class="graph-filter-actions">
+            <button id="selectAllGraphYears" type="button" class="btn-map">Select all years</button>
+            <button id="clearGraphYears" type="button" class="btn-clear">Clear years</button>
+          </div>
+
+          <label>Year range</label>
+          <div class="graph-year-range">
+            <input id="graphYearMinRange" type="range" min="1980" max="2030" value="1980">
+            <input id="graphYearMaxRange" type="range" min="1980" max="2030" value="2030">
+          </div>
+          <div id="graphYearRangeReadout" class="graph-range-readout">All years</div>
+
+          <label for="graphChartType">Chart type</label>
+          <select id="graphChartType">
+            <option value="bar">Bar</option>
+            <option value="line">Line</option>
+            <option value="pie">Pie</option>
+          </select>
+
+          <label for="graphTopN">Top categories (for category charts)</label>
+          <input id="graphTopN" type="number" min="3" max="30" value="12">
+        </div>
+
+        <div class="graph-actions">
+          <button id="renderGraphBtn" type="button" class="btn-map">Generate</button>
+          <button id="downloadGraphBtn" type="button" class="btn-export">Download PNG</button>
+          <button id="expandGraphBtn" type="button" class="btn-map">Enlarge</button>
+        </div>
+
+        <div class="graph-heatmap-controls">
+          <button id="showHeatmapBtn" type="button" class="btn-map">Show GIS Heatmap</button>
+          <button id="clearHeatmapBtn" type="button" class="btn-clear">Clear Heatmap</button>
+          <button id="toggleHeatmapLegendBtn" type="button" class="btn-map">Hide Legend</button>
+        </div>
+
+        <div class="graph-heatmap-mobile-toggle-wrap">
+          <button id="toggleHeatmapAdvancedBtn" type="button" class="btn-map" aria-expanded="false" aria-controls="heatmapAdvancedControls">Advanced heatmap controls ▼</button>
+        </div>
+
+        <div id="heatmapAdvancedControls" class="graph-heatmap-advanced-group">
+          <div class="graph-heatmap-controls">
+            <button id="exportHeatmapPngBtn" type="button" class="btn-export">Export Heatmap PNG</button>
+            <button id="exportHeatmapPdfBtn" type="button" class="btn-export">Export Heatmap PDF</button>
+          </div>
+
+          <div class="graph-heatmap-settings">
+            <label for="heatmapRadiusRange" class="graph-setting-label">Heatmap radius <button id="heatmapRadiusHelp" class="info-dot" type="button" title="Radius controls how far each room spreads its influence on the heatmap. Higher radius creates broader, smoother blobs. Lower radius keeps hotspots tighter.">?</button></label>
+            <input id="heatmapRadiusRange" type="range" min="12" max="50" value="26">
+            <label for="heatmapOpacityRange" class="graph-setting-label">Heatmap opacity <button id="heatmapOpacityHelp" class="info-dot" type="button" title="Opacity controls how transparent or strong the heatmap looks. Lower opacity lets the basemap show through more. Higher opacity makes density areas more intense.">?</button></label>
+            <input id="heatmapOpacityRange" type="range" min="10" max="90" value="28">
+            <div id="heatmapSettingsReadout" class="graph-heatmap-readout">Radius: 26 | Opacity: 0.28</div>
+          </div>
+        </div>
+
+        <div id="graphSummary" class="graph-summary">Choose graph settings and click Generate.</div>
+        <div class="graph-canvas-wrap">
+          <canvas id="roomsStatsChart" aria-label="Room statistics chart"></canvas>
+        </div>
       </div>
       <div id="filtersPanel" class="tab-panel">
         <h2 style="color: white;">Filters</h2>
@@ -2365,6 +2713,19 @@ body.sidebar-open {
       <div class="page-actions">
         <button id="submittedRoomsRefresh" class="btn-map" type="button">Refresh</button>
         <button id="submittedRoomsBack" class="btn-cancel" type="button">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="graphPreviewPage" class="page-overlay" hidden>
+    <div class="page-card">
+      <h3>Graphs Preview</h3>
+      <div id="graphPreviewSummary" class="graph-summary" style="margin-bottom: 12px;">Generate a graph first.</div>
+      <div class="graph-preview-wrap">
+        <canvas id="roomsStatsChartLarge" aria-label="Large room statistics chart"></canvas>
+      </div>
+      <div class="page-actions">
+        <button id="closeGraphPreview" class="btn-cancel" type="button">Close</button>
       </div>
     </div>
   </div>
@@ -2688,6 +3049,7 @@ body.sidebar-open {
 <!-- Scripts -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -2695,6 +3057,7 @@ body.sidebar-open {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 const db = supabase.createClient(
   "https://ypmtgvoadqtcspcrtemy.supabase.co",
@@ -2959,13 +3322,15 @@ function showSidebarTab(tab) {
   const tabButtons = {
     filters: document.getElementById('tabFilters'),
     plan: document.getElementById('tabPlan'),
-    submit: document.getElementById('tabSubmit')
+    submit: document.getElementById('tabSubmit'),
+    graphs: document.getElementById('tabGraphs')
   };
 
   const tabPanels = {
     filters: document.getElementById('filtersPanel'),
     plan: document.getElementById('planPanel'),
-    submit: document.getElementById('submitPanel')
+    submit: document.getElementById('submitPanel'),
+    graphs: document.getElementById('graphsPanel')
   };
 
   Object.keys(tabButtons).forEach(key => {
@@ -3006,6 +3371,884 @@ async function openPlanPanel() {
 
 function closeSidebarTab() {
   showSidebarTab('filters');
+}
+
+let roomsStatsChartInstance = null;
+let heatmapLayer = null;
+let heatmapLegendControl = null;
+let isHeatmapVisible = false;
+let markersWereVisibleBeforeHeatmap = false;
+let isHeatmapLegendVisible = true;
+let heatmapSettings = {
+  radius: 26,
+  opacity: 0.28
+};
+
+const GRAPH_CATEGORY_ALIASES = new Map([
+  ['psychological horror', 'Horror/Psychological horror'],
+  ['horror/psychological horror', 'Horror/Psychological horror'],
+  ['horror', 'Horror/Psychological horror'],
+  ['splatter', 'Splatter'],
+  ['action', 'Action'],
+  ['spooky', 'Spooky'],
+  ['sci-fi', 'Sci-fi'],
+  ['scifi', 'Sci-fi'],
+  ['sci fi', 'Sci-fi'],
+  ['riddles', 'Puzzles'],
+  ['puzzles', 'Puzzles'],
+  ['puzzle', 'Puzzles'],
+  ['kids', 'Kids'],
+  ['comedy', 'Comedy'],
+  ['role playing', 'Role Playing'],
+  ['role-playing', 'Role Playing'],
+  ['roleplaying', 'Role Playing'],
+  ['vr', 'VR'],
+  ['outer space', 'Outer Space'],
+  ['portable', 'Portable']
+]);
+
+const GRAPH_CATEGORY_ORDER = [
+  'Horror/Psychological horror',
+  'Splatter',
+  'Action',
+  'Spooky',
+  'Sci-fi',
+  'Puzzles',
+  'Kids',
+  'Comedy',
+  'Role Playing',
+  'VR',
+  'Outer Space',
+  'Portable'
+];
+
+const GRAPH_CATEGORY_COLORS = {
+  'Horror/Psychological horror': '#8b0000',
+  'Splatter': '#c0392b',
+  'Action': '#e67e22',
+  'Spooky': '#7f8c8d',
+  'Sci-fi': '#2980b9',
+  'Puzzles': '#16a085',
+  'Kids': '#f1c40f',
+  'Comedy': '#f39c12',
+  'Role Playing': '#8e44ad',
+  'VR': '#00a8ff',
+  'Outer Space': '#2c3e50',
+  'Portable': '#27ae60'
+};
+
+const GRAPH_CATEGORY_CODES = {
+  'Horror/Psychological horror': 'HP',
+  'Splatter': 'SP',
+  'Action': 'AC',
+  'Spooky': 'SK',
+  'Sci-fi': 'SF',
+  'Puzzles': 'PU',
+  'Kids': 'KI',
+  'Comedy': 'CO',
+  'Role Playing': 'RP',
+  'VR': 'VR',
+  'Outer Space': 'OS',
+  'Portable': 'PO'
+};
+
+function updateHeatmapSettingsReadout() {
+  const readout = document.getElementById('heatmapSettingsReadout');
+  if (!readout) return;
+  readout.textContent = `Radius: ${heatmapSettings.radius} | Opacity: ${heatmapSettings.opacity.toFixed(2)}`;
+}
+
+function showHeatmapSettingHelp(topic) {
+  const messages = {
+    radius: 'Heatmap radius controls how far each room spreads its influence on the map. Higher radius creates broader and smoother hotspots. Lower radius makes each cluster tighter and more local.',
+    opacity: 'Heatmap opacity controls how transparent or intense the heatmap appears. Lower opacity keeps the basemap more visible. Higher opacity makes density patterns stronger and easier to compare.'
+  };
+
+  const message = messages[topic];
+  if (!message) return;
+  alert(message);
+}
+
+function syncHeatmapControlsForViewport() {
+  const toggleButton = document.getElementById('toggleHeatmapAdvancedBtn');
+  const advancedContainer = document.getElementById('heatmapAdvancedControls');
+  if (!toggleButton || !advancedContainer) return;
+
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  if (!isMobile) {
+    advancedContainer.classList.add('is-open');
+    toggleButton.setAttribute('aria-expanded', 'true');
+    toggleButton.textContent = 'Advanced heatmap controls';
+    return;
+  }
+
+  const isOpen = advancedContainer.classList.contains('is-open');
+  toggleButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  toggleButton.textContent = isOpen
+    ? 'Advanced heatmap controls ▲'
+    : 'Advanced heatmap controls ▼';
+}
+
+function toggleHeatmapAdvancedControls() {
+  const advancedContainer = document.getElementById('heatmapAdvancedControls');
+  if (!advancedContainer) return;
+
+  const shouldOpen = !advancedContainer.classList.contains('is-open');
+  advancedContainer.classList.toggle('is-open', shouldOpen);
+  syncHeatmapControlsForViewport();
+}
+
+function extractRoomCategories(room) {
+  const categoryText = String(room?.Category || '').trim();
+  if (!categoryText) return [];
+
+  const normalizedText = categoryText
+    .toLowerCase()
+    .replace(/[|;+]/g, ',')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const seen = new Set();
+  const categories = [];
+
+  [...GRAPH_CATEGORY_ALIASES.entries()]
+    .sort((a, b) => b[0].length - a[0].length)
+    .forEach(([alias, normalized]) => {
+      if (seen.has(normalized)) return;
+      if (!normalizedText.includes(alias)) return;
+      seen.add(normalized);
+      categories.push(normalized);
+    });
+
+  return categories;
+}
+
+function parseRoomYear(room) {
+  const raw = room?.["Year of S"];
+  const year = Number.parseInt(raw, 10);
+  const currentYear = new Date().getFullYear();
+  if (!Number.isInteger(year) || year < 1980 || year > currentYear + 1) return null;
+  return year;
+}
+
+function parseRoomDuration(room) {
+  const duration = Number.parseFloat(room?.Duration);
+  return Number.isFinite(duration) && duration > 0 ? duration : null;
+}
+
+function getGraphSourceRooms(scope) {
+  if (scope === 'filtered') {
+    if (cachedFilteredRooms.length > 0) return cachedFilteredRooms;
+  }
+  return cachedAllRooms;
+}
+
+function getSelectedGraphCategories() {
+  const select = document.getElementById('graphCategoryFilter');
+  if (!select) return [];
+  return [...select.selectedOptions].map(option => option.value);
+}
+
+function getSelectedGraphYears() {
+  const select = document.getElementById('graphYearFilter');
+  if (!select) return [];
+  return [...select.selectedOptions].map(option => Number.parseInt(option.value, 10)).filter(Number.isInteger);
+}
+
+function getSelectedGraphYearRange() {
+  const minInput = document.getElementById('graphYearMinRange');
+  const maxInput = document.getElementById('graphYearMaxRange');
+  if (!minInput || !maxInput) {
+    return { min: null, max: null };
+  }
+
+  let min = Number.parseInt(minInput.value, 10);
+  let max = Number.parseInt(maxInput.value, 10);
+  if (!Number.isInteger(min) || !Number.isInteger(max)) {
+    return { min: null, max: null };
+  }
+
+  if (min > max) {
+    [min, max] = [max, min];
+  }
+
+  return { min, max };
+}
+
+function filterRoomsForGraphYears(rooms, selectedYears) {
+  const yearSet = new Set(selectedYears);
+  const { min, max } = getSelectedGraphYearRange();
+
+  return rooms.filter(room => {
+    const year = parseRoomYear(room);
+    if (year === null) return false;
+    if (min !== null && year < min) return false;
+    if (max !== null && year > max) return false;
+    if (yearSet.size === 0) return true;
+    return yearSet.has(year);
+  });
+}
+
+function populateGraphYearFilter() {
+  const select = document.getElementById('graphYearFilter');
+  if (!select) return;
+
+  const previousSelection = new Set(getSelectedGraphYears().map(String));
+  const years = [...new Set(cachedAllRooms.map(parseRoomYear).filter(year => year !== null))].sort((a, b) => a - b);
+
+  const minInput = document.getElementById('graphYearMinRange');
+  const maxInput = document.getElementById('graphYearMaxRange');
+  const readout = document.getElementById('graphYearRangeReadout');
+
+  select.innerHTML = years.map(year => {
+    const selected = previousSelection.size > 0 && previousSelection.has(String(year));
+    return `<option value="${year}"${selected ? ' selected' : ''}>${year}</option>`;
+  }).join('');
+
+  if (years.length > 0 && minInput && maxInput) {
+    const minYear = years[0];
+    const maxYear = years[years.length - 1];
+    minInput.min = String(minYear);
+    minInput.max = String(maxYear);
+    maxInput.min = String(minYear);
+    maxInput.max = String(maxYear);
+
+    if (!minInput.dataset.initialized) {
+      minInput.value = String(minYear);
+      minInput.dataset.initialized = 'true';
+    }
+    if (!maxInput.dataset.initialized) {
+      maxInput.value = String(maxYear);
+      maxInput.dataset.initialized = 'true';
+    }
+
+    updateGraphYearRangeReadout();
+  } else if (readout) {
+    readout.textContent = 'All years';
+  }
+}
+
+function updateGraphYearRangeReadout() {
+  const readout = document.getElementById('graphYearRangeReadout');
+  if (!readout) return;
+
+  const { min, max } = getSelectedGraphYearRange();
+  if (min === null || max === null) {
+    readout.textContent = 'All years';
+    return;
+  }
+
+  readout.textContent = min === max ? `Year: ${min}` : `Years: ${min} - ${max}`;
+}
+
+async function captureMapAsPngDataUrl() {
+  const mapElement = document.getElementById('map');
+  if (!mapElement) {
+    throw new Error('Map element not found.');
+  }
+
+  try {
+    return await domtoimage.toPng(mapElement, {
+      bgcolor: '#ffffff',
+      quality: 1
+    });
+  } catch (error) {
+    const canvas = await html2canvas(mapElement, {
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      scale: 2,
+      logging: false
+    });
+    return canvas.toDataURL('image/png', 1.0);
+  }
+}
+
+async function exportHeatmapAsPng() {
+  if (!isHeatmapVisible || !heatmapLayer) {
+    setGraphSummary('Show the GIS heatmap first, then export it.');
+    return;
+  }
+
+  const dataUrl = await captureMapAsPngDataUrl();
+  const link = document.createElement('a');
+  link.href = dataUrl;
+  link.download = `gis-heatmap-${new Date().toISOString().split('T')[0]}.png`;
+  link.click();
+}
+
+async function exportHeatmapAsPdf() {
+  if (!isHeatmapVisible || !heatmapLayer) {
+    setGraphSummary('Show the GIS heatmap first, then export it.');
+    return;
+  }
+
+  const dataUrl = await captureMapAsPngDataUrl();
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const margin = 10;
+  const imgWidth = pageWidth - (margin * 2);
+  const imgHeight = pageHeight - (margin * 2);
+
+  pdf.setFontSize(14);
+  pdf.text('GIS Heatmap Export', margin, 8);
+  pdf.addImage(dataUrl, 'PNG', margin, 12, imgWidth, imgHeight - 8);
+  pdf.save(`gis-heatmap-${new Date().toISOString().split('T')[0]}.pdf`);
+}
+
+function setMultiSelectValues(selectId, values) {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+  const valueSet = new Set(values.map(String));
+  [...select.options].forEach(option => {
+    option.selected = valueSet.has(option.value);
+  });
+}
+
+function selectAllMultiSelectOptions(selectId) {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+  [...select.options].forEach(option => {
+    option.selected = true;
+  });
+}
+
+function clearMultiSelectOptions(selectId) {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+  [...select.options].forEach(option => {
+    option.selected = false;
+  });
+}
+
+function filterRoomsForGraphCategories(rooms, selectedCategories) {
+  if (!selectedCategories.length) return rooms;
+  return rooms.filter(room => {
+    const roomCategories = extractRoomCategories(room);
+    return selectedCategories.some(category => roomCategories.includes(category));
+  });
+}
+
+function makePalette(count) {
+  const palette = [
+    '#fdd835', '#27b622', '#3388ff', '#ff6b6b', '#9b59b6', '#1abc9c', '#e67e22', '#2ecc71',
+    '#f39c12', '#3498db', '#e74c3c', '#16a085', '#8e44ad', '#d35400', '#2c3e50', '#c0392b'
+  ];
+
+  const colors = [];
+  for (let i = 0; i < count; i++) {
+    colors.push(palette[i % palette.length]);
+  }
+  return colors;
+}
+
+function buildCategoryMetric(rooms, metric, topN, selectedCategories = []) {
+  const map = new Map();
+
+  const activeCategories = selectedCategories.length
+    ? GRAPH_CATEGORY_ORDER.filter(category => selectedCategories.includes(category))
+    : GRAPH_CATEGORY_ORDER;
+
+  activeCategories.forEach(category => {
+    map.set(category, { count: 0, durationSum: 0, durationCount: 0 });
+  });
+
+  rooms.forEach(room => {
+    const duration = parseRoomDuration(room);
+    extractRoomCategories(room).forEach(category => {
+      const current = map.get(category);
+      if (!current) return;
+      current.count += 1;
+      if (duration !== null) {
+        current.durationSum += duration;
+        current.durationCount += 1;
+      }
+    });
+  });
+
+  const rows = [...map.entries()].map(([label, values]) => {
+    const value = metric === 'avgDuration'
+      ? (values.durationCount > 0 ? values.durationSum / values.durationCount : null)
+      : values.count;
+    return { label, value, count: values.count };
+  }).filter(item => item.value !== null && item.count > 0);
+
+  rows.sort((a, b) => {
+    const orderDelta = activeCategories.indexOf(a.label) - activeCategories.indexOf(b.label);
+    if (orderDelta !== 0) return orderDelta;
+    return b.value - a.value;
+  });
+  return selectedCategories.length ? rows : rows.slice(0, topN);
+}
+
+function buildYearMetric(rooms, metric) {
+  const map = new Map();
+
+  rooms.forEach(room => {
+    const year = parseRoomYear(room);
+    if (!year) return;
+
+    if (!map.has(year)) {
+      map.set(year, { count: 0, durationSum: 0, durationCount: 0 });
+    }
+
+    const current = map.get(year);
+    current.count += 1;
+    const duration = parseRoomDuration(room);
+    if (duration !== null) {
+      current.durationSum += duration;
+      current.durationCount += 1;
+    }
+  });
+
+  return [...map.entries()]
+    .map(([year, values]) => {
+      const value = metric === 'avgDuration'
+        ? (values.durationCount > 0 ? values.durationSum / values.durationCount : null)
+        : values.count;
+      return { label: String(year), year, value, count: values.count };
+    })
+    .filter(item => item.value !== null)
+    .sort((a, b) => a.year - b.year);
+}
+
+function buildYearCategoryComparison(rooms, topN, selectedCategories = []) {
+  const categoryTotals = new Map();
+  const yearsSet = new Set();
+  const yearCategoryCount = new Map();
+
+  rooms.forEach(room => {
+    const year = parseRoomYear(room);
+    if (!year) return;
+    yearsSet.add(year);
+
+    extractRoomCategories(room).forEach(category => {
+      categoryTotals.set(category, (categoryTotals.get(category) || 0) + 1);
+      const key = `${year}|||${category}`;
+      yearCategoryCount.set(key, (yearCategoryCount.get(key) || 0) + 1);
+    });
+  });
+
+  const years = [...yearsSet].sort((a, b) => a - b);
+  const topCategories = selectedCategories.length
+    ? GRAPH_CATEGORY_ORDER.filter(category => selectedCategories.includes(category))
+    : [...categoryTotals.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, topN)
+        .map(([category]) => category);
+
+  const datasets = topCategories.map((category, index) => {
+    const color = makePalette(topCategories.length)[index];
+    const data = years.map(year => yearCategoryCount.get(`${year}|||${category}`) || 0);
+    return {
+      label: category,
+      data,
+      borderColor: color,
+      backgroundColor: `${color}55`,
+      fill: false,
+      tension: 0.25
+    };
+  });
+
+  return {
+    labels: years.map(String),
+    datasets,
+    topCategoryCount: topCategories.length
+  };
+}
+
+function destroyRoomsChart() {
+  if (roomsStatsChartInstance) {
+    roomsStatsChartInstance.destroy();
+    roomsStatsChartInstance = null;
+  }
+}
+
+let roomsStatsPreviewChartInstance = null;
+let lastRenderedGraphConfig = null;
+let lastRenderedGraphSummary = '';
+
+function destroyRoomsPreviewChart() {
+  if (roomsStatsPreviewChartInstance) {
+    roomsStatsPreviewChartInstance.destroy();
+    roomsStatsPreviewChartInstance = null;
+  }
+}
+
+function cloneChartConfig(config) {
+  return JSON.parse(JSON.stringify(config));
+}
+
+function renderChartOnCanvas(canvasId, config, preview = false) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return null;
+  const ctx = canvas.getContext('2d');
+
+  if (preview) {
+    destroyRoomsPreviewChart();
+    roomsStatsPreviewChartInstance = new Chart(ctx, cloneChartConfig(config));
+    return roomsStatsPreviewChartInstance;
+  }
+
+  destroyRoomsChart();
+  roomsStatsChartInstance = new Chart(ctx, cloneChartConfig(config));
+  return roomsStatsChartInstance;
+}
+
+function setGraphSummary(text) {
+  const summary = document.getElementById('graphSummary');
+  if (!summary) return;
+  summary.textContent = text;
+}
+
+function setGraphPreviewSummary(text) {
+  const summary = document.getElementById('graphPreviewSummary');
+  if (!summary) return;
+  summary.textContent = text;
+}
+
+function getRoomsForHeatmap() {
+  const dataScope = document.getElementById('graphDataScope')?.value || 'filtered';
+  const selectedCategories = getSelectedGraphCategories();
+  const baseRooms = getGraphSourceRooms(dataScope);
+  const categoryRooms = filterRoomsForGraphCategories(baseRooms, selectedCategories);
+  return filterRoomsForGraphYears(categoryRooms, getSelectedGraphYears());
+    
+}
+
+function clearRoomsHeatmap() {
+  if (heatmapLayer) {
+    map.removeLayer(heatmapLayer);
+    heatmapLayer = null;
+  }
+
+  if (heatmapLegendControl) {
+    map.removeControl(heatmapLegendControl);
+    heatmapLegendControl = null;
+  }
+
+  isHeatmapVisible = false;
+
+  if (markersWereVisibleBeforeHeatmap && !map.hasLayer(markers)) {
+    map.addLayer(markers);
+  }
+
+  markersWereVisibleBeforeHeatmap = false;
+}
+
+function getHeatmapDisplayCategories(selectedCategories, rooms) {
+  if (selectedCategories.length) {
+    return GRAPH_CATEGORY_ORDER.filter(category => selectedCategories.includes(category));
+  }
+
+  const found = new Set();
+  rooms.forEach(room => {
+    extractRoomCategories(room).forEach(category => found.add(category));
+  });
+  return GRAPH_CATEGORY_ORDER.filter(category => found.has(category));
+}
+
+function buildHeatmapGradient(categories) {
+  if (!categories.length) {
+    return {
+      0.2: '#3388ff',
+      0.45: '#2ecc71',
+      0.7: '#f1c40f',
+      1.0: '#e74c3c'
+    };
+  }
+
+  if (categories.length === 1) {
+    const color = GRAPH_CATEGORY_COLORS[categories[0]] || '#3388ff';
+    return {
+      0.2: `${color}66`,
+      0.55: `${color}aa`,
+      1.0: color
+    };
+  }
+
+  const gradient = {};
+  categories.forEach((category, index) => {
+    const stop = categories.length === 1 ? 1 : 0.2 + (0.8 * (index / (categories.length - 1)));
+    gradient[Number(stop.toFixed(2))] = GRAPH_CATEGORY_COLORS[category] || '#3388ff';
+  });
+  gradient[1] = GRAPH_CATEGORY_COLORS[categories[categories.length - 1]] || '#e74c3c';
+  return gradient;
+}
+
+function renderHeatmapLegend(roomCount, categories, yearLabel) {
+  if (heatmapLegendControl) {
+    map.removeControl(heatmapLegendControl);
+    heatmapLegendControl = null;
+  }
+
+  if (!isHeatmapLegendVisible) return;
+
+  heatmapLegendControl = L.control({ position: 'bottomleft' });
+  heatmapLegendControl.onAdd = function() {
+    const div = L.DomUtil.create('div', 'heatmap-legend');
+
+    div.innerHTML = `
+      <div class="heatmap-legend-title">GIS Heatmap</div>
+      <div class="heatmap-legend-bar"></div>
+      <div class="heatmap-legend-scale">
+        <span>Low density</span>
+        <span>High density</span>
+      </div>
+      <div class="heatmap-legend-meta">
+        <div>Rooms: ${roomCount}</div>
+        <div>Categories: ${categories.length}</div>
+        <div>Years: ${yearLabel}</div>
+      </div>
+    `;
+    L.DomEvent.disableClickPropagation(div);
+    return div;
+  };
+  heatmapLegendControl.addTo(map);
+}
+
+function refreshHeatmapIfVisible() {
+  if (!isHeatmapVisible) return;
+  showRoomsHeatmap();
+}
+
+function showRoomsHeatmap() {
+  isHeatmapVisible = true;
+  const rooms = getRoomsForHeatmap().filter(room => isValidCoordinate(room.Lat, -90, 90) && isValidCoordinate(room.Lon, -180, 180));
+  const selectedCategories = getSelectedGraphCategories();
+  const selectedYears = getSelectedGraphYears();
+  const { min, max } = getSelectedGraphYearRange();
+  const displayCategories = getHeatmapDisplayCategories(selectedCategories, rooms);
+
+  if (heatmapLayer) {
+    map.removeLayer(heatmapLayer);
+    heatmapLayer = null;
+  }
+
+  if (map.hasLayer(markers)) {
+    markersWereVisibleBeforeHeatmap = true;
+    map.removeLayer(markers);
+  }
+
+  if (!rooms.length) {
+    setGraphSummary('No geocoded rooms available for the heatmap with current category/year selection.');
+    if (heatmapLegendControl) {
+      map.removeControl(heatmapLegendControl);
+      heatmapLegendControl = null;
+    }
+    return;
+  }
+
+  const points = rooms.map(room => {
+    const matchedCategories = extractRoomCategories(room).filter(category => {
+      const selected = getSelectedGraphCategories();
+      return selected.length === 0 || selected.includes(category);
+    });
+    const intensity = Math.min(1, Math.max(0.35, matchedCategories.length / 3));
+    return [room.Lat, room.Lon, intensity];
+  });
+
+  heatmapLayer = L.heatLayer(points, {
+    radius: heatmapSettings.radius,
+    blur: 22,
+    maxZoom: 15,
+    minOpacity: heatmapSettings.opacity,
+    gradient: buildHeatmapGradient(displayCategories)
+  }).addTo(map);
+
+  const yearLabel = selectedYears.length
+    ? selectedYears.join(', ')
+    : (min !== null && max !== null ? (min === max ? `${min}` : `${min}-${max}`) : 'All');
+  renderHeatmapLegend(rooms.length, displayCategories, yearLabel);
+
+  showTopPage('map');
+  if (points.length > 1) {
+    const bounds = L.latLngBounds(points.map(point => [point[0], point[1]]));
+    map.fitBounds(bounds, { padding: [30, 30] });
+  } else {
+    map.setView([points[0][0], points[0][1]], Math.max(map.getZoom(), 13));
+  }
+
+  setGraphSummary(`GIS heatmap displayed for ${rooms.length} rooms using current category/year selection.`);
+}
+
+async function openGraphsPanel() {
+  showSidebarTab('graphs');
+
+  if (cachedAllRooms.length === 0) {
+    await cacheAllEscapeRooms();
+  }
+
+  if (cachedFilteredRooms.length === 0) {
+    await loadEscapeRooms();
+  }
+
+  populateGraphYearFilter();
+
+  setGraphSummary('Choose graph settings and click Generate.');
+}
+
+window.renderRoomsStatisticsChart = function() {
+  const dataScope = document.getElementById('graphDataScope')?.value || 'filtered';
+  const dimension = document.getElementById('graphDimension')?.value || 'category';
+  const metric = document.getElementById('graphMetric')?.value || 'number';
+  const chartTypeChoice = document.getElementById('graphChartType')?.value || 'bar';
+  const topN = Math.max(3, Math.min(30, Number.parseInt(document.getElementById('graphTopN')?.value, 10) || 12));
+  const selectedCategories = getSelectedGraphCategories();
+  const selectedYears = getSelectedGraphYears();
+
+  const baseRooms = getGraphSourceRooms(dataScope);
+  const categoryFilteredRooms = dimension === 'category'
+    ? baseRooms
+    : filterRoomsForGraphCategories(baseRooms, selectedCategories);
+  const sourceRooms = filterRoomsForGraphYears(categoryFilteredRooms, selectedYears);
+  if (!sourceRooms || sourceRooms.length === 0) {
+    destroyRoomsChart();
+    destroyRoomsPreviewChart();
+    setGraphSummary('No rooms available for graphing with current selection.');
+    setGraphPreviewSummary('No rooms available for graphing with current selection.');
+    return;
+  }
+
+  let chartConfig = null;
+  let summaryText = '';
+  const durationMetric = metric === 'duration';
+
+  if (dimension === 'yearCategory') {
+    const series = buildYearCategoryComparison(sourceRooms, topN, selectedCategories);
+    if (series.labels.length === 0 || series.datasets.length === 0) {
+      setGraphSummary('No valid year/category data found for this graph.');
+      setGraphPreviewSummary('No valid year/category data found for this graph.');
+      return;
+    }
+
+    chartConfig = {
+      type: chartTypeChoice === 'line' ? 'line' : 'bar',
+      data: {
+        labels: series.labels,
+        datasets: series.datasets
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: 'Number' } },
+          x: { title: { display: true, text: 'Year' } }
+        },
+        plugins: {
+          legend: { display: true, position: 'bottom' }
+        }
+      }
+    };
+
+    summaryText = `Comparing ${series.topCategoryCount} categories across ${series.labels.length} years (${dataScope} dataset). Rooms with multiple categories contribute to each selected category.`;
+  } else {
+    const rows = dimension === 'year'
+      ? buildYearMetric(sourceRooms, durationMetric ? 'avgDuration' : 'count')
+      : buildCategoryMetric(sourceRooms, durationMetric ? 'avgDuration' : 'count', topN, selectedCategories);
+
+    if (rows.length === 0) {
+      setGraphSummary('No data points found for this graph configuration.');
+      setGraphPreviewSummary('No data points found for this graph configuration.');
+      return;
+    }
+
+    const labels = rows.map(item => item.label);
+    const data = rows.map(item => durationMetric ? Number(item.value.toFixed(1)) : item.value);
+    const colors = makePalette(labels.length);
+
+    const finalChartType = (chartTypeChoice === 'pie' && durationMetric) ? 'bar' : chartTypeChoice;
+    const yTitle = durationMetric ? 'Duration (minutes)' : 'Number';
+
+    chartConfig = {
+      type: finalChartType,
+      data: {
+        labels,
+        datasets: [{
+          label: durationMetric ? 'Average duration' : 'Rooms',
+          data,
+          borderColor: colors,
+          backgroundColor: finalChartType === 'line' ? colors[0] : colors,
+          borderWidth: 2,
+          tension: 0.25,
+          fill: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: finalChartType === 'pie', position: 'bottom' }
+        },
+        scales: finalChartType === 'pie' ? {} : {
+          y: { beginAtZero: true, title: { display: true, text: yTitle } },
+          x: { title: { display: true, text: dimension === 'year' ? 'Year' : 'Categories' } }
+        }
+      }
+    };
+
+    summaryText = `${rows.length} data points from ${sourceRooms.length} rooms (${dataScope} dataset).`;
+    if (selectedCategories.length) {
+      summaryText += ` Selected categories: ${selectedCategories.join(', ')}.`;
+    }
+    if (selectedYears.length) {
+      summaryText += ` Years: ${selectedYears.join(', ')}.`;
+    }
+    if (dimension === 'year') {
+      summaryText += ' Rooms matching any selected category are counted once per year.';
+    }
+    if (chartTypeChoice === 'pie' && durationMetric) {
+      summaryText += ' Pie supports number only, so bar chart was used.';
+    }
+  }
+
+  renderChartOnCanvas('roomsStatsChart', chartConfig, false);
+  if (document.getElementById('graphPreviewPage')?.style.display === 'flex') {
+    renderChartOnCanvas('roomsStatsChartLarge', chartConfig, true);
+  }
+
+  lastRenderedGraphConfig = cloneChartConfig(chartConfig);
+  lastRenderedGraphSummary = summaryText;
+  setGraphSummary(summaryText);
+  setGraphPreviewSummary(summaryText);
+};
+
+window.downloadRoomsStatisticsChart = function() {
+  const canvas = document.getElementById('roomsStatsChart');
+  if (!canvas || !roomsStatsChartInstance) {
+    setGraphSummary('Generate a graph first, then download it as PNG.');
+    return;
+  }
+
+  const link = document.createElement('a');
+  link.href = canvas.toDataURL('image/png');
+  link.download = `rooms-statistics-${new Date().toISOString().split('T')[0]}.png`;
+  link.click();
+};
+
+function openGraphPreview() {
+  const page = document.getElementById('graphPreviewPage');
+  if (!page) return;
+  page.hidden = false;
+  page.style.display = 'flex';
+
+  if (lastRenderedGraphConfig) {
+    renderChartOnCanvas('roomsStatsChartLarge', lastRenderedGraphConfig, true);
+    setGraphPreviewSummary(lastRenderedGraphSummary || 'Graphs preview');
+  } else {
+    setGraphPreviewSummary('Generate a graph first.');
+  }
+}
+
+function closeGraphPreview() {
+  const page = document.getElementById('graphPreviewPage');
+  if (!page) return;
+  page.hidden = true;
+  page.style.display = 'none';
+  destroyRoomsPreviewChart();
 }
 
 function showForgotPassword() {
@@ -4822,6 +6065,8 @@ async function loadEscapeRooms() {
     markers.addLayers(markerBatch);
     await nextFrame();
   }
+
+  refreshHeatmapIfVisible();
 }
 
 // Debounce filter application for faster UX
@@ -5930,7 +7175,124 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById("tabFilters").onclick = () => showSidebarTab('filters');
   document.getElementById("tabPlan").onclick = openPlanPanel;
   document.getElementById("tabSubmit").onclick = () => showSidebarTab('submit');
+  document.getElementById("tabGraphs").onclick = openGraphsPanel;
   showSidebarTab('filters');
+
+  document.getElementById("closeGraphs").onclick = () => {
+    closeSidebarTab();
+  };
+
+  document.getElementById("renderGraphBtn").onclick = () => {
+    window.renderRoomsStatisticsChart();
+  };
+
+  document.getElementById("downloadGraphBtn").onclick = () => {
+    window.downloadRoomsStatisticsChart();
+  };
+
+  document.getElementById("expandGraphBtn").onclick = () => {
+    openGraphPreview();
+  };
+
+  document.getElementById("showHeatmapBtn").onclick = () => {
+    showRoomsHeatmap();
+  };
+
+  document.getElementById("clearHeatmapBtn").onclick = () => {
+    clearRoomsHeatmap();
+  };
+
+  document.getElementById("toggleHeatmapLegendBtn").onclick = () => {
+    isHeatmapLegendVisible = !isHeatmapLegendVisible;
+    document.getElementById("toggleHeatmapLegendBtn").textContent = isHeatmapLegendVisible ? 'Hide Legend' : 'Show Legend';
+    refreshHeatmapIfVisible();
+  };
+
+  document.getElementById("toggleHeatmapAdvancedBtn").onclick = () => {
+    toggleHeatmapAdvancedControls();
+  };
+
+  ["heatmapRadiusRange", "heatmapOpacityRange"].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', () => {
+      heatmapSettings.radius = Number.parseInt(document.getElementById('heatmapRadiusRange').value, 10) || 26;
+      heatmapSettings.opacity = (Number.parseInt(document.getElementById('heatmapOpacityRange').value, 10) || 28) / 100;
+      updateHeatmapSettingsReadout();
+      refreshHeatmapIfVisible();
+    });
+  });
+
+    document.getElementById("exportHeatmapPngBtn").onclick = async () => {
+      await exportHeatmapAsPng();
+    };
+
+    document.getElementById("exportHeatmapPdfBtn").onclick = async () => {
+      await exportHeatmapAsPdf();
+    };
+
+    document.getElementById("heatmapRadiusHelp").onclick = () => {
+      showHeatmapSettingHelp('radius');
+    };
+
+    document.getElementById("heatmapOpacityHelp").onclick = () => {
+      showHeatmapSettingHelp('opacity');
+    };
+
+  updateHeatmapSettingsReadout();
+  syncHeatmapControlsForViewport();
+
+  window.addEventListener('resize', () => {
+    syncHeatmapControlsForViewport();
+  });
+
+  document.getElementById("selectAllGraphCategories").onclick = () => {
+    selectAllMultiSelectOptions('graphCategoryFilter');
+    window.renderRoomsStatisticsChart();
+    refreshHeatmapIfVisible();
+  };
+
+  document.getElementById("clearGraphCategories").onclick = () => {
+    clearMultiSelectOptions('graphCategoryFilter');
+    window.renderRoomsStatisticsChart();
+    refreshHeatmapIfVisible();
+  };
+
+  document.getElementById("selectAllGraphYears").onclick = () => {
+    selectAllMultiSelectOptions('graphYearFilter');
+    window.renderRoomsStatisticsChart();
+    refreshHeatmapIfVisible();
+  };
+
+  document.getElementById("clearGraphYears").onclick = () => {
+    clearMultiSelectOptions('graphYearFilter');
+    window.renderRoomsStatisticsChart();
+    refreshHeatmapIfVisible();
+  };
+
+  document.getElementById("closeGraphPreview").onclick = () => {
+    closeGraphPreview();
+  };
+
+  ["graphDataScope", "graphDimension", "graphMetric", "graphChartType", "graphTopN", "graphCategoryFilter", "graphYearFilter"].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const eventName = id === 'graphTopN' ? 'input' : 'change';
+    el.addEventListener(eventName, () => {
+      window.renderRoomsStatisticsChart();
+      refreshHeatmapIfVisible();
+    });
+  });
+
+  ["graphYearMinRange", "graphYearMaxRange"].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', () => {
+      updateGraphYearRangeReadout();
+      window.renderRoomsStatisticsChart();
+      refreshHeatmapIfVisible();
+    });
+  });
 
   document.getElementById("loginSubmitButton").onclick = async () => {
     const email = document.getElementById("loginEmail").value.trim();
