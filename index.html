@@ -4094,8 +4094,8 @@ function getOnlineRoomCountry(room) {
 }
 
 function getOnlineRoomCategoryLabel(room) {
-  const raw = String(room?.Category || 'Online').trim();
-  if (!raw) return 'Online';
+  const raw = String(room?.Category || '').trim();
+  if (!raw) return 'Not listed';
 
   const cleaned = raw
     .replace(/[|,;]+/g, ' / ')
@@ -4103,7 +4103,14 @@ function getOnlineRoomCategoryLabel(room) {
     .replace(/\s+/g, ' ')
     .trim();
 
-  return /online/i.test(cleaned) ? cleaned : `Online / ${cleaned}`;
+  const categoryParts = cleaned.split(' / ').map(part => part.trim()).filter(Boolean);
+  if (!categoryParts.length) return 'Not listed';
+
+  const displayParts = categoryParts[0].toLowerCase() === 'online'
+    ? categoryParts.slice(1)
+    : categoryParts;
+
+  return displayParts.length ? displayParts.join(' / ') : 'Not listed';
 }
 
 function createOnlineRoomCell(tagName, label, value) {
