@@ -614,15 +614,51 @@ input[type="time"] {
   color: #fff;
 }
 
+#graphsPanel {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(255, 255, 255, 0.02)), var(--secondary-bg) !important;
+}
+
+#graphsPanel h3 {
+  margin-bottom: 6px;
+}
+
+.graph-panel-intro {
+  margin: 0 0 12px 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .graph-controls {
   display: grid;
   grid-template-columns: 1fr;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  padding: 14px;
+  background: rgba(10, 10, 10, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.graph-controls label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .graph-controls select[multiple] {
   min-height: 150px;
+}
+
+.graph-controls select,
+.graph-controls input {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  background: rgba(8, 8, 8, 0.44);
+  color: var(--text-color);
 }
 
 .graph-filter-actions,
@@ -634,11 +670,27 @@ input[type="time"] {
   flex-wrap: wrap;
 }
 
+.graph-filter-actions,
+.graph-heatmap-controls,
+.graph-heatmap-settings,
+.graph-year-range {
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
 .graph-filter-actions button,
 .graph-year-range button,
 .graph-heatmap-controls button,
 .graph-heatmap-settings button {
   flex: 1 1 120px;
+}
+
+.graph-filter-actions button,
+.graph-actions button,
+.graph-heatmap-controls button,
+.graph-heatmap-mobile-toggle-wrap button {
+  border-radius: 10px;
 }
 
 .graph-year-range input[type="range"] {
@@ -647,24 +699,25 @@ input[type="time"] {
 
 .graph-range-readout {
   font-size: 12px;
-  color: #ddd;
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .graph-summary {
-  background: #1f1f1f;
-  border: 1px solid #444;
-  border-radius: 8px;
-  padding: 10px;
+  background: linear-gradient(135deg, rgba(253, 216, 53, 0.14), rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(253, 216, 53, 0.28);
+  border-radius: 12px;
+  padding: 12px;
   font-size: 12px;
-  color: #ddd;
-  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.86);
+  margin-bottom: 12px;
+  line-height: 1.45;
 }
 
 .graph-actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .graph-actions button {
@@ -672,11 +725,12 @@ input[type="time"] {
 }
 
 .graph-canvas-wrap {
-  background: #111;
-  border: 1px solid #444;
-  border-radius: 8px;
-  padding: 8px;
+  background: linear-gradient(180deg, rgba(8, 8, 8, 0.78), rgba(20, 20, 20, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 12px;
   min-height: 360px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 .graph-canvas-wrap canvas {
@@ -743,6 +797,83 @@ input[type="time"] {
 .graph-heatmap-settings label {
   flex: 1 1 100%;
   margin-bottom: 0;
+}
+
+.online-rooms-panel {
+  margin-top: 12px;
+  padding: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.online-rooms-panel[hidden] {
+  display: none !important;
+}
+
+.online-rooms-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.online-rooms-header h3 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+.online-rooms-count,
+.online-rooms-summary {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.online-rooms-summary {
+  margin-bottom: 10px;
+  line-height: 1.45;
+}
+
+.online-rooms-list {
+  display: grid;
+  gap: 8px;
+}
+
+.online-room-card {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px;
+}
+
+.online-room-card strong,
+.online-room-card span,
+.online-room-card a {
+  display: block;
+}
+
+.online-room-card strong {
+  color: var(--text-color);
+  margin-bottom: 4px;
+}
+
+.online-room-card span {
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.online-room-card a {
+  margin-top: 8px;
+  color: var(--accent-color);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.online-room-card a:hover {
+  text-decoration: underline;
 }
 
 .graph-setting-label {
@@ -2457,6 +2588,7 @@ body.sidebar-open {
           <option value="Comedy">Comedy</option>
           <option value="Horror">Horror</option>
           <option value="Kids">Kids</option>
+          <option value="Online">Online</option>
           <option value="Outer Space">Outer Space</option>
           <option value="Portable">Portable</option>
           <option value="Psychological horror">Psychological horror</option>
@@ -2472,6 +2604,7 @@ body.sidebar-open {
       <div id="graphsPanel" class="tab-panel" hidden>
         <button id="closeGraphs" class="panel-close-btn" aria-label="Close">×</button>
         <h3>GIS Graphs & Statistics</h3>
+        <p class="graph-panel-intro">Use the current filters or the full approved dataset, then compare categories, years, and durations without overcrowding the map view.</p>
         <div class="graph-controls">
           <label for="graphDataScope">Data scope</label>
           <select id="graphDataScope">
@@ -2503,6 +2636,7 @@ body.sidebar-open {
             <option value="Kids">Kids</option>
             <option value="Comedy">Comedy</option>
             <option value="Role Playing">Role Playing</option>
+            <option value="Online">Online</option>
             <option value="VR">VR</option>
             <option value="Outer Space">Outer Space</option>
             <option value="Portable">Portable</option>
@@ -2594,6 +2728,7 @@ body.sidebar-open {
       <option value="Comedy">Comedy</option>
       <option value="Horror">Horror</option>
       <option value="Kids">Kids</option>
+      <option value="Online">Online</option>
       <option value="Outer Space">Outer Space</option>
       <option value="Portable">Portable</option>
       <option value="Psychological horror">Psychological horror</option>
@@ -2628,6 +2763,15 @@ body.sidebar-open {
     </div>
 
     <button id="applyFilters">Apply filters</button>
+
+    <div id="onlineRoomsSection" class="online-rooms-panel" hidden>
+      <div class="online-rooms-header">
+        <h3>Online Escape Rooms</h3>
+        <span id="onlineRoomsCount" class="online-rooms-count">0 shown</span>
+      </div>
+      <div id="onlineRoomsSummary" class="online-rooms-summary">Online rooms appear here because they do not need a physical map marker.</div>
+      <div id="onlineRoomsList" class="online-rooms-list"></div>
+    </div>
 
     <hr>
 
@@ -3399,6 +3543,7 @@ const GRAPH_CATEGORY_ALIASES = new Map([
   ['puzzle', 'Puzzles'],
   ['kids', 'Kids'],
   ['comedy', 'Comedy'],
+  ['online', 'Online'],
   ['role playing', 'Role Playing'],
   ['role-playing', 'Role Playing'],
   ['roleplaying', 'Role Playing'],
@@ -3416,6 +3561,7 @@ const GRAPH_CATEGORY_ORDER = [
   'Puzzles',
   'Kids',
   'Comedy',
+  'Online',
   'Role Playing',
   'VR',
   'Outer Space',
@@ -3431,6 +3577,7 @@ const GRAPH_CATEGORY_COLORS = {
   'Puzzles': '#16a085',
   'Kids': '#f1c40f',
   'Comedy': '#f39c12',
+  'Online': '#4fc3f7',
   'Role Playing': '#8e44ad',
   'VR': '#00a8ff',
   'Outer Space': '#2c3e50',
@@ -3446,6 +3593,7 @@ const GRAPH_CATEGORY_CODES = {
   'Puzzles': 'PU',
   'Kids': 'KI',
   'Comedy': 'CO',
+  'Online': 'ON',
   'Role Playing': 'RP',
   'VR': 'VR',
   'Outer Space': 'OS',
@@ -3521,6 +3669,64 @@ function extractRoomCategories(room) {
     });
 
   return categories;
+}
+
+function isOnlineEscapeRoom(room) {
+  return extractRoomCategories(room).includes('Online');
+}
+
+function hasRenderableMapCoordinates(room) {
+  return isValidCoordinate(Number(room?.Lat), -90, 90) && isValidCoordinate(Number(room?.Lon), -180, 180);
+}
+
+function renderOnlineRooms(onlineRooms, totalFilteredRooms) {
+  const section = document.getElementById('onlineRoomsSection');
+  const count = document.getElementById('onlineRoomsCount');
+  const summary = document.getElementById('onlineRoomsSummary');
+  const list = document.getElementById('onlineRoomsList');
+  if (!section || !count || !summary || !list) return;
+
+  list.innerHTML = '';
+
+  if (!onlineRooms.length) {
+    section.hidden = true;
+    count.textContent = '0 shown';
+    summary.textContent = 'Online rooms appear here because they do not need a physical map marker.';
+    return;
+  }
+
+  section.hidden = false;
+  count.textContent = `${onlineRooms.length} shown`;
+  summary.textContent = `${onlineRooms.length} of ${totalFilteredRooms} filtered rooms are online-only, so they are listed here instead of being placed on the map.`;
+
+  onlineRooms.forEach(room => {
+    const card = document.createElement('div');
+    card.className = 'online-room-card';
+
+    const title = document.createElement('strong');
+    title.textContent = room['Escape room'] || 'Online room';
+    card.appendChild(title);
+
+    const company = document.createElement('span');
+    company.textContent = room.Company || 'Unknown company';
+    card.appendChild(company);
+
+    const details = document.createElement('span');
+    const durationLabel = room.Duration ? `${room.Duration} min` : 'Duration not listed';
+    details.textContent = `${room.Category || 'Online'} | ${durationLabel}`;
+    card.appendChild(details);
+
+    if (room.website) {
+      const link = document.createElement('a');
+      link.href = room.website;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = 'Open website';
+      card.appendChild(link);
+    }
+
+    list.appendChild(card);
+  });
 }
 
 function parseRoomYear(room) {
@@ -5983,20 +6189,24 @@ async function loadEscapeRooms() {
     return true;
   });
 
+  const onlineRooms = filteredData.filter(isOnlineEscapeRoom);
+  const mapRooms = filteredData.filter(room => !isOnlineEscapeRoom(room) && hasRenderableMapCoordinates(room));
+  renderOnlineRooms(onlineRooms, filteredData.length);
+
   cachedFilteredRooms = filteredData;
-  console.log(`Loaded ${filteredData.length} rooms (from cache of ${data.length})`);
+  console.log(`Loaded ${filteredData.length} rooms (${mapRooms.length} map rooms, ${onlineRooms.length} online rooms) from cache of ${data.length}`);
 
   const wishlistIdSet = currentUser ? getWishlistIdSet() : null;
 
   const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve));
 
   // Chunk marker creation so large result sets do not block the main thread.
-  for (let i = 0; i < filteredData.length; i += MARKER_RENDER_CHUNK_SIZE) {
+  for (let i = 0; i < mapRooms.length; i += MARKER_RENDER_CHUNK_SIZE) {
     if (renderToken !== loadEscapeRoomsToken) {
       return;
     }
 
-    const batch = filteredData.slice(i, i + MARKER_RENDER_CHUNK_SIZE);
+    const batch = mapRooms.slice(i, i + MARKER_RENDER_CHUNK_SIZE);
     const markerBatch = [];
 
     batch.forEach(r => {
@@ -6070,10 +6280,13 @@ async function loadEscapeRooms() {
 }
 
 // Debounce filter application for faster UX
-function debounceApplyFilters() {
+function debounceApplyFilters(options = {}) {
+  const shouldCloseSidebar = options.closeSidebar !== false;
   clearTimeout(filterDebounceTimer);
   filterDebounceTimer = setTimeout(() => {
-    closeMobileSidebar();
+    if (shouldCloseSidebar) {
+      closeMobileSidebar();
+    }
     loadEscapeRooms();
   }, FILTER_DEBOUNCE_MS);
 }
@@ -6096,7 +6309,7 @@ document.getElementById("themeSelector").addEventListener('change', function() {
 // Save filters when they change
 document.getElementById("category").addEventListener('change', () => {
   Storage.saveFilters();
-  debounceApplyFilters();
+  debounceApplyFilters({ closeSidebar: false });
 });
 document.getElementById("minDuration").addEventListener('change', () => {
   Storage.saveFilters();
