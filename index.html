@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-  <title>Escape Rooms Map | Find Escape Rooms by City, Horror, Puzzle and Riddle Themes</title>
-  <meta name="description" content="Discover escape rooms worldwide with Escaper Map. Find escape rooms by city, compare horror escape rooms, and explore puzzle and riddle themed rooms before planning your next visit." />
+  <title>Escape Rooms Map | Find City-Based and Online Escape Games</title>
+  <meta name="description" content="Discover escape rooms worldwide with Escaper Map. Find escape rooms by city, compare horror and puzzle themes, and browse online escape games in a dedicated notebook view by country." />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="https://escapermap.com/" />
   <meta name="theme-color" content="#701f1f" />
@@ -20,16 +20,16 @@
   <meta property="og:url" content="https://escapermap.com">
   <meta property="og:site_name" content="Escaper Map">
   <meta property="og:locale" content="en_GB">
-  <meta property="og:title" content="Escape Rooms Map | Find Escape Rooms by City and Theme">
-  <meta property="og:description" content="Find escape rooms in your city, discover horror escape rooms, and compare puzzle and riddle rooms on Escaper Map." />
+  <meta property="og:title" content="Escape Rooms Map | Find City-Based and Online Escape Games">
+  <meta property="og:description" content="Find escape rooms in your city, explore horror and puzzle themes, and browse online escape games in a country-by-country notebook on Escaper Map." />
   <meta property="og:image" content="https://escapermap.com/logo.png">
   <meta property="og:image:alt" content="Escaper Map logo">
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://escapermap.com">
-  <meta property="twitter:title" content="Escape Rooms Map | Find Escape Rooms by City and Theme">
-  <meta property="twitter:description" content="Search escape rooms by city, horror style, puzzle difficulty, and riddle themes with Escaper Map." />
+  <meta property="twitter:title" content="Escape Rooms Map | Find City-Based and Online Escape Games">
+  <meta property="twitter:description" content="Search escape rooms by city, horror style, puzzle difficulty, and browse online escape games with Escaper Map." />
   <meta property="twitter:image" content="https://escapermap.com/logo.png">
 
   <!-- Leaflet -->
@@ -799,81 +799,311 @@ input[type="time"] {
   margin-bottom: 0;
 }
 
-.online-rooms-panel {
-  margin-top: 12px;
-  padding: 12px;
-  border: 2px solid rgba(255, 255, 255, 0.12);
+.online-escape-button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 11px 12px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
+  background: linear-gradient(135deg, rgba(253, 216, 53, 0.22), rgba(255, 255, 255, 0.05));
+  color: var(--text-color);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
 }
 
-.online-rooms-panel[hidden] {
-  display: none !important;
+.online-escape-button:hover {
+  border-color: var(--accent-color);
 }
 
-.online-rooms-header {
+#onlineRoomsPage {
+  position: fixed;
+  inset: 64px 0 0 0;
+  z-index: 3200;
+  padding: 22px;
+  background: radial-gradient(circle at 72% 34%, rgba(242, 183, 68, 0.16), transparent 24%), rgba(20, 12, 20, 0.82);
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+#onlineRoomsPage .page-card {
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 24px;
+  border-width: 3px;
+  background: #231823;
+}
+
+.online-rooms-layout {
+  display: grid;
+  grid-template-columns: minmax(360px, 1fr) minmax(560px, 1.08fr);
+  height: 100%;
+  align-items: stretch;
+}
+
+.online-rooms-scene {
+  position: relative;
+  min-height: 100%;
+  background: linear-gradient(180deg, #3b2b34 0%, #241924 100%);
+  overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 8px;
+  justify-content: center;
+  padding: 18px;
 }
 
-.online-rooms-header h3 {
-  margin: 0;
-  font-size: 14px;
-  color: var(--text-color);
-}
-
-.online-rooms-count,
-.online-rooms-summary {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.78);
-}
-
-.online-rooms-summary {
-  margin-bottom: 10px;
-  line-height: 1.45;
-}
-
-.online-rooms-list {
-  display: grid;
-  gap: 8px;
-}
-
-.online-room-card {
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(0, 0, 0, 0.2);
-  padding: 10px;
-}
-
-.online-room-card strong,
-.online-room-card span,
-.online-room-card a {
+.online-rooms-scene svg {
+  width: min(100%, 880px);
+  height: auto;
+  max-height: min(100%, 780px);
   display: block;
 }
 
-.online-room-card strong {
-  color: var(--text-color);
-  margin-bottom: 4px;
+.online-rooms-notebook {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: linear-gradient(180deg, #f6ead1 0%, #efe2c4 100%);
+  color: #3b281e;
 }
 
-.online-room-card span {
-  color: rgba(255, 255, 255, 0.76);
-  font-size: 12px;
-  line-height: 1.4;
+.online-rooms-topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 26px 18px 26px;
+  border-bottom: 2px solid rgba(112, 82, 58, 0.18);
 }
 
-.online-room-card a {
-  margin-top: 8px;
-  color: var(--accent-color);
-  font-size: 12px;
+.online-rooms-topbar h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #402b20;
+}
+
+.online-rooms-topbar p,
+.online-rooms-meta {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: #715745;
+}
+
+.online-rooms-close {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border: 2px solid rgba(112, 82, 58, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.4);
+  color: #402b20;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.online-rooms-close:hover {
+  border-color: #9d2b2b;
+}
+
+.online-rooms-book {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 20px 26px 26px 26px;
+}
+
+.online-notebook-heading {
+  margin: 0 0 16px 0;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.52);
+  box-shadow: inset 0 0 0 1px rgba(112, 82, 58, 0.12);
+}
+
+.online-notebook-heading span {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #9b765a;
+  margin-bottom: 6px;
+}
+
+.online-notebook-heading h4 {
+  margin: 0 0 6px 0;
+  font-size: 1.2rem;
+  color: #4b3024;
+}
+
+.online-notebook-heading p {
+  margin: 0;
+  color: #6f5544;
+  line-height: 1.45;
+}
+
+.online-rooms-search {
+  width: 100%;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(112, 82, 58, 0.24);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.76);
+  color: #3b281e;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.online-rooms-toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: end;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.online-rooms-toolbar-field {
+  flex: 0 0 auto;
+}
+
+.online-rooms-toolbar-field.search-field {
+  flex: 1 1 220px;
+}
+
+.online-rooms-toolbar-field.sort-field {
+  width: 150px;
+}
+
+.online-rooms-toolbar-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a6955;
+}
+
+.online-rooms-sort {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid rgba(112, 82, 58, 0.24);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.76);
+  color: #3b281e;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+.online-rooms-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 18px 0 6px 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.52);
+  box-shadow: inset 0 0 0 1px rgba(112, 82, 58, 0.12);
+}
+
+.online-rooms-page-arrows {
+  display: flex;
+  gap: 8px;
+}
+
+.online-rooms-page-arrows button {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(112, 82, 58, 0.24);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #4b3024;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.online-rooms-page-arrows button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.online-rooms-page-status {
+  font-size: 0.92rem;
+  color: #6f5544;
+}
+
+.online-country-sheet {
+  position: relative;
+  margin-bottom: 18px;
+  padding: 18px 18px 16px 24px;
+  border-radius: 18px;
+  background:
+    linear-gradient(90deg, rgba(196, 69, 54, 0.18) 0 18px, transparent 18px),
+    repeating-linear-gradient(180deg, rgba(124, 153, 196, 0.26) 0 1px, transparent 1px 34px),
+    linear-gradient(180deg, rgba(255,255,255,0.72), rgba(250, 241, 220, 0.96));
+  box-shadow: 0 14px 28px rgba(62, 39, 24, 0.14);
+}
+
+.online-country-sheet h4 {
+  margin: 0 0 12px 0;
+  font-size: 1.05rem;
+  color: #5a3425;
+}
+
+.online-country-header,
+.online-country-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1.25fr) minmax(170px, 1.45fr) minmax(170px, 1.35fr) minmax(82px, 0.72fr) minmax(72px, 0.58fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.online-country-header {
+  padding: 0 0 10px 0;
+  border-bottom: 1px dashed rgba(90, 52, 37, 0.28);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7d5b47;
+}
+
+.online-country-row {
+  min-height: 34px;
+  padding: 9px 0;
+  border-bottom: 1px dotted rgba(90, 52, 37, 0.14);
+  font-size: 0.92rem;
+  color: #3b281e;
+}
+
+.online-country-row:last-child {
+  border-bottom: none;
+}
+
+.online-country-row a {
+  color: #9d2b2b;
+  font-weight: 700;
   text-decoration: none;
 }
 
-.online-room-card a:hover {
+.online-country-row a:hover {
   text-decoration: underline;
+}
+
+.online-room-empty {
+  padding: 26px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.58);
+  color: #5b4637;
+  line-height: 1.5;
+  box-shadow: inset 0 0 0 1px rgba(112, 82, 58, 0.1);
 }
 
 .graph-setting-label {
@@ -1342,6 +1572,80 @@ body.sidebar-open {
 
   .popup-icon {
     font-size: 16px;
+  }
+
+  #onlineRoomsPage {
+    inset: 64px 0 0 0;
+    padding: 10px;
+  }
+
+  .online-rooms-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 220px minmax(0, 1fr);
+  }
+
+  .online-rooms-scene {
+    padding: 10px;
+  }
+
+  .online-rooms-topbar {
+    padding: 18px 18px 14px 18px;
+  }
+
+  .online-rooms-book {
+    padding: 14px 18px 18px 18px;
+  }
+
+  .online-country-header {
+    display: none;
+  }
+
+  .online-rooms-toolbar,
+  .online-rooms-pagination {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .online-rooms-page-arrows {
+    justify-content: space-between;
+  }
+
+  .online-country-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 10px 0;
+  }
+
+  .online-country-row span::before,
+  .online-country-row a::before {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #7d5b47;
+    display: inline-block;
+    min-width: 88px;
+    margin-right: 6px;
+  }
+
+  .online-country-row span[data-label="Company"]::before {
+    content: 'Company';
+  }
+
+  .online-country-row span[data-label="Name"]::before {
+    content: 'Name';
+  }
+
+  .online-country-row span[data-label="Category"]::before {
+    content: 'Category';
+  }
+
+  .online-country-row span[data-label="Duration"]::before {
+    content: 'Duration';
+  }
+
+  .online-country-row [data-label="Link"]::before {
+    content: 'Link';
   }
 }
 
@@ -2442,7 +2746,7 @@ body.sidebar-open {
       "@type": "WebSite",
       "name": "Escaper Map",
       "url": "https://escapermap.com/",
-      "description": "Find escape rooms by city and theme, including horror, puzzle and riddle escape rooms.",
+      "description": "Find escape rooms by city and theme, including horror, puzzle, riddle, and online escape room experiences.",
       "potentialAction": {
         "@type": "SearchAction",
         "target": "https://escapermap.com/?q={search_term_string}",
@@ -2456,8 +2760,8 @@ body.sidebar-open {
       "applicationCategory": "TravelApplication",
       "operatingSystem": "Any",
       "image": "https://escapermap.com/logo.png",
-      "description": "Global escape room directory for finding escape rooms in each city and filtering by horror, puzzle and riddle categories.",
-      "keywords": "escape rooms, escape room in city, horror escape rooms, puzzle escape rooms, riddle escape rooms"
+      "description": "Global escape room directory for finding physical escape rooms in each city and browsing online escape games by country, theme, and duration.",
+      "keywords": "escape rooms, online escape games, escape room in city, horror escape rooms, puzzle escape rooms, riddle escape rooms"
     },
     {
       "@type": "FAQPage",
@@ -2467,7 +2771,7 @@ body.sidebar-open {
           "name": "How can I find escape rooms in a specific city?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Use the company, room name and map filters to discover escape rooms by city and nearby areas, then save your plan."
+            "text": "Use the company, room name, and map filters to discover physical escape rooms by city and nearby areas, then save your plan."
           }
         },
         {
@@ -2484,6 +2788,14 @@ body.sidebar-open {
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "Yes. Choose the Riddles category to discover puzzle-heavy and riddle-style escape rooms."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where can I browse online escape games?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Use the Online Escape Games button in Filters to open the notebook view, where approved online games are grouped by country with category, duration, and link details."
           }
         }
       ]
@@ -2580,8 +2892,8 @@ body.sidebar-open {
         <input id="yearInput" type="number" placeholder="Year created (optional)">
         <label for="websiteInput">Website</label>
         <input id="websiteInput" placeholder="Website (optional)">
-        <label for="addressInput">Address *</label>
-        <input id="addressInput" placeholder="Address" required>
+        <label for="addressInput">Address</label>
+        <input id="addressInput" placeholder="Address (optional)">
         <label for="categoryInput">Category *<span class="multi-select-hint"> (hold Ctrl to select multiple)</span></label>
         <select id="categoryInput" multiple required>
           <option value="Action">Action</option>
@@ -2728,7 +3040,6 @@ body.sidebar-open {
       <option value="Comedy">Comedy</option>
       <option value="Horror">Horror</option>
       <option value="Kids">Kids</option>
-      <option value="Online">Online</option>
       <option value="Outer Space">Outer Space</option>
       <option value="Portable">Portable</option>
       <option value="Psychological horror">Psychological horror</option>
@@ -2739,6 +3050,8 @@ body.sidebar-open {
       <option value="Sci-fi">Sci-fi</option>
       <option value="VR">VR</option>
     </select>
+
+    <button id="openOnlineRooms" type="button" class="online-escape-button">Online Escape Games</button>
 
     <label>Company Name</label>
     <input type="text" id="company">
@@ -2763,15 +3076,6 @@ body.sidebar-open {
     </div>
 
     <button id="applyFilters">Apply filters</button>
-
-    <div id="onlineRoomsSection" class="online-rooms-panel" hidden>
-      <div class="online-rooms-header">
-        <h3>Online Escape Rooms</h3>
-        <span id="onlineRoomsCount" class="online-rooms-count">0 shown</span>
-      </div>
-      <div id="onlineRoomsSummary" class="online-rooms-summary">Online rooms appear here because they do not need a physical map marker.</div>
-      <div id="onlineRoomsList" class="online-rooms-list"></div>
-    </div>
 
     <hr>
 
@@ -2874,6 +3178,103 @@ body.sidebar-open {
     </div>
   </div>
 
+  <div id="onlineRoomsPage" class="page-overlay" hidden>
+    <div class="page-card">
+      <div class="online-rooms-layout">
+        <div class="online-rooms-scene" aria-hidden="true">
+          <svg viewBox="0 0 1280 900" role="presentation" preserveAspectRatio="xMidYMid slice">
+            <rect width="1280" height="900" fill="#3d2d35"/>
+            <rect y="640" width="1280" height="260" fill="#5a3e2d"/>
+            <rect y="720" width="1280" height="6" fill="#473223" opacity="0.65"/>
+            <rect y="790" width="1280" height="6" fill="#473223" opacity="0.65"/>
+            <rect x="98" y="108" width="566" height="404" rx="18" fill="#936f46" stroke="#62482d" stroke-width="16"/>
+            <rect x="162" y="162" width="104" height="82" transform="rotate(-3 214 203)" fill="#ebe2d3"/>
+            <rect x="176" y="177" width="78" height="56" transform="rotate(-3 214 203)" fill="#5f7180"/>
+            <circle cx="214" cy="168" r="9" fill="#7c2525"/>
+            <rect x="316" y="158" width="116" height="90" transform="rotate(2 374 203)" fill="#ebe2d3"/>
+            <rect x="333" y="176" width="83" height="58" transform="rotate(2 374 203)" fill="#6f6057"/>
+            <circle cx="374" cy="164" r="9" fill="#7c2525"/>
+            <rect x="494" y="170" width="130" height="122" transform="rotate(-2 559 231)" fill="#f1e5cf"/>
+            <circle cx="559" cy="182" r="9" fill="#7c2525"/>
+            <path d="M515 210 L605 208 M518 236 L609 234 M520 262 L597 260" stroke="#403124" stroke-width="4" stroke-linecap="round"/>
+            <rect x="560" y="284" width="118" height="96" transform="rotate(1 619 332)" fill="#ebe2d3"/>
+            <rect x="577" y="301" width="80" height="60" transform="rotate(1 617 331)" fill="#465d3d"/>
+            <circle cx="603" cy="292" r="9" fill="#7c2525"/>
+            <rect x="224" y="362" width="116" height="96" transform="rotate(3 282 410)" fill="#ebe2d3"/>
+            <rect x="238" y="378" width="82" height="66" transform="rotate(3 279 411)" fill="#7d4d40"/>
+            <circle cx="279" cy="372" r="9" fill="#7c2525"/>
+            <rect x="398" y="386" width="122" height="108" transform="rotate(-2 459 440)" fill="#f1e5cf"/>
+            <circle cx="459" cy="394" r="9" fill="#7c2525"/>
+            <path d="M419 426 L506 423 M420 452 L500 449" stroke="#403124" stroke-width="4" stroke-linecap="round"/>
+            <path d="M214 214 L384 214 L566 245 L272 410 L462 426 L618 332 L214 214" fill="none" stroke="#b6262c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+            <rect x="802" y="76" width="370" height="464" rx="20" fill="#191324" stroke="#271d31" stroke-width="14"/>
+            <rect x="824" y="96" width="130" height="388" fill="#241b39"/>
+            <rect x="874" y="332" width="34" height="152" fill="#2f2342"/>
+            <rect x="928" y="282" width="40" height="202" fill="#2a203d"/>
+            <rect x="978" y="350" width="52" height="134" fill="#231a34"/>
+            <rect x="1044" y="320" width="58" height="164" fill="#2d2141"/>
+            <circle cx="1056" cy="152" r="42" fill="#e2d08d"/>
+            <rect x="852" y="596" width="326" height="208" fill="#6f472d"/>
+            <rect x="890" y="804" width="42" height="108" fill="#4c321f"/>
+            <rect x="1092" y="804" width="42" height="108" fill="#4c321f"/>
+            <rect x="1038" y="610" width="138" height="88" rx="8" fill="#0e0f17" stroke="#06070b" stroke-width="8"/>
+            <rect x="1053" y="628" width="108" height="58" fill="#3d4a6a"/>
+            <path d="M1064 640 H1124 M1064 656 H1140 M1064 672 H1108" stroke="#5bc0b7" stroke-width="6" stroke-linecap="round"/>
+            <rect x="1028" y="702" width="158" height="18" rx="8" fill="#11131d"/>
+            <circle cx="936" cy="672" r="54" fill="#efbd45"/>
+            <circle cx="936" cy="672" r="84" fill="url(#lampGlow)" opacity="0.7"/>
+            <path d="M936 728 L844 796 L844 854" fill="none" stroke="#bb8335" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="832" y="874" width="20" height="60" fill="#bb8335"/>
+            <circle cx="882" cy="705" r="24" fill="#efe4ce"/>
+            <path d="M868 705 H896" stroke="#9d2b2b" stroke-width="10"/>
+            <defs>
+              <radialGradient id="lampGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#efbd45" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="#efbd45" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="online-rooms-notebook">
+          <div class="online-rooms-topbar">
+            <div>
+              <h3>Online Escape Games</h3>
+              <p id="onlineRoomsMeta" class="online-rooms-meta">Loading online rooms...</p>
+            </div>
+            <button id="closeOnlineRoomsPage" class="online-rooms-close" type="button" aria-label="Close online rooms">×</button>
+          </div>
+          <div id="onlineRoomsBook" class="online-rooms-book">
+            <div class="online-notebook-heading">
+              <span>Case File</span>
+              <h4>Notebook of Remote Escape Experiences</h4>
+              <div class="online-rooms-toolbar">
+                <div class="online-rooms-toolbar-field search-field">
+                  <label for="onlineRoomsSearch">Search</label>
+                  <input id="onlineRoomsSearch" class="online-rooms-search" type="search" placeholder="Search online rooms..." aria-label="Search online rooms">
+                </div>
+                <div class="online-rooms-toolbar-field sort-field">
+                  <label for="onlineRoomsSort">Sort by</label>
+                  <select id="onlineRoomsSort" class="online-rooms-sort" aria-label="Sort online rooms">
+                    <option value="durationAsc">Shortest</option>
+                    <option value="durationDesc">Longest</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div id="onlineRoomsResults"></div>
+            <div id="onlineRoomsPagination" class="online-rooms-pagination" hidden>
+              <div class="online-rooms-page-arrows">
+                <button id="onlineRoomsPrevPage" type="button" aria-label="Previous page">←</button>
+                <button id="onlineRoomsNextPage" type="button" aria-label="Next page">→</button>
+              </div>
+              <div id="onlineRoomsPageStatus" class="online-rooms-page-status">Page 1 of 1</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="corner-brand">
     <div class="logo-menu">
       <button id="cornerLogoButton" class="logo-button" aria-expanded="false" type="button">
@@ -2891,10 +3292,10 @@ body.sidebar-open {
 
 <section id="homePage" class="site-page" aria-labelledby="seoHeading">
   <div class="seo-wrap">
-    <h1 id="seoHeading">Find Escape Rooms by City, Horror Theme, Puzzle and Riddle Style</h1>
+    <h1 id="seoHeading">Find Escape Rooms by City, Theme, and Online Availability</h1>
     <p>
-      Escaper Map helps players discover escape rooms in cities around the world. Search by company or room name,
-      filter by category, and build your ideal route for one-night or weekend escape room trips.
+      Escaper Map helps players discover physical escape rooms in cities around the world and browse online escape games
+      in a dedicated notebook view. Search by company or room name, compare themes, and build your ideal route for one-night or weekend trips.
     </p>
 
     <div class="home-actions">
@@ -2915,12 +3316,17 @@ body.sidebar-open {
         <h2>Puzzle and Riddle Escape Rooms</h2>
         <p>Choose Riddles to discover logic-driven and puzzle-focused rooms with strong brain-teaser gameplay.</p>
       </article>
+      <article class="seo-card">
+        <h2>Online Escape Games</h2>
+        <p>Open the Online Escape Games notebook to browse remote games by country, category, duration, and booking link.</p>
+      </article>
     </div>
 
     <h2>Popular Search Topics</h2>
     <ul>
       <li>escape rooms near me</li>
       <li>escape room in [city]</li>
+      <li>online escape games</li>
       <li>horror escape rooms</li>
       <li>puzzle escape rooms and riddle escape rooms</li>
     </ul>
@@ -2933,7 +3339,7 @@ body.sidebar-open {
     <div class="seo-faq" id="faq">
       <div class="seo-card">
         <h2>How do I find escape rooms in a specific city?</h2>
-        <p>Search by room or company name and use your location radius to focus on one city or nearby areas.</p>
+        <p>Search by room or company name and use your location radius to focus on one city or nearby areas for physical escape rooms.</p>
       </div>
       <div class="seo-card">
         <h2>How do I find horror escape rooms?</h2>
@@ -2942,6 +3348,10 @@ body.sidebar-open {
       <div class="seo-card">
         <h2>How do I find puzzle or riddle escape rooms?</h2>
         <p>Select Riddles in Filters to surface puzzle-heavy experiences built around clues and logic challenges.</p>
+      </div>
+      <div class="seo-card">
+        <h2>Where do I find online escape games?</h2>
+        <p>Use the Online Escape Games button under Filters to open the notebook view and browse approved online games grouped by country.</p>
       </div>
     </div>
   </div>
@@ -3679,54 +4089,236 @@ function hasRenderableMapCoordinates(room) {
   return isValidCoordinate(Number(room?.Lat), -90, 90) && isValidCoordinate(Number(room?.Lon), -180, 180);
 }
 
-function renderOnlineRooms(onlineRooms, totalFilteredRooms) {
-  const section = document.getElementById('onlineRoomsSection');
-  const count = document.getElementById('onlineRoomsCount');
-  const summary = document.getElementById('onlineRoomsSummary');
-  const list = document.getElementById('onlineRoomsList');
-  if (!section || !count || !summary || !list) return;
+function getOnlineRoomCountry(room) {
+  return String(room?.Country || 'Unknown country').trim() || 'Unknown country';
+}
 
-  list.innerHTML = '';
+function getOnlineRoomCategoryLabel(room) {
+  const raw = String(room?.Category || 'Online').trim();
+  if (!raw) return 'Online';
 
-  if (!onlineRooms.length) {
-    section.hidden = true;
-    count.textContent = '0 shown';
-    summary.textContent = 'Online rooms appear here because they do not need a physical map marker.';
-    return;
+  const cleaned = raw
+    .replace(/[|,;]+/g, ' / ')
+    .replace(/\s*\/\s*/g, ' / ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return /online/i.test(cleaned) ? cleaned : `Online / ${cleaned}`;
+}
+
+function createOnlineRoomCell(tagName, label, value) {
+  const cell = document.createElement(tagName);
+  cell.dataset.label = label;
+  cell.textContent = value;
+  return cell;
+}
+
+function createOnlineRoomRow(room) {
+  const row = document.createElement('div');
+  row.className = 'online-country-row';
+
+  row.appendChild(createOnlineRoomCell('span', 'Company', String(room?.Company || 'Unknown company')));
+  row.appendChild(createOnlineRoomCell('span', 'Name', String(room?.['Escape room'] || 'Untitled room')));
+  row.appendChild(createOnlineRoomCell('span', 'Category', getOnlineRoomCategoryLabel(room)));
+  row.appendChild(createOnlineRoomCell('span', 'Duration', parseRoomDuration(room) ? `${parseRoomDuration(room)} min` : 'Not listed'));
+
+  const linkCell = document.createElement(room?.website ? 'a' : 'span');
+  linkCell.dataset.label = 'Link';
+  if (room?.website) {
+    linkCell.href = ensureHttps(room.website);
+    linkCell.target = '_blank';
+    linkCell.rel = 'noopener noreferrer';
+    linkCell.textContent = 'Open';
+  } else {
+    linkCell.textContent = 'N/A';
   }
+  row.appendChild(linkCell);
 
-  section.hidden = false;
-  count.textContent = `${onlineRooms.length} shown`;
-  summary.textContent = `${onlineRooms.length} of ${totalFilteredRooms} filtered rooms are online-only, so they are listed here instead of being placed on the map.`;
+  return row;
+}
 
-  onlineRooms.forEach(room => {
-    const card = document.createElement('div');
-    card.className = 'online-room-card';
+function filterOnlineRoomsByQuery(rooms, query) {
+  const normalizedQuery = String(query || '').trim().toLowerCase();
+  if (!normalizedQuery) return rooms;
 
-    const title = document.createElement('strong');
-    title.textContent = room['Escape room'] || 'Online room';
-    card.appendChild(title);
+  return rooms.filter(room => {
+    const searchableFields = [
+      getOnlineRoomCountry(room),
+      room?.Company,
+      room?.['Escape room'],
+      getOnlineRoomCategoryLabel(room)
+    ];
 
-    const company = document.createElement('span');
-    company.textContent = room.Company || 'Unknown company';
-    card.appendChild(company);
+    return searchableFields.some(value => String(value || '').toLowerCase().includes(normalizedQuery));
+  });
+}
 
-    const details = document.createElement('span');
-    const durationLabel = room.Duration ? `${room.Duration} min` : 'Duration not listed';
-    details.textContent = `${room.Category || 'Online'} | ${durationLabel}`;
-    card.appendChild(details);
+function sortOnlineRooms(rooms, sortBy) {
+  const sorted = [...rooms];
+  sorted.sort((left, right) => {
+    const leftCountry = getOnlineRoomCountry(left);
+    const rightCountry = getOnlineRoomCountry(right);
+    const countryCompare = leftCountry.localeCompare(rightCountry);
+    if (countryCompare !== 0) return countryCompare;
 
-    if (room.website) {
-      const link = document.createElement('a');
-      link.href = room.website;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.textContent = 'Open website';
-      card.appendChild(link);
+    const leftDuration = parseRoomDuration(left);
+    const rightDuration = parseRoomDuration(right);
+    const normalizedLeftDuration = leftDuration ?? (sortBy === 'durationDesc' ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY);
+    const normalizedRightDuration = rightDuration ?? (sortBy === 'durationDesc' ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY);
+
+    if (normalizedLeftDuration !== normalizedRightDuration) {
+      return sortBy === 'durationDesc'
+        ? normalizedRightDuration - normalizedLeftDuration
+        : normalizedLeftDuration - normalizedRightDuration;
     }
 
-    list.appendChild(card);
+    const leftName = String(left?.['Escape room'] || '');
+    const rightName = String(right?.['Escape room'] || '');
+    const nameCompare = leftName.localeCompare(rightName);
+    if (nameCompare !== 0) return nameCompare;
+
+    return String(left?.Company || '').localeCompare(String(right?.Company || ''));
   });
+
+  return sorted;
+}
+
+async function renderOnlineRoomsPage() {
+  const meta = document.getElementById('onlineRoomsMeta');
+  const results = document.getElementById('onlineRoomsResults');
+  const searchInput = document.getElementById('onlineRoomsSearch');
+  const sortInput = document.getElementById('onlineRoomsSort');
+  const pagination = document.getElementById('onlineRoomsPagination');
+  const prevButton = document.getElementById('onlineRoomsPrevPage');
+  const nextButton = document.getElementById('onlineRoomsNextPage');
+  const pageStatus = document.getElementById('onlineRoomsPageStatus');
+  if (!meta || !results || !searchInput || !sortInput || !pagination || !prevButton || !nextButton || !pageStatus) return;
+
+  meta.textContent = 'Loading online rooms...';
+  results.innerHTML = '';
+
+  const pageSize = 10;
+  let currentPage = 1;
+
+  const sourceRooms = cachedAllRooms.length > 0 ? cachedAllRooms : await cacheAllEscapeRooms();
+  const onlineRooms = [...sourceRooms].filter(room => isOnlineEscapeRoom(room));
+
+  const renderResults = () => {
+    results.innerHTML = '';
+    const filteredRooms = sortOnlineRooms(
+      filterOnlineRoomsByQuery(onlineRooms, searchInput.value),
+      sortInput.value
+    );
+
+    if (!onlineRooms.length) {
+      meta.textContent = 'No approved online rooms are available yet.';
+      pagination.hidden = true;
+      const emptyState = document.createElement('div');
+      emptyState.className = 'online-room-empty';
+      emptyState.textContent = 'No approved online escape games are available yet. Add games with the Online category and they will appear here once approved.';
+      results.appendChild(emptyState);
+      return;
+    }
+
+    if (!filteredRooms.length) {
+      meta.textContent = `0 matches in ${onlineRooms.length} online rooms`;
+      pagination.hidden = true;
+      const emptyState = document.createElement('div');
+      emptyState.className = 'online-room-empty';
+      emptyState.textContent = 'No online rooms matched that search. Try a country, company, room name, or category.';
+      results.appendChild(emptyState);
+      return;
+    }
+
+    const totalPages = Math.max(1, Math.ceil(filteredRooms.length / pageSize));
+    currentPage = Math.min(currentPage, totalPages);
+    currentPage = Math.max(1, currentPage);
+
+    const startIndex = (currentPage - 1) * pageSize;
+    const pagedRooms = filteredRooms.slice(startIndex, startIndex + pageSize);
+
+    const roomsByCountry = new Map();
+    pagedRooms.forEach(room => {
+      const country = getOnlineRoomCountry(room);
+      if (!roomsByCountry.has(country)) {
+        roomsByCountry.set(country, []);
+      }
+      roomsByCountry.get(country).push(room);
+    });
+
+    meta.textContent = `${filteredRooms.length} online rooms across ${new Set(filteredRooms.map(room => getOnlineRoomCountry(room))).size} countries`;
+    pagination.hidden = totalPages <= 1;
+    pageStatus.textContent = `Page ${currentPage} of ${totalPages} | Showing ${pagedRooms.length} of ${filteredRooms.length} rooms`;
+    prevButton.disabled = currentPage === 1;
+    nextButton.disabled = currentPage === totalPages;
+
+    roomsByCountry.forEach((rooms, country) => {
+      const sheet = document.createElement('section');
+      sheet.className = 'online-country-sheet';
+
+      const heading = document.createElement('h4');
+      heading.textContent = `${country} (${rooms.length})`;
+      sheet.appendChild(heading);
+
+      const header = document.createElement('div');
+      header.className = 'online-country-header';
+      ['Company', 'Name', 'Category', 'Duration', 'Link'].forEach(label => {
+        const cell = document.createElement('span');
+        cell.textContent = label;
+        header.appendChild(cell);
+      });
+      sheet.appendChild(header);
+
+      rooms.forEach(room => {
+        sheet.appendChild(createOnlineRoomRow(room));
+      });
+
+      results.appendChild(sheet);
+    });
+  };
+
+  searchInput.value = '';
+  sortInput.value = 'durationAsc';
+
+  searchInput.oninput = () => {
+    currentPage = 1;
+    renderResults();
+  };
+
+  sortInput.onchange = () => {
+    currentPage = 1;
+    renderResults();
+  };
+
+  prevButton.onclick = () => {
+    if (currentPage <= 1) return;
+    currentPage -= 1;
+    renderResults();
+  };
+
+  nextButton.onclick = () => {
+    currentPage += 1;
+    renderResults();
+  };
+
+  renderResults();
+}
+
+async function openOnlineRoomsPage() {
+  const page = document.getElementById('onlineRoomsPage');
+  if (!page) return;
+
+  closeMobileSidebar();
+  page.hidden = false;
+  page.style.display = 'flex';
+  await renderOnlineRoomsPage();
+}
+
+function closeOnlineRoomsPage() {
+  const page = document.getElementById('onlineRoomsPage');
+  if (!page) return;
+  page.hidden = true;
+  page.style.display = 'none';
 }
 
 function parseRoomYear(room) {
@@ -6191,7 +6783,6 @@ async function loadEscapeRooms() {
 
   const onlineRooms = filteredData.filter(isOnlineEscapeRoom);
   const mapRooms = filteredData.filter(room => !isOnlineEscapeRoom(room) && hasRenderableMapCoordinates(room));
-  renderOnlineRooms(onlineRooms, filteredData.length);
 
   cachedFilteredRooms = filteredData;
   console.log(`Loaded ${filteredData.length} rooms (${mapRooms.length} map rooms, ${onlineRooms.length} online rooms) from cache of ${data.length}`);
@@ -6247,7 +6838,7 @@ async function loadEscapeRooms() {
           
           <div class="popup-section">
             <div class="popup-icon">🌐</div>
-            <div class="popup-text"><strong>Website:</strong> ${r.website ? `<a href="${r.website}" target="_blank">${r.website}</a>` : 'N/A'}</div>
+            <div class="popup-text"><strong>Website:</strong> ${r.website ? `<a href="${ensureHttps(r.website)}" target="_blank">${r.website}</a>` : 'N/A'}</div>
           </div>
           <div class="popup-section">
             <div class="popup-icon">🗺️</div>
@@ -7228,6 +7819,11 @@ function isValidCoordinate(value, min, max) {
   return Number.isFinite(value) && value >= min && value <= max;
 }
 
+function ensureHttps(url) {
+  if (!url) return url;
+  return /^https?:\/\//i.test(url) ? url : 'https://' + url;
+}
+
 function getGoogleMapsDirectionsLink(lat, lon, mode = 'driving') {
   const fallbackUrl = 'https://www.google.com/maps';
   if (!isValidCoordinate(lat, -90, 90) || !isValidCoordinate(lon, -180, 180)) {
@@ -7383,6 +7979,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById("continueAsGuest").onclick = () => {
     document.getElementById("authPanel").style.display = 'none';
+  };
+
+  document.getElementById("openOnlineRooms").onclick = async () => {
+    await openOnlineRoomsPage();
+  };
+
+  document.getElementById("closeOnlineRoomsPage").onclick = () => {
+    closeOnlineRoomsPage();
   };
 
   document.getElementById("tabFilters").onclick = () => showSidebarTab('filters');
@@ -7788,10 +8392,6 @@ document.getElementById("submitBtn").onclick = async () => {
   const category = selectedCategories.join(", ");
 
   const address = document.getElementById("addressInput").value.trim();
-  if (!address) {
-    alert("Address is required");
-    return;
-  }
 
   try {
     // Convert empty strings to null for optional numeric fields
@@ -7805,7 +8405,7 @@ document.getElementById("submitBtn").onclick = async () => {
       Duration: durationValue ? parseInt(durationValue) : null,
       "Year of S": yearValue ? parseInt(yearValue) : null,
       website: websiteValue || null,
-      Address: document.getElementById("addressInput").value,
+      Address: address || null,
       Category: category,
       Lat: null,
       Lon: null,
@@ -7871,7 +8471,7 @@ function showSubmitConfirmation(submission) {
       <strong>Category:</strong> <span>${submission.category}</span>
       <strong>Duration:</strong> <span>${submission.duration ? submission.duration + ' min' : 'N/A'}</span>
       <strong>Year:</strong> <span>${submission.year || 'N/A'}</span>
-      <strong>Website:</strong> <span>${submission.website ? `<a href="${submission.website}" target="_blank">${submission.website}</a>` : 'N/A'}</span>
+      <strong>Website:</strong> <span>${submission.website ? `<a href="${ensureHttps(submission.website)}" target="_blank">${submission.website}</a>` : 'N/A'}</span>
       <strong>Status:</strong> <span style="color: #ff9800;">${submission.status}</span>
     </div>
   `;
