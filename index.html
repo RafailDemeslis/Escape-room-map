@@ -629,6 +629,36 @@ input[type="time"] {
   line-height: 1.45;
 }
 
+.graphs-view-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.graphs-view-switch button {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-color);
+  padding: 9px 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.graphs-view-switch button.active {
+  border-color: var(--accent-color);
+  background: rgba(253, 216, 53, 0.2);
+}
+
+.graphs-subview {
+  display: block;
+}
+
+.graphs-subview[hidden] {
+  display: none;
+}
+
 .graph-controls {
   display: grid;
   grid-template-columns: 1fr;
@@ -775,7 +805,7 @@ input[type="time"] {
 .heatmap-legend-bar {
   height: 12px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #3388ff 0%, #2ecc71 35%, #f1c40f 68%, #e74c3c 100%);
+  background: rgba(255, 255, 255, 0.16);
   margin-bottom: 6px;
 }
 
@@ -1167,6 +1197,59 @@ input[type="time"] {
   touch-action: manipulation;
 }
 
+#heatmapCompareContainer {
+  flex: 1;
+  display: none;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.35);
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+#layout.is-heatmap-compare #map {
+  display: none;
+}
+
+#layout.is-heatmap-compare #heatmapCompareContainer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+#heatmapCompareContainer.compare-count-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#heatmapCompareContainer.compare-count-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.heatmap-compare-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 260px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(15, 15, 15, 0.9);
+}
+
+.heatmap-compare-title {
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #f8f8f8;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(249, 115, 22, 0.2);
+}
+
+.heatmap-compare-map {
+  flex: 1;
+  min-height: 220px;
+}
+
 footer.app-footer {
   display: flex;
   flex-wrap: wrap;
@@ -1442,6 +1525,16 @@ body.sidebar-open {
     width: 100%;
     height: 100vh;
     max-height: none;
+  }
+
+  #layout.is-heatmap-compare #heatmapCompareContainer {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .heatmap-compare-map {
+    min-height: 240px;
   }
 
   #sidebar h2 {
@@ -2917,24 +3010,17 @@ body.sidebar-open {
         <button id="closeGraphs" class="panel-close-btn" aria-label="Close">×</button>
         <h3>GIS Graphs & Statistics</h3>
         <p class="graph-panel-intro">Use the current filters or the full approved dataset, then compare categories, years, and durations without overcrowding the map view.</p>
-        <div class="graph-controls">
+
+        <div class="graphs-view-switch" role="tablist" aria-label="Graphs view mode">
+          <button id="showChartsSubviewBtn" class="active" type="button" role="tab" aria-selected="true">Graph</button>
+          <button id="showHeatmapSubviewBtn" type="button" role="tab" aria-selected="false">Heatmap</button>
+        </div>
+
+        <div id="graphsCommonControls" class="graph-controls">
           <label for="graphDataScope">Data scope</label>
           <select id="graphDataScope">
             <option value="filtered">Current filtered rooms</option>
             <option value="all">All approved rooms</option>
-          </select>
-
-          <label for="graphDimension">Dimension (X axis)</label>
-          <select id="graphDimension">
-            <option value="category">Categories</option>
-            <option value="year">Year</option>
-            <option value="yearCategory">Categories by year</option>
-          </select>
-
-          <label for="graphMetric">Y axis</label>
-          <select id="graphMetric">
-            <option value="number">Number</option>
-            <option value="duration">Duration</option>
           </select>
 
           <label for="graphCategoryFilter">Categories to include</label>
@@ -2972,52 +3058,87 @@ body.sidebar-open {
           </div>
           <div id="graphYearRangeReadout" class="graph-range-readout">All years</div>
 
-          <label for="graphChartType">Chart type</label>
-          <select id="graphChartType">
-            <option value="bar">Bar</option>
-            <option value="line">Line</option>
-            <option value="pie">Pie</option>
-          </select>
-
-          <label for="graphTopN">Top categories (for category charts)</label>
-          <input id="graphTopN" type="number" min="3" max="30" value="12">
         </div>
 
-        <div class="graph-actions">
-          <button id="renderGraphBtn" type="button" class="btn-map">Generate</button>
-          <button id="downloadGraphBtn" type="button" class="btn-export">Download PNG</button>
-          <button id="expandGraphBtn" type="button" class="btn-map">Enlarge</button>
-        </div>
+        <div id="graphsChartsSection" class="graphs-subview">
+          <div class="graph-controls">
 
-        <div class="graph-heatmap-controls">
-          <button id="showHeatmapBtn" type="button" class="btn-map">Show GIS Heatmap</button>
-          <button id="clearHeatmapBtn" type="button" class="btn-clear">Clear Heatmap</button>
-          <button id="toggleHeatmapLegendBtn" type="button" class="btn-map">Hide Legend</button>
-        </div>
+            <label for="graphDimension">Dimension (X axis)</label>
+            <select id="graphDimension">
+              <option value="category">Categories</option>
+              <option value="year">Year</option>
+              <option value="yearCategory">Categories by year</option>
+            </select>
 
-        <div class="graph-heatmap-mobile-toggle-wrap">
-          <button id="toggleHeatmapAdvancedBtn" type="button" class="btn-map" aria-expanded="false" aria-controls="heatmapAdvancedControls">Advanced heatmap controls ▼</button>
-        </div>
+            <label for="graphMetric">Y axis</label>
+            <select id="graphMetric">
+              <option value="number">Number</option>
+              <option value="duration">Duration</option>
+            </select>
 
-        <div id="heatmapAdvancedControls" class="graph-heatmap-advanced-group">
-          <div class="graph-heatmap-controls">
-            <button id="exportHeatmapPngBtn" type="button" class="btn-export">Export Heatmap PNG</button>
-            <button id="exportHeatmapPdfBtn" type="button" class="btn-export">Export Heatmap PDF</button>
+            <label for="graphChartType">Chart type</label>
+            <select id="graphChartType">
+              <option value="bar">Bar</option>
+              <option value="line">Line</option>
+              <option value="pie">Pie</option>
+            </select>
+
+            <label for="graphTopN">Top categories (for category charts)</label>
+            <input id="graphTopN" type="number" min="3" max="30" value="12">
           </div>
 
-          <div class="graph-heatmap-settings">
-            <label for="heatmapRadiusRange" class="graph-setting-label">Heatmap radius <button id="heatmapRadiusHelp" class="info-dot" type="button" title="Radius controls how far each room spreads its influence on the heatmap. Higher radius creates broader, smoother blobs. Lower radius keeps hotspots tighter.">?</button></label>
-            <input id="heatmapRadiusRange" type="range" min="12" max="50" value="26">
-            <label for="heatmapOpacityRange" class="graph-setting-label">Heatmap opacity <button id="heatmapOpacityHelp" class="info-dot" type="button" title="Opacity controls how transparent or strong the heatmap looks. Lower opacity lets the basemap show through more. Higher opacity makes density areas more intense.">?</button></label>
-            <input id="heatmapOpacityRange" type="range" min="10" max="90" value="28">
-            <div id="heatmapSettingsReadout" class="graph-heatmap-readout">Radius: 26 | Opacity: 0.28</div>
+          <div class="graph-actions">
+            <button id="renderGraphBtn" type="button" class="btn-map">Generate</button>
+            <button id="downloadGraphBtn" type="button" class="btn-export">Download PNG</button>
+            <button id="expandGraphBtn" type="button" class="btn-map">Enlarge</button>
+          </div>
+
+          <div class="graph-canvas-wrap">
+            <canvas id="roomsStatsChart" aria-label="Room statistics chart"></canvas>
+          </div>
+        </div>
+
+        <div id="graphsHeatmapSection" class="graphs-subview" hidden>
+          <div class="graph-heatmap-controls">
+            <button id="showHeatmapBtn" type="button" class="btn-map">Show GIS Heatmap</button>
+            <button id="clearHeatmapBtn" type="button" class="btn-clear">Clear Heatmap</button>
+            <button id="toggleHeatmapLegendBtn" type="button" class="btn-map">Hide Legend</button>
+          </div>
+
+          <div class="graph-heatmap-mobile-toggle-wrap">
+            <button id="toggleHeatmapAdvancedBtn" type="button" class="btn-map" aria-expanded="false" aria-controls="heatmapAdvancedControls">Advanced heatmap controls ▼</button>
+          </div>
+
+          <div id="heatmapAdvancedControls" class="graph-heatmap-advanced-group">
+            <div class="graph-heatmap-controls">
+              <button id="exportHeatmapPngBtn" type="button" class="btn-export">Export Heatmap PNG</button>
+              <button id="exportHeatmapPdfBtn" type="button" class="btn-export">Export Heatmap PDF</button>
+            </div>
+
+            <div class="graph-heatmap-settings">
+              <label for="heatmapRampSelect" class="graph-setting-label">Heatmap color ramp</label>
+              <select id="heatmapRampSelect">
+                <option value="singleOrange" selected>Single Orange</option>
+                <option value="singleBlue">Single Blue</option>
+                <option value="singleGreen">Single Green</option>
+                <option value="sunrise">Gradient Sunrise</option>
+                <option value="ocean">Gradient Ocean</option>
+                <option value="forest">Gradient Forest</option>
+                <option value="volcano">Gradient Volcano</option>
+                <option value="violet">Gradient Violet</option>
+                <option value="sandToSea">Gradient Sand to Sea</option>
+                <option value="monoFire">Gradient Mono Fire</option>
+              </select>
+              <label for="heatmapRadiusRange" class="graph-setting-label">Heatmap radius <button id="heatmapRadiusHelp" class="info-dot" type="button" title="Radius controls how far each room spreads its influence on the heatmap. Higher radius creates broader, smoother blobs. Lower radius keeps hotspots tighter.">?</button></label>
+              <input id="heatmapRadiusRange" type="range" min="12" max="50" value="26">
+              <label for="heatmapOpacityRange" class="graph-setting-label">Heatmap opacity <button id="heatmapOpacityHelp" class="info-dot" type="button" title="Opacity controls how transparent or strong the heatmap looks. Lower opacity lets the basemap show through more. Higher opacity makes density areas more intense.">?</button></label>
+              <input id="heatmapOpacityRange" type="range" min="10" max="90" value="28">
+              <div id="heatmapSettingsReadout" class="graph-heatmap-readout">Ramp: Single Orange | Radius: 26 | Opacity: 0.28</div>
+            </div>
           </div>
         </div>
 
         <div id="graphSummary" class="graph-summary">Choose graph settings and click Generate.</div>
-        <div class="graph-canvas-wrap">
-          <canvas id="roomsStatsChart" aria-label="Room statistics chart"></canvas>
-        </div>
       </div>
       <div id="filtersPanel" class="tab-panel">
         <h2 style="color: white;">Filters</h2>
@@ -3087,6 +3208,7 @@ body.sidebar-open {
   </aside>
 
   <div id="map"></div>
+  <div id="heatmapCompareContainer" hidden></div>
   <div id="userAvatar" class="user-avatar" title="Click for menu"></div>
   <div id="avatarDropdown" class="avatar-dropdown">
     <button id="profileBtn">Profile</button>
@@ -3611,7 +3733,7 @@ body.sidebar-open {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script>
 const db = supabase.createClient(
   "https://ypmtgvoadqtcspcrtemy.supabase.co",
@@ -3933,6 +4055,53 @@ let heatmapLegendControl = null;
 let isHeatmapVisible = false;
 let markersWereVisibleBeforeHeatmap = false;
 let isHeatmapLegendVisible = true;
+let heatmapCompareMaps = [];
+let isHeatmapCompareMode = false;
+let isHeatmapCompareSyncing = false;
+const HEATMAP_COMPARE_LIMIT = 3;
+const HEATMAP_RAMPS = {
+  singleOrange: {
+    label: 'Single Orange',
+    gradient: { 0.18: 'rgba(249,115,22,0.22)', 0.55: 'rgba(249,115,22,0.62)', 1.0: '#f97316' }
+  },
+  singleBlue: {
+    label: 'Single Blue',
+    gradient: { 0.18: 'rgba(59,130,246,0.22)', 0.55: 'rgba(59,130,246,0.62)', 1.0: '#3b82f6' }
+  },
+  singleGreen: {
+    label: 'Single Green',
+    gradient: { 0.18: 'rgba(34,197,94,0.22)', 0.55: 'rgba(34,197,94,0.62)', 1.0: '#22c55e' }
+  },
+  sunrise: {
+    label: 'Gradient Sunrise',
+    gradient: { 0.15: '#fde68a', 0.45: '#fb923c', 0.72: '#f97316', 1.0: '#dc2626' }
+  },
+  ocean: {
+    label: 'Gradient Ocean',
+    gradient: { 0.15: '#93c5fd', 0.45: '#38bdf8', 0.72: '#0ea5e9', 1.0: '#1d4ed8' }
+  },
+  forest: {
+    label: 'Gradient Forest',
+    gradient: { 0.15: '#bbf7d0', 0.45: '#4ade80', 0.72: '#22c55e', 1.0: '#166534' }
+  },
+  volcano: {
+    label: 'Gradient Volcano',
+    gradient: { 0.15: '#fdba74', 0.45: '#f97316', 0.72: '#ef4444', 1.0: '#7f1d1d' }
+  },
+  violet: {
+    label: 'Gradient Violet',
+    gradient: { 0.15: '#c4b5fd', 0.45: '#a78bfa', 0.72: '#8b5cf6', 1.0: '#6d28d9' }
+  },
+  sandToSea: {
+    label: 'Gradient Sand to Sea',
+    gradient: { 0.15: '#fef3c7', 0.45: '#f59e0b', 0.72: '#06b6d4', 1.0: '#155e75' }
+  },
+  monoFire: {
+    label: 'Gradient Mono Fire',
+    gradient: { 0.15: '#ffedd5', 0.45: '#fb923c', 0.72: '#ea580c', 1.0: '#7c2d12' }
+  }
+};
+const DEFAULT_HEATMAP_RAMP = 'singleOrange';
 let heatmapSettings = {
   radius: 26,
   opacity: 0.28
@@ -4013,7 +4182,32 @@ const GRAPH_CATEGORY_CODES = {
 function updateHeatmapSettingsReadout() {
   const readout = document.getElementById('heatmapSettingsReadout');
   if (!readout) return;
-  readout.textContent = `Radius: ${heatmapSettings.radius} | Opacity: ${heatmapSettings.opacity.toFixed(2)}`;
+  readout.textContent = `Ramp: ${getSelectedHeatmapRampLabel()} | Radius: ${heatmapSettings.radius} | Opacity: ${heatmapSettings.opacity.toFixed(2)}`;
+}
+
+function getSelectedHeatmapRampId() {
+  const select = document.getElementById('heatmapRampSelect');
+  const selected = select?.value || DEFAULT_HEATMAP_RAMP;
+  return HEATMAP_RAMPS[selected] ? selected : DEFAULT_HEATMAP_RAMP;
+}
+
+function getSelectedHeatmapRampLabel() {
+  return HEATMAP_RAMPS[getSelectedHeatmapRampId()].label;
+}
+
+function buildHeatmapLegendCssGradient() {
+  const gradient = buildHeatmapGradient();
+  const stops = Object.entries(gradient)
+    .map(([stop, color]) => ({ stop: Number(stop), color }))
+    .filter(entry => Number.isFinite(entry.stop))
+    .sort((a, b) => a.stop - b.stop)
+    .map(entry => `${entry.color} ${Math.round(entry.stop * 100)}%`);
+
+  if (!stops.length) {
+    return 'linear-gradient(90deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.7) 100%)';
+  }
+
+  return `linear-gradient(90deg, ${stops.join(', ')})`;
 }
 
 function showHeatmapSettingHelp(topic) {
@@ -4447,18 +4641,19 @@ function updateGraphYearRangeReadout() {
 }
 
 async function captureMapAsPngDataUrl() {
-  const mapElement = document.getElementById('map');
-  if (!mapElement) {
-    throw new Error('Map element not found.');
+  const compareElement = document.getElementById('heatmapCompareContainer');
+  const targetElement = isHeatmapCompareMode ? compareElement : document.getElementById('map');
+  if (!targetElement) {
+    throw new Error('Heatmap element not found.');
   }
 
   try {
-    return await domtoimage.toPng(mapElement, {
+    return await domtoimage.toPng(targetElement, {
       bgcolor: '#ffffff',
       quality: 1
     });
   } catch (error) {
-    const canvas = await html2canvas(mapElement, {
+    const canvas = await html2canvas(targetElement, {
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
@@ -4470,7 +4665,7 @@ async function captureMapAsPngDataUrl() {
 }
 
 async function exportHeatmapAsPng() {
-  if (!isHeatmapVisible || !heatmapLayer) {
+  if (!isHeatmapVisible || (!isHeatmapCompareMode && !heatmapLayer)) {
     setGraphSummary('Show the GIS heatmap first, then export it.');
     return;
   }
@@ -4483,7 +4678,7 @@ async function exportHeatmapAsPng() {
 }
 
 async function exportHeatmapAsPdf() {
-  if (!isHeatmapVisible || !heatmapLayer) {
+  if (!isHeatmapVisible || (!isHeatmapCompareMode && !heatmapLayer)) {
     setGraphSummary('Show the GIS heatmap first, then export it.');
     return;
   }
@@ -4715,6 +4910,31 @@ function setGraphPreviewSummary(text) {
   summary.textContent = text;
 }
 
+function setGraphsSubview(mode) {
+  const chartButton = document.getElementById('showChartsSubviewBtn');
+  const heatmapButton = document.getElementById('showHeatmapSubviewBtn');
+  const chartsSection = document.getElementById('graphsChartsSection');
+  const heatmapSection = document.getElementById('graphsHeatmapSection');
+
+  if (!chartButton || !heatmapButton || !chartsSection || !heatmapSection) return;
+
+  const showCharts = mode !== 'heatmap';
+
+  chartButton.classList.toggle('active', showCharts);
+  heatmapButton.classList.toggle('active', !showCharts);
+  chartButton.setAttribute('aria-selected', showCharts ? 'true' : 'false');
+  heatmapButton.setAttribute('aria-selected', showCharts ? 'false' : 'true');
+
+  chartsSection.hidden = !showCharts;
+  heatmapSection.hidden = showCharts;
+
+  if (showCharts) {
+    setGraphSummary(lastRenderedGraphSummary || 'Choose graph settings and click Generate.');
+  } else if (!isHeatmapVisible) {
+    setGraphSummary('Choose category/year filters and click Show GIS Heatmap.');
+  }
+}
+
 function getRoomsForHeatmap() {
   const dataScope = document.getElementById('graphDataScope')?.value || 'filtered';
   const selectedCategories = getSelectedGraphCategories();
@@ -4725,6 +4945,8 @@ function getRoomsForHeatmap() {
 }
 
 function clearRoomsHeatmap() {
+  teardownHeatmapCompareMode();
+
   if (heatmapLayer) {
     map.removeLayer(heatmapLayer);
     heatmapLayer = null;
@@ -4744,6 +4966,145 @@ function clearRoomsHeatmap() {
   markersWereVisibleBeforeHeatmap = false;
 }
 
+function getHeatmapCompareContainer() {
+  return document.getElementById('heatmapCompareContainer');
+}
+
+function clearHeatmapCompareMaps() {
+  heatmapCompareMaps.forEach(entry => {
+    if (entry?.map && typeof entry.map.remove === 'function') {
+      entry.map.remove();
+    }
+  });
+  heatmapCompareMaps = [];
+}
+
+function teardownHeatmapCompareMode() {
+  if (!isHeatmapCompareMode) return;
+
+  const container = getHeatmapCompareContainer();
+  const layout = document.getElementById('layout');
+
+  clearHeatmapCompareMaps();
+
+  if (container) {
+    container.innerHTML = '';
+    container.hidden = true;
+    container.classList.remove('compare-count-1', 'compare-count-2', 'compare-count-3');
+  }
+
+  if (layout) {
+    layout.classList.remove('is-heatmap-compare');
+  }
+
+  isHeatmapCompareSyncing = false;
+  isHeatmapCompareMode = false;
+  map.invalidateSize();
+}
+
+function buildHeatmapPointsForRooms(rooms) {
+  return rooms.map(room => [Number(room.Lat), Number(room.Lon), 0.75]);
+}
+
+function setupHeatmapCompareMode(compareCategories, rooms) {
+  const container = getHeatmapCompareContainer();
+  const layout = document.getElementById('layout');
+  if (!container || !layout || compareCategories.length === 0) {
+    return [];
+  }
+
+  clearHeatmapCompareMaps();
+
+  container.innerHTML = '';
+  container.hidden = false;
+  container.classList.remove('compare-count-1', 'compare-count-2', 'compare-count-3');
+  container.classList.add(`compare-count-${Math.min(compareCategories.length, HEATMAP_COMPARE_LIMIT)}`);
+  layout.classList.add('is-heatmap-compare');
+  isHeatmapCompareMode = true;
+
+  const panelStats = [];
+  const allLatLng = [];
+
+  compareCategories.forEach((category, index) => {
+    const panel = document.createElement('section');
+    panel.className = 'heatmap-compare-panel';
+
+    const title = document.createElement('div');
+    title.className = 'heatmap-compare-title';
+    title.textContent = category;
+
+    const mapHost = document.createElement('div');
+    mapHost.className = 'heatmap-compare-map';
+    mapHost.id = `heatmapCompareMap${index}`;
+
+    panel.appendChild(title);
+    panel.appendChild(mapHost);
+    container.appendChild(panel);
+
+    const categoryRooms = rooms.filter(room => extractRoomCategories(room).includes(category));
+    const points = buildHeatmapPointsForRooms(categoryRooms);
+    points.forEach(point => allLatLng.push([point[0], point[1]]));
+
+    const compareMap = L.map(mapHost.id, {
+      zoomControl: index === 0,
+      attributionControl: index === 0,
+      touchZoom: true,
+      doubleClickZoom: true,
+      scrollWheelZoom: true,
+      preferCanvas: true,
+      renderer: L.canvas({ padding: 0.5 })
+    }).setView(map.getCenter(), map.getZoom());
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(compareMap);
+
+    if (points.length) {
+      L.heatLayer(points, {
+        radius: heatmapSettings.radius,
+        blur: 22,
+        maxZoom: 15,
+        minOpacity: heatmapSettings.opacity,
+        gradient: buildHeatmapGradient()
+      }).addTo(compareMap);
+    }
+
+    heatmapCompareMaps.push({ map: compareMap, category });
+    panelStats.push({ category, roomCount: points.length });
+  });
+
+  if (allLatLng.length > 1) {
+    const bounds = L.latLngBounds(allLatLng);
+    heatmapCompareMaps.forEach(entry => {
+      entry.map.fitBounds(bounds, { padding: [20, 20], animate: false });
+    });
+  } else if (allLatLng.length === 1) {
+    heatmapCompareMaps.forEach(entry => {
+      entry.map.setView(allLatLng[0], Math.max(map.getZoom(), 13), { animate: false });
+    });
+  }
+
+  heatmapCompareMaps.forEach(entry => {
+    entry.map.on('moveend zoomend', () => {
+      if (isHeatmapCompareSyncing) return;
+      isHeatmapCompareSyncing = true;
+      const center = entry.map.getCenter();
+      const zoom = entry.map.getZoom();
+      heatmapCompareMaps.forEach(other => {
+        if (other.map === entry.map) return;
+        other.map.setView(center, zoom, { animate: false });
+      });
+      isHeatmapCompareSyncing = false;
+    });
+  });
+
+  requestAnimationFrame(() => {
+    heatmapCompareMaps.forEach(entry => entry.map.invalidateSize());
+  });
+
+  return panelStats;
+}
+
 function getHeatmapDisplayCategories(selectedCategories, rooms) {
   if (selectedCategories.length) {
     return GRAPH_CATEGORY_ORDER.filter(category => selectedCategories.includes(category));
@@ -4756,32 +5117,8 @@ function getHeatmapDisplayCategories(selectedCategories, rooms) {
   return GRAPH_CATEGORY_ORDER.filter(category => found.has(category));
 }
 
-function buildHeatmapGradient(categories) {
-  if (!categories.length) {
-    return {
-      0.2: '#3388ff',
-      0.45: '#2ecc71',
-      0.7: '#f1c40f',
-      1.0: '#e74c3c'
-    };
-  }
-
-  if (categories.length === 1) {
-    const color = GRAPH_CATEGORY_COLORS[categories[0]] || '#3388ff';
-    return {
-      0.2: `${color}66`,
-      0.55: `${color}aa`,
-      1.0: color
-    };
-  }
-
-  const gradient = {};
-  categories.forEach((category, index) => {
-    const stop = categories.length === 1 ? 1 : 0.2 + (0.8 * (index / (categories.length - 1)));
-    gradient[Number(stop.toFixed(2))] = GRAPH_CATEGORY_COLORS[category] || '#3388ff';
-  });
-  gradient[1] = GRAPH_CATEGORY_COLORS[categories[categories.length - 1]] || '#e74c3c';
-  return gradient;
+function buildHeatmapGradient() {
+  return HEATMAP_RAMPS[getSelectedHeatmapRampId()].gradient;
 }
 
 function renderHeatmapLegend(roomCount, categories, yearLabel) {
@@ -4797,8 +5134,8 @@ function renderHeatmapLegend(roomCount, categories, yearLabel) {
     const div = L.DomUtil.create('div', 'heatmap-legend');
 
     div.innerHTML = `
-      <div class="heatmap-legend-title">GIS Heatmap</div>
-      <div class="heatmap-legend-bar"></div>
+      <div class="heatmap-legend-title">Simple GIS Heatmap</div>
+      <div class="heatmap-legend-bar" style="background: ${buildHeatmapLegendCssGradient()};"></div>
       <div class="heatmap-legend-scale">
         <span>Low density</span>
         <span>High density</span>
@@ -4807,6 +5144,7 @@ function renderHeatmapLegend(roomCount, categories, yearLabel) {
         <div>Rooms: ${roomCount}</div>
         <div>Categories: ${categories.length}</div>
         <div>Years: ${yearLabel}</div>
+        <div>Ramp: ${getSelectedHeatmapRampLabel()}</div>
       </div>
     `;
     L.DomEvent.disableClickPropagation(div);
@@ -4827,10 +5165,20 @@ function showRoomsHeatmap() {
   const selectedYears = getSelectedGraphYears();
   const { min, max } = getSelectedGraphYearRange();
   const displayCategories = getHeatmapDisplayCategories(selectedCategories, rooms);
+  const compareCategories = selectedCategories.slice(0, HEATMAP_COMPARE_LIMIT);
 
   if (heatmapLayer) {
     map.removeLayer(heatmapLayer);
     heatmapLayer = null;
+  }
+
+  if (heatmapLegendControl) {
+    map.removeControl(heatmapLegendControl);
+    heatmapLegendControl = null;
+  }
+
+  if (isHeatmapCompareMode) {
+    teardownHeatmapCompareMode();
   }
 
   if (map.hasLayer(markers)) {
@@ -4840,28 +5188,33 @@ function showRoomsHeatmap() {
 
   if (!rooms.length) {
     setGraphSummary('No geocoded rooms available for the heatmap with current category/year selection.');
-    if (heatmapLegendControl) {
-      map.removeControl(heatmapLegendControl);
-      heatmapLegendControl = null;
-    }
     return;
   }
 
-  const points = rooms.map(room => {
-    const matchedCategories = extractRoomCategories(room).filter(category => {
-      const selected = getSelectedGraphCategories();
-      return selected.length === 0 || selected.includes(category);
-    });
-    const intensity = Math.min(1, Math.max(0.35, matchedCategories.length / 3));
-    return [room.Lat, room.Lon, intensity];
-  });
+  if (selectedCategories.length > 1) {
+    const yearLabel = selectedYears.length
+      ? selectedYears.join(', ')
+      : (min !== null && max !== null ? (min === max ? `${min}` : `${min}-${max}`) : 'All');
+
+    const panelStats = setupHeatmapCompareMode(compareCategories, rooms);
+    const panelText = panelStats
+      .map(panel => `${panel.category} (${panel.roomCount})`)
+      .join(' | ');
+    const limitedText = selectedCategories.length > HEATMAP_COMPARE_LIMIT
+      ? ` Showing first ${HEATMAP_COMPARE_LIMIT} selected categories.`
+      : '';
+    setGraphSummary(`Split heatmap comparison by category (${panelStats.length} panels, years: ${yearLabel}). ${panelText}.${limitedText}`);
+    return;
+  }
+
+  const points = buildHeatmapPointsForRooms(rooms);
 
   heatmapLayer = L.heatLayer(points, {
     radius: heatmapSettings.radius,
     blur: 22,
     maxZoom: 15,
     minOpacity: heatmapSettings.opacity,
-    gradient: buildHeatmapGradient(displayCategories)
+    gradient: buildHeatmapGradient()
   }).addTo(map);
 
   const yearLabel = selectedYears.length
@@ -4877,7 +5230,7 @@ function showRoomsHeatmap() {
     map.setView([points[0][0], points[0][1]], Math.max(map.getZoom(), 13));
   }
 
-  setGraphSummary(`GIS heatmap displayed for ${rooms.length} rooms using current category/year selection.`);
+  setGraphSummary(`Simple GIS heatmap displayed for ${rooms.length} rooms using current category/year selection.`);
 }
 
 async function openGraphsPanel() {
@@ -4892,6 +5245,7 @@ async function openGraphsPanel() {
   }
 
   populateGraphYearFilter();
+  setGraphsSubview('charts');
 
   setGraphSummary('Choose graph settings and click Generate.');
 }
@@ -8002,6 +8356,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById("tabGraphs").onclick = openGraphsPanel;
   showSidebarTab('filters');
 
+  document.getElementById("showChartsSubviewBtn").onclick = () => {
+    setGraphsSubview('charts');
+  };
+
+  document.getElementById("showHeatmapSubviewBtn").onclick = () => {
+    setGraphsSubview('heatmap');
+  };
+
   document.getElementById("closeGraphs").onclick = () => {
     closeSidebarTab();
   };
@@ -8036,10 +8398,11 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleHeatmapAdvancedControls();
   };
 
-  ["heatmapRadiusRange", "heatmapOpacityRange"].forEach(id => {
+  ["heatmapRadiusRange", "heatmapOpacityRange", "heatmapRampSelect"].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
-    el.addEventListener('input', () => {
+    const eventName = id === 'heatmapRampSelect' ? 'change' : 'input';
+    el.addEventListener(eventName, () => {
       heatmapSettings.radius = Number.parseInt(document.getElementById('heatmapRadiusRange').value, 10) || 26;
       heatmapSettings.opacity = (Number.parseInt(document.getElementById('heatmapOpacityRange').value, 10) || 28) / 100;
       updateHeatmapSettingsReadout();
